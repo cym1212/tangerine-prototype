@@ -34,10 +34,8 @@ public class Post extends BaseEntity {
 
     private short blockCnt = 0;
 
-    //대표지역
-    private  String province;//광역시/도
-    private  String city;//시/군/구
-    private  String district;//읍/면/동
+    //대표장소
+    private  String representativeRegion;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)

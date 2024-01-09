@@ -1,5 +1,6 @@
-package io.mohajistudio.tangerine.prototype.domain.member.domain;
+package io.mohajistudio.tangerine.prototype.domain.notice;
 
+import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

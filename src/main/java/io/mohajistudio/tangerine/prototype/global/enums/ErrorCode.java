@@ -38,7 +38,8 @@ public enum ErrorCode {
 
 
     //Region
-    KAKAO_PLACE_SEARCH(500, "R001", "카카오 장소 검색 API를 호출하는 도중 에러가 발생했습니다");
+    KAKAO_PLACE_SEARCH(500, "R001", "카카오 장소 검색 API를 호출하는 도중 에러가 발생했습니다"),
+    KAKAO_REGULAR_EXPRESSION(500, "R002", "카카오 장소 검색 API가 반환한 주소가 정규식과 일치하지 않습니다. 고객센터에 문의해주세요");
 
     private final String code;
     private final String message;

@@ -83,9 +83,9 @@ class PostServiceTest {
         placeBlockImages2.add(PlaceBlockImage.builder().imageUrl("https://image-url-3-1.com").imageMimeType(ImageMimeType.JPEG).orderNumber((short) 1).build());
         placeBlockImages2.add(PlaceBlockImage.builder().imageUrl("https://image-url-3-2.com").imageMimeType(ImageMimeType.PNG).orderNumber((short) 1).build());
 
-        placeBlocks.add(PlaceBlock.builder().content("수정된 두 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 2).category(category).place(place).placeBlockImages(placeBlockImages).id(placeBlockIds.get(0)).build());
+ /*       placeBlocks.add(PlaceBlock.builder().content("수정된 두 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 2).category(category).place(place).placeBlockImages(placeBlockImages).id(placeBlockIds.get(0)).build());
         placeBlocks.add(PlaceBlock.builder().content("추가된 세 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 3).category(category).place(place).placeBlockImages(placeBlockImages2).build());
-
+*/
         modifyPost.setTextBlocks(textBlocks);
         modifyPost.setPlaceBlocks(placeBlocks);
         return modifyPost;

@@ -36,6 +36,6 @@ public class MemberProfile extends BaseEntity {
     Member member;
 
     public static MemberProfile createMemberProfileFrom(RegisterDTO registerDTO, Member member) {
-        return MemberProfile.builder().birthday(registerDTO.getBirthday()).phone(registerDTO.getPhone()).gender(registerDTO.getGender()).thumbnail(registerDTO.getThumbnail()).nickname(registerDTO.getNickname()).member(member).build();
+        return MemberProfile.builder().birthday(registerDTO.getBirthday()).phone(registerDTO.getPhone()).gender(registerDTO.getGender()).thumbnail(registerDTO.getThumbnail()).nickname(registerDTO.getNickname()).name(registerDTO.getName()).member(member).build();
     }
 }

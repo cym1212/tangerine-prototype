@@ -35,4 +35,8 @@ public class RegisterDTO {
     @Size(max = 255)
     @Schema(description = "멤버 프로필 이미지", example = "https://thumbnail.com")
     private String thumbnail;
+    @NotNull
+    @NotBlank
+    @Size(max = 20, min = 2)
+    private String name;
 }
