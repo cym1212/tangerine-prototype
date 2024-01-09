@@ -69,13 +69,17 @@ public class RepresentServiceImpl implements RepresentService {
     //군/시/도 순서로 맵을 돌면서findKey() 실행//상위 행정구역을 앞에 붙여서 반환
     private static List<String> findKeysInOrder(Map<String, Integer>... maps) {
         List<String> result = new ArrayList<>();
-        int halfSize = (maps.length + 1) / 2;
+        double sum = maps[0].values().stream()
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        int halfSize = (int) (sum / 2) + (sum % 2 == 1 ? 1 : 0);
+        System.out.println("halfSize = " + halfSize);
         for (Map<String, Integer> map : maps) {
             List<String> keys = findKey(map, halfSize);
             if (keys != null) {
                 for (String key : keys) {
-                    // 언더바가 있는 경우, 언더바 이후의 문자열만 추가//한 번의 반복동안 key를 통해 cleanedKey키를 구함
-                    result.add(key);           //부산 강서구//인천 강서구//서울 강서구
+                    result.add(key);
                 }
             }
         }

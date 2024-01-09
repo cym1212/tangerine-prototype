@@ -134,16 +134,18 @@ class regionApiTest {
     void generateException4(){
         List<AddressDTO> places = new ArrayList<>();
         places.add(AddressDTO.builder().province("서울").city("강서구").district("등촌동").detail("24-5").build());
-        places.add(AddressDTO.builder().province("서울").city("강서구").district("등촌동").detail("24-5").build());
+        places.add(AddressDTO.builder().province("서울").city("강서구").district("등촌동").detail("24-6").build());
+        places.add(AddressDTO.builder().province("서울").city("강서구").district("등촌동").detail("24-7").build());
+        places.add(AddressDTO.builder().province("서울").city("강서구").district("등촌동").detail("24-8").build());
         places.add(AddressDTO.builder().province("부산").city("강서구").district("눌차동").detail("55-1").build());
-        places.add(AddressDTO.builder().province("부산").city("강서구").district("눌차동").detail("55-1").build());
+        places.add(AddressDTO.builder().province("부산").city("강서구").district("눌차동").detail("55-2").build());
         places.add(AddressDTO.builder().province("인천").city("강서구").district("개안동").detail("55-1").build());
-        places.add(AddressDTO.builder().province("인천").city("강서구").district("개안동").detail("55-1").build());
+        places.add(AddressDTO.builder().province("인천").city("강서구").district("개안동").detail("55-2").build());
 
 
         List<String> RepresentativeRegion = RRG.extract(places);
         System.out.println("대표지역 = " + RepresentativeRegion);
-        List<String> expectedList = Arrays.asList("전국","인천","부산","서울","인천 강서구","서울 강서구","부산 강서구","강서구 등촌동","강서구 개안동","강서구 눌차동");
+        List<String> expectedList = Arrays.asList("전국","서울","서울 강서구","강서구 등촌동");
         assertArrayEquals(expectedList.toArray(), RepresentativeRegion.toArray());
     }
     @Test
@@ -151,6 +153,7 @@ class regionApiTest {
         List<AddressDTO> places = new ArrayList<>();
         places.add(AddressDTO.builder().province("강원특별자치도").city("춘천시").district("봉의동").detail("15").build());
         places.add(AddressDTO.builder().province("경기").city("수원시").district("영통구").detail("이의동").build());
+        places.add(AddressDTO.builder().province("서울").city("강서구").district("등촌동").detail("24-5").build());
 
 
         List<String> RepresentativeRegion = RRG.extract(places);
