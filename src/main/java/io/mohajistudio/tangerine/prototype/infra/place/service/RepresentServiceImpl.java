@@ -1,6 +1,5 @@
 package io.mohajistudio.tangerine.prototype.infra.place.service;
 
-import io.mohajistudio.tangerine.prototype.domain.place.controller.RepresentService;
 import io.mohajistudio.tangerine.prototype.infra.place.dto.AddressDTO;
 import org.springframework.stereotype.Service;
 

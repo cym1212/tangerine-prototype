@@ -62,7 +62,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         memberAttribute.put("id", member.getId());
 
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole().name())), memberAttribute, oAuth2Attribute.getAttributeKey());
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole().name())), memberAttribute, "id");
     }
 
     boolean checkSameEmailDifferentProvider(Member member, OAuth2AttributeDTO oAuth2Attribute) {
