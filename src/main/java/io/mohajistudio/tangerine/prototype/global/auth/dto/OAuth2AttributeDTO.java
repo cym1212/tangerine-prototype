@@ -11,13 +11,13 @@ import java.util.Map;
 @ToString
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
-public class OAuth2Attribute {
+public class OAuth2AttributeDTO {
     private Map<String, Object> attributes;
     private String attributeKey;
     private String provider;
     private String email;
 
-    public static OAuth2Attribute of(String provider, String attributeKey, Map<String, Object> attributes) {
+    public static OAuth2AttributeDTO of(String provider, String attributeKey, Map<String, Object> attributes) {
         switch (provider) {
             case "kakao":
                 return ofKakao(provider, attributeKey, attributes);
@@ -27,11 +27,11 @@ public class OAuth2Attribute {
     }
 
     @SuppressWarnings("unchecked")
-    private static OAuth2Attribute ofKakao(String provider, String attributeKey, Map<String, Object> attributes) {
+    private static OAuth2AttributeDTO ofKakao(String provider, String attributeKey, Map<String, Object> attributes) {
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
         Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
 
-        return OAuth2Attribute.builder().provider(provider).attributes(kakaoProfile).attributeKey(attributeKey).email((String) kakaoAccount.get("email")).build();
+        return OAuth2AttributeDTO.builder().provider(provider).attributes(kakaoProfile).attributeKey(attributeKey).email((String) kakaoAccount.get("email")).build();
     }
 
     public Map<String, Object> convertToMap() {

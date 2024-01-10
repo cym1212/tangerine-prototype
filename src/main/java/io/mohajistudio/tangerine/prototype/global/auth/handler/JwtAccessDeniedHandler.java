@@ -1,7 +1,7 @@
 package io.mohajistudio.tangerine.prototype.global.auth.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMember;
+import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMemberDTO = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMemberDTO = (SecurityMemberDTO) authentication.getPrincipal();
 
         Map<String, String> exception = new HashMap<>();
         if(securityMemberDTO.getRole().name().equals("GUEST")) {

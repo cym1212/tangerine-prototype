@@ -4,7 +4,7 @@ import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberDTO;
 import io.mohajistudio.tangerine.prototype.domain.member.mapper.MemberMapper;
 import io.mohajistudio.tangerine.prototype.domain.member.service.MemberService;
 import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberProfileDTO;
-import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMember;
+import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import io.mohajistudio.tangerine.prototype.global.common.PageableParam;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
@@ -38,7 +38,7 @@ public class MemberController {
     @Operation(summary = "팔로우할 멤버 추가/삭제", description = "팔로우 할 멤버를 추가 또는 삭제합니다.")
     public void followMemberModify(@PathVariable("memberId") Long memberId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMember = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         if (Objects.equals(memberId, securityMember.getId())) {
             throw new BusinessException(ErrorCode.SELF_FOLLOW);

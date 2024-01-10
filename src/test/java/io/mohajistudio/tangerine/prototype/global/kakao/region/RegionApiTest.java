@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,22 +18,14 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @SpringBootTest
-class regionApiTest {
+@ActiveProfiles("dev")
+class RegionApiTest {
 
     @Autowired
     private PlaceApiService placeApiService;
     @Autowired
     private RepresentServiceImpl RRG;
 
-    @AfterEach
-    void afterEach() {
-        // 각 테스트 메서드가 종료될 때마다 1초 딜레이 추가
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
     @Test
     void getRegionData() {
         PlaceKakaoSearchApiResultDTO data = placeApiService.searchPlace("범박고등학교",1,1);
