@@ -1,16 +1,12 @@
 package io.mohajistudio.tangerine.prototype.infra.place.service;
 
-
 import io.mohajistudio.tangerine.prototype.domain.place.controller.RepresentService;
 import io.mohajistudio.tangerine.prototype.infra.place.dto.AddressDTO;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Component
-@Slf4j
+@Service
 public class RepresentServiceImpl implements RepresentService {
     //post에서 수정, 저장 로직 만들때 대표지역을 설정하기 위해 사용
     //post 수정, 저장 만들때 같은 지역 입력받으면 400에러 보내도록 예외처리 요망
@@ -25,61 +21,76 @@ public class RepresentServiceImpl implements RepresentService {
         Map<String, Integer> provinces = new HashMap<>();
         Map<String, Integer> cities = new HashMap<>();
         Map<String, Integer> districts = new HashMap<>();
-        extractForPlace(places, provinces, cities, districts);
-
+        extractFromAddress(places, provinces, cities, districts);
         result.addAll(findKeysInOrder(districts, cities, provinces));
-
         return result;
     }
 
-
-
-    private static void extractForPlace(List<AddressDTO> places, Map<String, Integer> provinces, Map<String, Integer> cities, Map<String, Integer> districts) {
+    //각각의 맵들에 key가 존재하면 value 를 1 증가 시킴
+    private static void extractFromAddress(List<AddressDTO> places, Map<String, Integer> provinces, Map<String, Integer> cities, Map<String, Integer> districts) {
         for (AddressDTO place : places) {
             //key value로 저장//동일한 키 존재시 value1 증가
-            String ProvinceKey = place.getProvince() ;
-            String CityKey = ProvinceKey + "_" + place.getCity();
-            String DistrictKey = CityKey + "_" + place.getDistrict();
+            String ProvinceKey = place.getProvince();
+            String CityKey = ProvinceKey + " " + place.getCity();
+            String DistrictKey = place.getCity() + " " + place.getDistrict();
             provinces.compute(ProvinceKey, (key, value) -> (value == null) ? 1 : ++value);
             cities.compute(CityKey, (key, value) -> (value == null) ? 1 : ++value);
             districts.compute(DistrictKey, (key, value) -> (value == null) ? 1 : ++value);
         }
     }
-
+   /* //군/시/도 순서로 맵을 돌면서findKey() 실행// 결과에 같은 지역이 있을 경우 상위 행정구역을 앞에 붙여서 반환
     private static List<String> findKeysInOrder(Map<String, Integer>... maps) {
-        List<String> keys = new ArrayList<>();
+        List<String> result = new ArrayList<>();
         int halfSize = (maps.length + 1) / 2;
-        Map<String,String> addedParentRegions = new HashMap<>();
+        Map<String, String> addedParentRegions = new HashMap<>();
         for (Map<String, Integer> map : maps) {
-            List<String> key = findKey(map , halfSize);
-            if (key != null) {
-                for(String ke : key){
-                    // 언더바가 있는 경우, 언더바 이후의 문자열만 추가//한 번의 반복동안 ke를 통해 cleanedKey키를 구함
-                    int lastUnderscoreIndex = ke.lastIndexOf('_');
-                    String cleanedKey = (lastUnderscoreIndex != -1) ? ke.substring(lastUnderscoreIndex + 1) : ke;
+            List<String> keys = findKey(map, halfSize);
+            if (keys != null) {
+                for (String key : keys) {
+                    // 언더바가 있는 경우, 언더바 이후의 문자열만 추가//한 번의 반복동안 key를 통해 cleanedKey키를 구함
+                    int lastUnderscoreIndex = key.lastIndexOf(' ');
+                    String cleanedKey = (lastUnderscoreIndex != -1) ? key.substring(lastUnderscoreIndex + 1) : key;
                     //중복이 제거된 addedParentRegions에 cleanedKey가 등록되어있지 않은 경우
-                    if(!addedParentRegions.containsKey(cleanedKey)){
-                        keys.add(cleanedKey);   //개안동//등촌동//눌차동//강서구//서울//부산
-                    }
-                     else {
-                        keys.add(ke);           //부산_강서구//인천_강서구//서울_강서구
-                        if(keys.remove(cleanedKey)){
-                            keys.add(addedParentRegions.get(cleanedKey));
+                    if (!addedParentRegions.containsKey(cleanedKey)) {
+                        result.add(cleanedKey);   //개안동//등촌동//눌차동//강서구//서울//부산
+                    } else {
+                        result.add(key);           //부산 강서구//인천 강서구//서울 강서구
+                        if (result.remove(cleanedKey)) {
+                            result.add(addedParentRegions.get(cleanedKey));
                         }
                     }
-                    addedParentRegions.put(cleanedKey,ke);
-
+                    addedParentRegions.put(cleanedKey, key);
                 }
-
             }
         }
-        Collections.reverse(keys);
-        return keys;
+        Collections.reverse(result);
+        return result;
+    } */
+    //군/시/도 순서로 맵을 돌면서findKey() 실행//상위 행정구역을 앞에 붙여서 반환
+    private static List<String> findKeysInOrder(Map<String, Integer>... maps) {
+        List<String> result = new ArrayList<>();
+        double sum = maps[0].values().stream()
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        int halfSize = (int) (sum / 2) + (sum % 2 == 1 ? 1 : 0);
+        System.out.println("halfSize = " + halfSize);
+        for (Map<String, Integer> map : maps) {
+            List<String> keys = findKey(map, halfSize);
+            if (keys != null) {
+                for (String key : keys) {
+                    result.add(key);
+                }
+            }
+        }
+        Collections.reverse(result);
+        return result;
     }
 
-    private static  List<String> findKey(Map<String, Integer> map, int halfSize) {
+    //각각의 맵의 총 크기의 반 이상이 되는 value 들을 모두 대표 지역으로 설정
+    private static List<String> findKey(Map<String, Integer> map, int halfSize) {
         int Value = Integer.MIN_VALUE;
-        List <String> Keys = new ArrayList<>();
+        List<String> Keys = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             int currentValue = entry.getValue();
             if (currentValue >= halfSize) {
@@ -89,12 +100,13 @@ public class RepresentServiceImpl implements RepresentService {
         }
         return (Value == Integer.MIN_VALUE ? null : Keys);
     }
+    // 하나 들어왔을때 그 데이터가 대표 지역
     private static List<String> getOneLists(List<AddressDTO> places) {
         List<String> result = new ArrayList<>();
         AddressDTO place = places.get(0);
         result.add(place.getProvince());
-        result.add(place.getCity());
-        result.add(place.getDistrict());
+        result.add(place.getProvince()+ " " +place.getCity());
+        result.add(place.getCity()+ " " +place.getDistrict());
         return result;
     }
 
