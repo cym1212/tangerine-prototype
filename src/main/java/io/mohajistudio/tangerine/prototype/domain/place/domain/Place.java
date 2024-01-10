@@ -26,13 +26,13 @@ public class Place extends BaseEntity {
     @Column(nullable = false, columnDefinition = "geometry(Point, 4326)")
     private Point coordinates;
     private String thumbnail;
-    @Column(columnDefinition = "varchar(10)", nullable = false)
+    @Column(columnDefinition = "varchar(20)", nullable = false)
     private String addressProvince;//광역시/도
-    @Column(columnDefinition = "varchar(10)", nullable = false)
+    @Column(columnDefinition = "varchar(20)", nullable = false)
     private String addressCity;//시/군/구
-    @Column(columnDefinition = "varchar(10)", nullable = false)
+    @Column(columnDefinition = "varchar(20)", nullable = false)
     private String addressDistrict;//읍/면/동
-    @Column(columnDefinition = "varchar(10)", nullable = false)
+    @Column(columnDefinition = "varchar(20)", nullable = false)
     private String addressDetail;//이하
     private String roadAddress;
     @Column(length = 500)
