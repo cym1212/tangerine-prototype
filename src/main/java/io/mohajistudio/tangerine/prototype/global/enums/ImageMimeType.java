@@ -4,7 +4,9 @@ public enum ImageMimeType {
     JPEG("image/jpeg"),
     PNG("image/png"),
     GIF("image/gif"),
-    BMP("image/bmp");
+    BMP("image/bmp"),
+
+    JPG("image/jpg");
 
     private final String value;
 
