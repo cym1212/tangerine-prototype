@@ -12,6 +12,7 @@ import io.mohajistudio.tangerine.prototype.infra.place.dto.AddressDTO;
 import io.mohajistudio.tangerine.prototype.infra.place.dto.PlaceKakaoSearchApiDTO;
 import io.mohajistudio.tangerine.prototype.infra.place.dto.PlaceKakaoSearchApiResultDTO;
 import io.mohajistudio.tangerine.prototype.infra.place.service.PlaceApiService;
+import io.mohajistudio.tangerine.prototype.infra.place.service.RepresentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

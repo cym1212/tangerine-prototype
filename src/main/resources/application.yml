@@ -1,6 +1,3 @@
-spring:
-  profiles:
-    include: secret, place
 springdoc:
   swagger-ui:
     path: /swagger

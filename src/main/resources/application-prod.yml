@@ -1,0 +1,8 @@
+spring:
+  config:
+    import:
+      - file:/config/application-secret.yml
+      - file:/config/application-place.yml
+      - file:/config/application-prod-db.yml
+server:
+  port: 8081

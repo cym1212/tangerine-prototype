@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  tangerine-prototype:
+    image: hch9510/tangerine-prototype:0.0.1
+    ports:
+      - "8080:8080"
