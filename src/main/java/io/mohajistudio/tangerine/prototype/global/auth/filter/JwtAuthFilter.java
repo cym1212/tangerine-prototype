@@ -1,7 +1,7 @@
 package io.mohajistudio.tangerine.prototype.global.auth.filter;
 
 import io.jsonwebtoken.Claims;
-import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMember;
+import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.service.JwtProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (authElements.length == 2 && "Bearer".equals(authElements[0])) {
                 try {
                     Claims claims = jwtProvider.verifyToken(authElements[1]);
-                    SecurityMember securityMemberDTO = SecurityMember.fromClaims(claims);
+                    SecurityMemberDTO securityMemberDTO = SecurityMemberDTO.fromClaims(claims);
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(securityMemberDTO, null, List.of(new SimpleGrantedAuthority(securityMemberDTO.getRole().name())));
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 } catch (Exception e) {

@@ -4,7 +4,7 @@ import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PostDTO;
 import io.mohajistudio.tangerine.prototype.domain.post.mapper.PostMapper;
 import io.mohajistudio.tangerine.prototype.domain.post.service.PostService;
-import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMember;
+import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import io.mohajistudio.tangerine.prototype.global.common.PageableParam;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
@@ -46,7 +46,7 @@ public class PostController {
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMember = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         Post post = postMapper.toEntity(postAddDTO);
 
@@ -68,7 +68,7 @@ public class PostController {
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMember = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         if (!Objects.equals(id, postDetailsDTO.getId())) {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
@@ -81,7 +81,7 @@ public class PostController {
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
     public void postDelete(@PathVariable("id") Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMember = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         postService.deletePost(id, securityMember.getId());
     }
@@ -90,7 +90,7 @@ public class PostController {
     @Operation(summary = "좋아하는 게시글 추가/삭제", description = "좋아하는 게시글을 추가 또는 삭제합니다.")
     public void favoritePostModify(@PathVariable("id") Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMember = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         postService.modifyFavoritePost(id, securityMember.getId());
     }
@@ -98,7 +98,7 @@ public class PostController {
     @PatchMapping("/{id}/scrap")
     public void scrapPostModify(@PathVariable("id") Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMember = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         postService.modifyScrapPost(id, securityMember.getId());
     }

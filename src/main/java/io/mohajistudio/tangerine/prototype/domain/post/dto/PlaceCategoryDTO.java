@@ -16,6 +16,7 @@ public class PlaceCategoryDTO {
     @Setter
     @Schema(name = "PlaceCategoryDTO.Details", description = "장소 블럭의 상세를 반환할 때 사용할 DTO")
     public static class Details extends PlaceCategoryDTO {
+        @Schema(description = "장소 카테고리명", example = "카페")
         private String name;
     }
 

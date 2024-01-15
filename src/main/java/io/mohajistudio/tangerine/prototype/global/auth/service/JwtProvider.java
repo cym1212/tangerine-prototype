@@ -1,9 +1,9 @@
 package io.mohajistudio.tangerine.prototype.global.auth.service;
 
 import io.jsonwebtoken.*;
-import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMember;
+import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import io.mohajistudio.tangerine.prototype.global.config.JwtProperties;
-import io.mohajistudio.tangerine.prototype.global.auth.dto.GeneratedToken;
+import io.mohajistudio.tangerine.prototype.global.auth.dto.GeneratedTokenDTO;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
@@ -43,28 +43,28 @@ public class JwtProvider {
     }
 
     @Transactional
-    public GeneratedToken generateTokens(Long id, String email, String provider, String role) {
+    public GeneratedTokenDTO generateTokens(Long id, String email, String provider, String role) {
         String accessToken = generateToken(id, email, provider, role, ACCESS_TOKEN_PERIOD);
         String refreshToken = generateToken(id, email, provider, role, REFRESH_TOKEN_PERIOD);
 
         saveRefreshToken(id, refreshToken);
 
-        return GeneratedToken.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+        return GeneratedTokenDTO.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    public GeneratedToken generateTokens(SecurityMember securityMemberDTO) {
+    public GeneratedTokenDTO generateTokens(SecurityMemberDTO securityMemberDTO) {
         String accessToken = generateToken(securityMemberDTO, ACCESS_TOKEN_PERIOD);
         String refreshToken = generateToken(securityMemberDTO, REFRESH_TOKEN_PERIOD);
 
         saveRefreshToken(securityMemberDTO.getId(), refreshToken);
 
-        return GeneratedToken.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+        return GeneratedTokenDTO.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    public GeneratedToken generateGuestToken(Long id, String email, String provider, String role) {
+    public GeneratedTokenDTO generateGuestToken(Long id, String email, String provider, String role) {
         String accessToken = generateToken(id, email, provider, role, ACCESS_TOKEN_PERIOD);
 
-        return GeneratedToken.builder().accessToken(accessToken).build();
+        return GeneratedTokenDTO.builder().accessToken(accessToken).build();
     }
 
     private String generateToken(Long id, String email, String provider, String role, Long tokenPeriod) {
@@ -78,7 +78,7 @@ public class JwtProvider {
         return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(new Date(now.getTime() + tokenPeriod)).signWith(signingKey, signatureAlgorithm).compact();
     }
 
-    private String generateToken(SecurityMember securityMemberDTO, Long tokenPeriod) {
+    private String generateToken(SecurityMemberDTO securityMemberDTO, Long tokenPeriod) {
         Claims claims = Jwts.claims().setSubject("id");
         claims.put("role", securityMemberDTO.getRole().name());
         claims.put("provider", securityMemberDTO.getProvider().name());
@@ -90,12 +90,12 @@ public class JwtProvider {
     }
 
     @Transactional
-    public GeneratedToken reissueToken(String refreshToken) {
-        GeneratedToken generatedTokenDTO;
+    public GeneratedTokenDTO reissueToken(String refreshToken) {
+        GeneratedTokenDTO generatedTokenDTO;
         String reissuedRefreshToken = null;
         String reissuedAccessToken;
         Claims claims = verifyToken(refreshToken);
-        SecurityMember securityMemberDTO = SecurityMember.fromClaims(claims);
+        SecurityMemberDTO securityMemberDTO = SecurityMemberDTO.fromClaims(claims);
 
         Optional<Member> findMember = memberRepository.findById(securityMemberDTO.getId());
 
@@ -120,7 +120,7 @@ public class JwtProvider {
         }
 
         reissuedAccessToken = generateToken(securityMemberDTO, ACCESS_TOKEN_PERIOD);
-        generatedTokenDTO = GeneratedToken.builder().accessToken(reissuedAccessToken).refreshToken(reissuedRefreshToken).build();
+        generatedTokenDTO = GeneratedTokenDTO.builder().accessToken(reissuedAccessToken).refreshToken(reissuedRefreshToken).build();
 
         return generatedTokenDTO;
     }

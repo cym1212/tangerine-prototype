@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class PlaceApiServiceImpl implements PlaceApiService {
         try {
             CloseableHttpClient client = HttpClientBuilder.create().build();
             HttpGet getRequest = new HttpGet(placeApiConfig.getUrl() + "?query=" + query + "&page=" + page + "&size=" + size);
-            getRequest.addHeader("Authorization", "KakaoAK " + placeApiConfig.getRestApiKey());
+            getRequest.addHeader(HttpHeaders.AUTHORIZATION, "KakaoAK " + placeApiConfig.getRestApiKey());
 
             CloseableHttpResponse response = client.execute(getRequest);
             ResponseHandler<String> handler = new BasicResponseHandler();

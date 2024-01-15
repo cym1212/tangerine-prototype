@@ -11,14 +11,14 @@ import lombok.Setter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class SecurityMember {
+public class SecurityMemberDTO {
     private final Long id;
     @Setter
     private Role role;
     private final String email;
     private final Provider provider;
 
-    public static SecurityMember fromClaims(Claims claims) {
-        return SecurityMember.builder().id(Long.valueOf(claims.getId())).email(claims.get("email", String.class)).provider(Provider.fromValue(claims.get("provider", String.class))).role(Role.fromValue(claims.get("role", String.class))).build();
+    public static SecurityMemberDTO fromClaims(Claims claims) {
+        return SecurityMemberDTO.builder().id(Long.valueOf(claims.getId())).email(claims.get("email", String.class)).provider(Provider.fromValue(claims.get("provider", String.class))).role(Role.fromValue(claims.get("role", String.class))).build();
     }
 }

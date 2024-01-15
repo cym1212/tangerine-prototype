@@ -1,7 +1,7 @@
 package io.mohajistudio.tangerine.prototype.global.auth.handler;
 
 import com.nimbusds.jose.shaded.gson.JsonObject;
-import io.mohajistudio.tangerine.prototype.global.auth.dto.GeneratedToken;
+import io.mohajistudio.tangerine.prototype.global.auth.dto.GeneratedTokenDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.service.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,7 +38,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String email = oAuth2User.getAttribute("email");
         String provider = oAuth2User.getAttribute("provider");
         String role = oAuth2User.getAuthorities().stream().findFirst().orElseThrow(IllegalAccessError::new).getAuthority();
-        GeneratedToken generatedTokenDTO;
+        GeneratedTokenDTO generatedTokenDTO;
 
         if (!registered) {
             generatedTokenDTO = jwtProvider.generateGuestToken(id, email, provider, role);

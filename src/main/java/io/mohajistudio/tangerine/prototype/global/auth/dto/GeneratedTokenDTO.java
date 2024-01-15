@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class GeneratedToken {
+public class GeneratedTokenDTO {
     private String accessToken;
     private String refreshToken;
 }

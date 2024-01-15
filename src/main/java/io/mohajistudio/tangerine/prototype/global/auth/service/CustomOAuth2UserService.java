@@ -4,7 +4,7 @@ import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.MemberProfile;
 import io.mohajistudio.tangerine.prototype.global.enums.Provider;
 import io.mohajistudio.tangerine.prototype.global.error.exception.CustomAuthenticationException;
-import io.mohajistudio.tangerine.prototype.global.auth.dto.OAuth2Attribute;
+import io.mohajistudio.tangerine.prototype.global.auth.dto.OAuth2AttributeDTO;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberProfileRepository;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -41,7 +41,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-        OAuth2Attribute oAuth2Attribute = OAuth2Attribute.of(registrationId, userNameAttributeName, originAttributes);
+        OAuth2AttributeDTO oAuth2Attribute = OAuth2AttributeDTO.of(registrationId, userNameAttributeName, originAttributes);
         Map<String, Object> memberAttribute = oAuth2Attribute.convertToMap();
 
         Optional<Member> findMember = memberRepository.findByEmail(oAuth2Attribute.getEmail());
@@ -62,10 +62,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         memberAttribute.put("id", member.getId());
 
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole().name())), memberAttribute, oAuth2Attribute.getAttributeKey());
+        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole().name())), memberAttribute, "id");
     }
 
-    boolean checkSameEmailDifferentProvider(Member member, OAuth2Attribute oAuth2Attribute) {
+    boolean checkSameEmailDifferentProvider(Member member, OAuth2AttributeDTO oAuth2Attribute) {
         return member.getEmail().equals(oAuth2Attribute.getEmail()) && member.getProvider().name().equals(oAuth2Attribute.getProvider());
     }
 }
