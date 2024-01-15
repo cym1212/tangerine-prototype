@@ -54,5 +54,5 @@ jobs:
             /share/CACHEDEV1_DATA/.qpkg/container-station/bin/docker run -d \
             --name ${{ secrets.DOCKERHUB_REPOSITORY_NAME }} \
               -v /share/Container/app:/config \
-              -p ${{ secrets.PORT }:${{ secrets.PORT } \
+              -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
               ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:latest \
