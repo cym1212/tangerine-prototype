@@ -6,6 +6,13 @@ plugins {
 
 group = 'io.mohajistudio'
 version = '0.0.1-SNAPSHOT'
+jar {
+	enabled = false
+}
+
+test.onlyIf {
+	!project.hasProperty('test')
+}
 
 java {
 	sourceCompatibility = '17'
