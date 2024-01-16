@@ -27,12 +27,13 @@ public class S3UploadService {
     private final AmazonS3Client amazonS3Client;
 
 
+
     public List<PlaceBlockImage> uploadImagesToS3(List<MultipartFile> multipartFiles) throws IOException {
         List<PlaceBlockImage> placeBlockImages = new ArrayList<>();
         short orderNumberCounter = 1;
 
-        for (MultipartFile multipartFile : multipartFiles) {
-            PlaceBlockImage placeBlockImage = uploadImageToS3(multipartFile, orderNumberCounter++);
+        for (int i = 1; i <= multipartFiles.size(); i++) {
+            PlaceBlockImage placeBlockImage = uploadImageToS3(multipartFiles.get(i - 1), orderNumberCounter++);
             placeBlockImages.add(placeBlockImage);
         }
 
