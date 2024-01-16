@@ -1,4 +1,4 @@
-package io.mohajistudio.tangerine.prototype.domain.place.controller;
+package io.mohajistudio.tangerine.prototype.infra.place.service;
 
 import io.mohajistudio.tangerine.prototype.infra.place.dto.AddressDTO;
 

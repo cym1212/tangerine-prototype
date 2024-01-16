@@ -27,5 +27,6 @@ public class TextBlockDTO {
     @Getter
     @Setter
     @Schema(name = "TextBlockDTO.Add", description = "텍스트 블럭을 추가할 때 사용할 DTO")
-    public static class Add extends TextBlockDTO { }
+    public static class Add extends TextBlockDTO {
+    }
 }

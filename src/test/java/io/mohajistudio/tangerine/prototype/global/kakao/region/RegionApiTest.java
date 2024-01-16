@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @SpringBootTest
 @ActiveProfiles("dev")
-class regionApiTest {
+class RegionApiTest {
 
     @Autowired
     private PlaceApiService placeApiService;

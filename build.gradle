@@ -6,6 +6,13 @@ plugins {
 
 group = 'io.mohajistudio'
 version = '0.0.1-SNAPSHOT'
+jar {
+	enabled = false
+}
+
+test.onlyIf {
+	!project.hasProperty('test')
+}
 
 java {
 	sourceCompatibility = '17'
@@ -45,6 +52,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.postgresql:postgresql:42.6.0'
 	implementation 'org.hibernate:hibernate-spatial:6.4.1.Final'
+
+//	implementation 'org.flywaydb:flyway-core:10.4.1'
+//	implementation 'org.flywaydb:flyway-database-postgresql:10.4.1'
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'

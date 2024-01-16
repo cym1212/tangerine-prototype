@@ -4,7 +4,7 @@ import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.comment.dto.CommentDTO;
 import io.mohajistudio.tangerine.prototype.domain.comment.mapper.CommentMapper;
 import io.mohajistudio.tangerine.prototype.domain.comment.service.CommentService;
-import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMember;
+import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import io.mohajistudio.tangerine.prototype.global.common.PageableParam;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
@@ -41,7 +41,7 @@ public class CommentController {
     @Operation(summary = "댓글 추가", description = "댓글 형식에 맞게 데이터를 전달해주세요.")
     public void commentAdd(@RequestBody @Valid CommentDTO.Add commentAddDTO, @PathVariable(name = "postId") Long postId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMember = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         commentService.AddComment(commentMapper.commentAddDtoToComment(commentAddDTO), postId, securityMember.getId());
     }
@@ -50,7 +50,7 @@ public class CommentController {
     @Operation(summary = "댓글 수정", description = "댓글 형식에 맞게 데이터를 전달해주세요.")
     public void commentModify(@RequestBody @Valid CommentDTO.Patch commentPatchDTO, @PathVariable(name = "postId") Long postId, @PathVariable(name = "id") Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMember = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         if (!Objects.equals(id, commentPatchDTO.getId())) {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
@@ -63,7 +63,7 @@ public class CommentController {
     @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
     public void commentDelete(@PathVariable(name = "postId") Long postId, @PathVariable(name = "id") Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMember = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         commentService.deleteComment(id, postId, securityMember.getId());
     }
@@ -72,7 +72,7 @@ public class CommentController {
     @Operation(summary = "좋아하는 댓글 추가/삭제", description = "좋아하는 댓글을 추가 또는 삭제합니다.")
     public void favoriteCommentModify(@PathVariable(name = "postId") Long postId, @PathVariable(name = "id") Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember securityMember = (SecurityMember) authentication.getPrincipal();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         commentService.modifyFavoriteComment(id, postId, securityMember.getId());
     }

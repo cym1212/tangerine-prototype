@@ -36,6 +36,6 @@ VALUES (11, '팝업');
 
 INSERT INTO place (name, coordinates, thumbnail, address_province, address_city, address_district, address_detail,
                    road_address, description, place_search_provider)
-VALUES ('강남대학교', ST_SetSRID(ST_MakePoint(37.27574, 127.13249), 4326), null, '경기도', '용인시', '기흥구', '구갈동 111, 강남대학교',
-        '경기 용인시 기흥구 강남로 40 강남대학교',
+VALUES ('강남대학교', ST_SetSRID(ST_MakePoint(37.27574, 127.13249), 4326), null, '경기도', '용인시', '기흥구', '구갈동 111',
+        '경기 용인시 기흥구 강남로 40',
         null, 'MEMBER');

@@ -30,9 +30,9 @@ public class PlaceDTO {
         private String addressCity;
         @Schema(description = "구 주소(읍/면/동)", example = "기흥구")
         private String addressDistrict;
-        @Schema(description = "구 주소(이하)", example = "구갈동 111, 강남대학교")
+        @Schema(description = "구 주소(이하)", example = "구갈동 111")
         private String addressDetail;
-        @Schema(description = "도로명주소", example = "경기 용인시 기흥구 강남로 40 강남대학교")
+        @Schema(description = "도로명주소", example = "경기 용인시 기흥구 강남로 40")
         private String roadAddress;
         @Schema(description = "장소 설명", example = "개발팀이 재학중인 학교")
         private String description;
