@@ -36,4 +36,11 @@ public class PlaceBlockImageDTO {
     @Schema(name = "PlaceBlockImageDTO.Add", description = "장소 블럭 이미지 추가를 위한 DTO")
     public static class Add extends PlaceBlockImageDTO {
     }
+
+    @Getter
+    @Setter
+    @Schema(name = "PlaceBlockImageDTO.Upload", description = "장소 블럭 이미지 업로드를 위한 DTO")
+    public static class Upload extends PlaceBlockImageDTO {
+    }
+
 }
