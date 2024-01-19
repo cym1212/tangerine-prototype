@@ -1,12 +1,14 @@
 package io.mohajistudio.tangerine.prototype.global.enums;
 
-public enum ImageMimeType {
-    JPEG("image/jpeg"),
-    PNG("image/png"),
-    GIF("image/gif"),
-    BMP("image/bmp"),
+import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 
-    JPG("image/jpg");
+public enum ImageMimeType {
+    JPEG(".jpeg"),
+    PNG(".png"),
+    GIF(".gif"),
+    BMP(".bmp"),
+    WebP(".webp"),
+    JPG(".jpg");
 
     private final String value;
 
@@ -20,6 +22,6 @@ public enum ImageMimeType {
                 return mimeType;
             }
         }
-        throw new IllegalArgumentException("지원하지 않는 이미지 확장자입니다: " + value);
+        throw new BusinessException("지원하지 않는 이미지 확장자입니다: " + value, ErrorCode.INVALID_INPUT_VALUE);
     }
 }

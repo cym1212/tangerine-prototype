@@ -21,10 +21,11 @@ jobs:
         distribution: 'temurin'
 
     # Spring Boot Build
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2.6.0
-      with:
-        arguments: build
+      run: ./gradlew clean build
 
     # Build Docker image
     - name: Build Docker image

@@ -21,9 +21,12 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 import java.net.BindException;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Slf4j
@@ -79,7 +82,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest httpServletRequest) {
-        log.error("handleHttpRequestMethodNotSupportedException", e);
+        log.error("handleHttpMessageNotReadableException", e);
         final ErrorResponse response = ErrorResponse.of(ErrorCode.HTTP_MESSAGE_NOT_READABLE);
         sendWebhook(httpServletRequest, e.getMessage(), ErrorCode.HTTP_MESSAGE_NOT_READABLE);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -97,7 +100,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e, HttpServletRequest httpServletRequest) {
         log.error("BusinessException", e);
         final ErrorCode errorCode = e.getErrorCode();
-        final ErrorResponse response = ErrorResponse.of(errorCode);
+        final ErrorResponse response = ErrorResponse.of(errorCode, e.getMessage());
         sendWebhook(httpServletRequest, e.getMessage(), errorCode);
         return new ResponseEntity<>(response, HttpStatus.valueOf(errorCode.getStatus()));
     }
@@ -139,18 +142,32 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    protected ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoSuchKeyException.class)
+    protected ResponseEntity<ErrorResponse> handleNoSuchKeyException(NoSuchKeyException e, HttpServletRequest httpServletRequest) {
+        log.error(e.getMessage());
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.NO_SUCH_KEY);
+        sendWebhook(httpServletRequest, e.getMessage(), ErrorCode.ILLEGAL_ARGUMENT);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     public void sendWebhook(HttpServletRequest httpServletRequest, String errorMessage, ErrorCode errorCode) {
         if ("prod".equals(environment.getActiveProfiles()[0])) {
-        FieldDTO methodField = FieldDTO.createInlineField("Method", httpServletRequest.getMethod());
-        FieldDTO endpointField = FieldDTO.createInlineField("Endpoint", httpServletRequest.getRequestURI());
-        FieldDTO clientIpField = FieldDTO.createInlineField("ClientIp", httpServletRequest.getRemoteAddr());
+            FieldDTO methodField = FieldDTO.createInlineField("Method", httpServletRequest.getMethod());
+            FieldDTO endpointField = FieldDTO.createInlineField("Endpoint", httpServletRequest.getRequestURI());
+            FieldDTO clientIpField = FieldDTO.createInlineField("ClientIp", httpServletRequest.getRemoteAddr());
 
-        FieldDTO errorCodeField = FieldDTO.createInlineField("ErrorCode", errorCode.getCode());
-        FieldDTO statusCodeField = FieldDTO.createInlineField("StatusCode", String.valueOf(errorCode.getStatus()));
-        FieldDTO errorMessageField = FieldDTO.createField("ErrorMessage", errorCode.getMessage());
-        EmbedObjectDTO embedObjectDTO = EmbedObjectDTO.createErrorEmbedObject("ErrorMessage", errorMessage, List.of(methodField, endpointField, clientIpField, errorCodeField, statusCodeField, errorMessageField));
-        DiscordWebhookDTO discordWebhookDTO = DiscordWebhookDTO.createErrorMessage("Spring Boot Server Error", List.of(embedObjectDTO));
-        webhookService.sendMessage(discordWebhookDTO);
+            FieldDTO errorCodeField = FieldDTO.createInlineField("ErrorCode", errorCode.getCode());
+            FieldDTO statusCodeField = FieldDTO.createInlineField("StatusCode", String.valueOf(errorCode.getStatus()));
+            FieldDTO errorMessageField = FieldDTO.createField("ErrorMessage", errorCode.getMessage());
+            EmbedObjectDTO embedObjectDTO = EmbedObjectDTO.createErrorEmbedObject("ErrorMessage", errorMessage, List.of(methodField, endpointField, clientIpField, errorCodeField, statusCodeField, errorMessageField));
+            DiscordWebhookDTO discordWebhookDTO = DiscordWebhookDTO.createErrorMessage("Spring Boot Server Error", List.of(embedObjectDTO));
+            webhookService.sendMessage(discordWebhookDTO);
         }
     }
 }

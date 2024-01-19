@@ -2,6 +2,7 @@ package io.mohajistudio.tangerine.prototype.domain.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.mohajistudio.tangerine.prototype.domain.place.domain.PlaceCategory;
+import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
 import jakarta.persistence.*;

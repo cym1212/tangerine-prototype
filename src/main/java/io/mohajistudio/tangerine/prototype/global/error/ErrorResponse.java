@@ -48,8 +48,7 @@ public class ErrorResponse {
         return new ErrorResponse(code);
     }
 
-    public static ErrorResponse of(final ErrorCode code, final String additionalMessage) {
-        String message = code.getMessage() + ": " + additionalMessage;
+    public static ErrorResponse of(final ErrorCode code, final String message) {
         return new ErrorResponse(code, message);
     }
 

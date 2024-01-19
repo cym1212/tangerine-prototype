@@ -67,7 +67,7 @@ dependencies {
 
 	implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 
-	implementation group: 'io.awspring.cloud', name: 'spring-cloud-starter-aws', version: '2.4.4'
+	implementation 'io.awspring.cloud:spring-cloud-starter-aws:3.1.0'
 
 	implementation(platform("software.amazon.awssdk:bom:2.21.1"))
 	implementation("software.amazon.awssdk:s3")
