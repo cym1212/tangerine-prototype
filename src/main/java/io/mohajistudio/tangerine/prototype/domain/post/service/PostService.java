@@ -2,6 +2,8 @@ package io.mohajistudio.tangerine.prototype.domain.post.service;
 
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
+import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
+import io.mohajistudio.tangerine.prototype.domain.placeblockimage.service.PlaceBlockImageService;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.*;
 import io.mohajistudio.tangerine.prototype.domain.post.repository.*;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
@@ -28,6 +30,7 @@ public class PostService {
     private final PlaceBlockRepository placeBlockRepository;
     private final PlaceBlockImageRepository placeBlockImageRepository;
     private final ScrapPostRepository scrapPostRepository;
+    private final PlaceBlockImageService placeBlockImageService;
 
     private static final int MIN_POSTS_INTERVAL_MINUTES = 10;
     private static final int MAX_POSTS_INTERVAL_HOURS = 24;
@@ -61,6 +64,7 @@ public class PostService {
             if (placeBlock.getRepresentativePlaceBlockImageId() == null) {
                 throw new BusinessException(INVALID_REPRESENTATIVE_PLACE_BLOCK_IMAGE_ORDER_NUMBER);
             }
+            placeBlockImageService.copyImagesToPermanent(placeBlock.getPlaceBlockImages());
         });
     }
 
@@ -106,6 +110,7 @@ public class PostService {
             if (placeBlock.getRepresentativePlaceBlockImageId() == null) {
                 throw new BusinessException(INVALID_REPRESENTATIVE_PLACE_BLOCK_IMAGE_ORDER_NUMBER);
             }
+            placeBlockImageService.copyImagesToPermanent(placeBlock.getPlaceBlockImages());
         });
     }
 

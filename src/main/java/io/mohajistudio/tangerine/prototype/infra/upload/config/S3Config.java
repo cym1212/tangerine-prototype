@@ -1,23 +1,22 @@
 package io.mohajistudio.tangerine.prototype.infra.upload.config;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
 @Getter
 @Setter
 @Configuration
 public class S3Config {
-    @Value("${cloud.aws.credentials.access-key}")
+    @Value("${cloud.aws.credentials.accessKey}")
     private String accessKey;
 
-    @Value("${cloud.aws.credentials.secret-key}")
+    @Value("${cloud.aws.credentials.secretKey}")
     private String secretKey;
 
     @Value("${cloud.aws.region.static}")
@@ -29,12 +28,21 @@ public class S3Config {
 
 
     @Bean
-    public AmazonS3Client amazonS3Client() {
-        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
-        return (AmazonS3Client) AmazonS3ClientBuilder.standard()
-                .withRegion(region)
-                .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
-                .build();
+    public S3Client s3Client() {
+        return S3Client.builder().credentialsProvider(this::awsCredentials).region(Region.of(region)).build();
     }
 
+    private AwsCredentials awsCredentials() {
+        return new AwsCredentials() {
+            @Override
+            public String accessKeyId() {
+                return accessKey;
+            }
+
+            @Override
+            public String secretAccessKey() {
+                return secretKey;
+            }
+        };
+    }
 }

@@ -1,6 +1,6 @@
 package io.mohajistudio.tangerine.prototype.domain.post.repository;
 
-import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlockImage;
+import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
 import io.mohajistudio.tangerine.prototype.global.enums.ImageMimeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -18,6 +18,7 @@ public enum ErrorCode {
     ILLEGAL_ARGUMENT(400, "C010", "잘못된 인수 값이 포함된 요청입니다"),
     INVALID_DATE_RANGE(400, "C011", "시작 날짜는 도착 날짜보다 최근일 수 없습니다"),
     NICKNAME_DUPLICATE(400, "C012", "이미 사용중인 닉네임입니다"),
+    DATE_TIME_PARSE_FAILURE(400, "C013", "잘못된 DateTime 형식입니다"),
 
     // Member
     MEMBER_NOT_FOUND(404, "M001", "존재하지 않는 회원입니다"),
@@ -41,8 +42,12 @@ public enum ErrorCode {
     KAKAO_PLACE_SEARCH(500, "R001", "카카오 장소 검색 API를 호출하는 도중 에러가 발생했습니다"),
     KAKAO_REGULAR_EXPRESSION(500, "R002", "카카오 장소 검색 API가 반환한 주소가 정규식과 일치하지 않습니다. 고객센터에 문의해주세요"),
 
-    //S3
-    MULTIPART_FILE_EXCEPTION(400, "S001", "이미지 파일을 찾을 수 없습니다.");
+    //Multipart
+    MULTIPART_FILE_EXCEPTION(400, "MP001", "파일을 찾을 수 없습니다"),
+    STORAGE_UPLOAD_FAILURE(400, "MP002", "스토리지로 업로드를 실패했습니다"),
+    MAX_UPLOAD_SIZE_EXCEEDED(400, "MP003", "파일 최대 크기를 초과했습니다"),
+    NO_SUCH_KEY(400, "MP004", "잘못된 파일 이름으로 스토리지에 업로드를 요청했습니다");
+
 
     private final String code;
     private final String message;
