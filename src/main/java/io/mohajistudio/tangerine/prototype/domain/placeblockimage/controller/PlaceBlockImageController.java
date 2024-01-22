@@ -30,7 +30,7 @@ public class PlaceBlockImageController {
     private final PlaceBlockImageMapper placeBlockImageMapper;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "AWS S3에 이미지 업로드", description = "이미지 값을 넘기면 S3에 이미지를 저장하고 PlaceBlockImage를 리턴합니다.")
+    @Operation(summary = "스토리지에 이미지 업로드", description = "이미지 값을 넘기면 S3에 이미지를 저장하고 PlaceBlockImage를 리턴합니다.")
     public List<PlaceBlockImageDTO.Upload> uploadImages(@RequestPart(value = "imageFiles", required = false) List<MultipartFile> imageFiles) {
         if (imageFiles == null || imageFiles.isEmpty()) {
             throw new BusinessException(ErrorCode.MULTIPART_FILE_EXCEPTION);

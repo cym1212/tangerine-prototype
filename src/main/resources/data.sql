@@ -1,12 +1,12 @@
-INSERT INTO member (id, email, role, provider, follow_count, follow_member_count)
+INSERT INTO member (id, email, role, provider, follow_cnt, follow_member_cnt)
 VALUES (1, 'hyh9510@nate.com', 'ADMIN', 'KAKAO', 0, 0);
 INSERT INTO member_profile (name, birthday, gender, phone, nickname, thumbnail, member_id)
 VALUES ('한창희', '1999-01-07', 'M', '01012345678', '송눈섭', 'https://www.naver.com', 1);
-INSERT INTO member (id, email, role, provider, follow_count, follow_member_count)
+INSERT INTO member (id, email, role, provider, follow_cnt, follow_member_cnt)
 VALUES (2, 'leech@gmail.com', 'ADMIN', 'KAKAO', 0, 0);
 INSERT INTO member_profile (name, birthday, gender, phone, nickname, thumbnail, member_id)
 VALUES ('이찬호', '1999-01-29', 'M', '01012345678', '리자노', 'https://www.naver.com', 2);
-INSERT INTO member (id, email, role, provider, follow_count, follow_member_count)
+INSERT INTO member (id, email, role, provider, follow_cnt, follow_member_cnt)
 VALUES (3, 'bflook08307@gmail.com', 'ADMIN', 'KAKAO', 0, 0);
 INSERT INTO member_profile (name, birthday, gender, phone, nickname, thumbnail, member_id)
 VALUES ('최민성', '2000-08-30', 'M', '01012345678', '문공표', 'https://www.naver.com', 3);
