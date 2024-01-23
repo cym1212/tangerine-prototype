@@ -1,9 +1,11 @@
 name: CD
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
 
 jobs:
   build-docker-images:
