@@ -1,19 +1,16 @@
-name: CI/CD
+name: CD
 
 on:
   pull_request:
     types:
       - closed
 
-permissions:
-  contents: read
-
 jobs:
   build-docker-images:
     runs-on: ubuntu-latest
     steps:
-    # Install Java 17
     - uses: actions/checkout@v3
+    # Install Java 17
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
