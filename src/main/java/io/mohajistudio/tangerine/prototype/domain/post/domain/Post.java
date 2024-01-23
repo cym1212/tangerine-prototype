@@ -32,10 +32,10 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private int favoriteCnt = 0;
 
-    private short blockCnt = 0;
+    private short placeBlockCnt = 0;
 
     //대표장소
-    private  String representativeRegion;
+    private String representativeRegion;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -64,13 +64,12 @@ public class Post extends BaseEntity {
 
     public void setPlaceBlocks(Set<PlaceBlock> placeBlocks) {
         this.placeBlocks = placeBlocks;
-        blockCnt += (short) placeBlocks.size();
+        placeBlockCnt += (short) placeBlocks.size();
         placeBlocks.forEach(placeBlock -> placeBlock.setPost(this));
     }
 
     public void setTextBlocks(Set<TextBlock> textBlocks) {
         this.textBlocks = textBlocks;
-        blockCnt += (short) textBlocks.size();
         textBlocks.forEach(textBlock -> textBlock.setPost(this));
     }
 }

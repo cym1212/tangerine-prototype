@@ -57,13 +57,13 @@ public class MemberService {
         if (findFollow.isPresent()) {
             Follow favoritePost = findFollow.get();
             followRepository.delete(favoritePost);
-            memberRepository.updateFollowCount(memberId, member.getFollowCount() - 1);
-            memberRepository.updateFollowMemberCount(followMemberId, followMember.getFollowMemberCount() - 1);
+            memberRepository.updateFollowCnt(memberId, member.getFollowCnt() - 1);
+            memberRepository.updateFollowMemberCnt(followMemberId, followMember.getFollowMemberCnt() - 1);
         } else {
             Follow follow = Follow.builder().member(member).followMember(followMember).build();
             followRepository.save(follow);
-            memberRepository.updateFollowCount(memberId, member.getFollowCount() + 1);
-            memberRepository.updateFollowMemberCount(followMemberId, followMember.getFollowMemberCount() + 1);
+            memberRepository.updateFollowCnt(memberId, member.getFollowCnt() + 1);
+            memberRepository.updateFollowMemberCnt(followMemberId, followMember.getFollowMemberCnt() + 1);
         }
     }
 

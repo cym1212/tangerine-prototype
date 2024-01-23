@@ -19,15 +19,21 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Table(name = "member_profile")
 public class MemberProfile extends BaseEntity {
+
     @Column(length = 20, nullable = false)
     private String name;
+
     private LocalDate birthday;
+
     @Column(length = 15)
     private String phone;
+
     @Column(length = 1, nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
     private String thumbnail;
+
     @Column(length = 20, unique = true)
     private String nickname;
 

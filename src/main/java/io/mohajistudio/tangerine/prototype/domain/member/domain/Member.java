@@ -34,8 +34,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
-    private int followCount = 0; //팔로우 한 멤버 수
-    private int followMemberCount = 0; //팔로우 받은 멤버 수
+    private int followCnt = 0; //팔로우 한 멤버 수
+    private int followMemberCnt = 0; //팔로우 받은 멤버 수
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private MemberProfile memberProfile;
