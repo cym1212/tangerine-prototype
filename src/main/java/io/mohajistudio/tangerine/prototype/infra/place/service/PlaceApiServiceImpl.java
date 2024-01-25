@@ -1,6 +1,7 @@
 package io.mohajistudio.tangerine.prototype.infra.place.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.infra.place.config.PlaceSearchApiProperties;
@@ -33,7 +34,7 @@ public class PlaceApiServiceImpl implements PlaceApiService {
             CloseableHttpResponse response = client.execute(getRequest);
             ResponseHandler<String> handler = new BasicResponseHandler();
             String result = handler.handleResponse(response);
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
             PlaceKakaoSearchApiResultDTO placeKakaoSearchApiResultDTO = objectMapper.readValue(result, PlaceKakaoSearchApiResultDTO.class);
 
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {

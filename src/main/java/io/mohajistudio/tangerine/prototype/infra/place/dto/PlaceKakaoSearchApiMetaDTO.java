@@ -8,7 +8,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PlaceKakaoSearchApiMetaDTO {
     private int totalCount;
