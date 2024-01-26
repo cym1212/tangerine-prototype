@@ -55,8 +55,8 @@ public interface PlaceMapper {
 
     @Named("setAddDTOCoordinates")
     default Point setCoordinates(PlaceDTO.Add placeDetailsDTO) {
-        double lat = placeDetailsDTO.getCoordinates().getLat();
-        double lng = placeDetailsDTO.getCoordinates().getLng();
+        double lat = placeDetailsDTO.getCoordinate().getLat();
+        double lng = placeDetailsDTO.getCoordinate().getLng();
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         return geometryFactory.createPoint(new Coordinate(lat, lng));
     }

@@ -24,7 +24,7 @@ public class Place extends BaseEntity {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false, columnDefinition = "geometry(Point, 4326)")
-    private Point coordinates;
+    private Point coordinate;
     private String thumbnail;
     @Column(columnDefinition = "varchar(20)", nullable = false)
     private String addressProvince;//광역시/도
