@@ -23,7 +23,7 @@ public interface PlaceMapper {
     @Mapping(source = "address", target = "addressCity", qualifiedByName = "convertToCity")
     @Mapping(source = "address", target = "addressDistrict", qualifiedByName = "convertToDistrict")
     @Mapping(source = "address", target = "addressDetail", qualifiedByName = "convertToDetail")
-    @Mapping(source = ".", target = "coordinates", qualifiedByName = "setAddDTOCoordinates")
+    @Mapping(source = ".", target = "coordinate", qualifiedByName = "setAddDTOCoordinate")
     Place toEntity(PlaceDTO.Add placeAddDTO);
 
     @Mapping(target = "id", ignore = true)
@@ -34,7 +34,7 @@ public interface PlaceMapper {
     @Mapping(source = "addressName", target = "addressCity", qualifiedByName = "convertToCity")
     @Mapping(source = "addressName", target = "addressDistrict", qualifiedByName = "convertToDistrict")
     @Mapping(source = "addressName", target = "addressDetail", qualifiedByName = "convertToDetail")
-    @Mapping(source = ".", target = "coordinates", qualifiedByName = "setKakaoCoordinates")
+    @Mapping(source = ".", target = "coordinate", qualifiedByName = "setKakaoCoordinate")
     Place toEntity(PlaceKakaoSearchApiDTO placeKakaoSearchApiDTO);
 
     @Mapping(source = ".", target = "address", qualifiedByName = "setAddress")
@@ -45,16 +45,16 @@ public interface PlaceMapper {
         return place.getAddress();
     }
 
-    @Named("setKakaoCoordinates")
-    default Point setCoordinates(PlaceKakaoSearchApiDTO placeKakaoSearchApiDTO) {
+    @Named("setKakaoCoordinate")
+    default Point setCoordinate(PlaceKakaoSearchApiDTO placeKakaoSearchApiDTO) {
         double lat = Double.parseDouble(placeKakaoSearchApiDTO.getX());
         double lng = Double.parseDouble(placeKakaoSearchApiDTO.getY());
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         return geometryFactory.createPoint(new Coordinate(lat, lng));
     }
 
-    @Named("setAddDTOCoordinates")
-    default Point setCoordinates(PlaceDTO.Add placeDetailsDTO) {
+    @Named("setAddDTOCoordinate")
+    default Point setCoordinate(PlaceDTO.Add placeDetailsDTO) {
         double lat = placeDetailsDTO.getCoordinate().getLat();
         double lng = placeDetailsDTO.getCoordinate().getLng();
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
