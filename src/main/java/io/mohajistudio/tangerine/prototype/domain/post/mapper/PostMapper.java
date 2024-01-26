@@ -23,10 +23,10 @@ public interface PostMapper {
 
     Post toEntity(PostDTO.Add postAddDTO);
 
-    @Mapping(source = ".", target = "coordinates", qualifiedByName = "setDetailsDTOCoordinates")
+    @Mapping(source = ".", target = "coordinate", qualifiedByName = "setDetailsDTOCoordinate")
     Place toEntity(PlaceDTO.Details placeDetailsDTO);
 
-    @Named("setDetailsDTOCoordinates")
+    @Named("setDetailsDTOCoordinate")
     default Point setDetailsDTOCoordinates(PlaceDTO.Details placeDetailsDTO) {
         double lat = placeDetailsDTO.getCoordinates().getLat();
         double lng = placeDetailsDTO.getCoordinates().getLng();
