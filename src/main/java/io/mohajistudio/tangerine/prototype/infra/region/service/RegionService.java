@@ -18,14 +18,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class RegionService {
     private final RegionProperties regionProperties;
 
-    public List<RegionProvinceDTO> findAllProvince() {
+    public List<RegionProvinceDTO> findAllRegions() {
+        List<RegionCityDTO> cities = findAllCities();
+        return findAllProvinces(cities);
+    }
+
+    private List<RegionProvinceDTO> findAllProvinces(List<RegionCityDTO> cities) {
         try {
             CloseableHttpClient client = HttpClientBuilder.create().build();
             HttpGet getRequest = new HttpGet(regionProperties.getUrl() + "&data=" + regionProperties.getProvinceKey() + "&key=" + regionProperties.getKey());
@@ -42,7 +47,14 @@ public class RegionService {
             for (JsonNode featureNode : featuresNode) {
                 String code = featureNode.path("properties").path("ctprvn_cd").asText();
                 String name = featureNode.path("properties").path("ctp_kor_nm").asText();
-                regionProvinceList.add(RegionProvinceDTO.builder().name(name).code(code).build());
+                RegionProvinceDTO regionProvince = RegionProvinceDTO.builder().name(name).code(code).regionCities(new ArrayList<>()).build();
+                cities.forEach(city -> {
+                    String provinceCode = city.getCode().substring(0, 2);
+                    if(Objects.equals(code, provinceCode)) {
+                        regionProvince.addRegionCity(city);
+                    }
+                });
+                regionProvinceList.add(regionProvince);
             }
             return regionProvinceList;
         } catch (Exception e) {
@@ -50,7 +62,7 @@ public class RegionService {
         }
     }
 
-    public List<RegionCityDTO> findAllCity() {
+    private List<RegionCityDTO> findAllCities() {
         try {
             CloseableHttpClient client = HttpClientBuilder.create().build();
             HttpGet getRequest = new HttpGet(regionProperties.getUrl() + "&data=" + regionProperties.getCityKey() + "&key=" + regionProperties.getKey());
@@ -68,6 +80,7 @@ public class RegionService {
                 String code = featureNode.path("properties").path("sig_cd").asText();
                 String fullName = featureNode.path("properties").path("full_nm").asText();
                 String name = featureNode.path("properties").path("sig_kor_nm").asText();
+
                 regionProvinceList.add(RegionCityDTO.builder().code(code).fullName(fullName).name(name).build());
             }
             return regionProvinceList;

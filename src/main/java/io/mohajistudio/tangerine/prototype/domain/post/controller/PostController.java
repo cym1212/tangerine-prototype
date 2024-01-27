@@ -108,13 +108,8 @@ public class PostController {
         postService.modifyScrapPost(id, securityMember.getId());
     }
 
-    @GetMapping("/region/provinces")
-    public List<RegionProvinceDTO> provinceList() {
-        return regionService.findAllProvince();
-    }
-
-    @GetMapping("/region/cities")
-    public List<RegionCityDTO> cityList() {
-        return regionService.findAllCity();
+    @GetMapping("/regions")
+    public List<RegionProvinceDTO> regionList() {
+        return regionService.findAllRegions();
     }
 }
