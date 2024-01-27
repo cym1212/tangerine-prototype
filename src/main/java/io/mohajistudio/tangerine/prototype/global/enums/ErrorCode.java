@@ -37,10 +37,13 @@ public enum ErrorCode {
     TOO_FREQUENT_POST(400, "P004", "게시글을 작성한 지 얼마 지나지 않았으므로 잠시 후 작성해주세요"),
     INVALID_REPRESENTATIVE_PLACE_BLOCK_IMAGE_ORDER_NUMBER(400, "P005", "잘못된 대표 이미지 순서 번호"),
 
+    //Search Place
+    KAKAO_PLACE_SEARCH(500, "SP001", "카카오 장소 검색 API를 호출하는 도중 에러가 발생했습니다"),
+    KAKAO_REGULAR_EXPRESSION(500, "SP002", "카카오 장소 검색 API가 반환한 주소가 정규식과 일치하지 않습니다. 고객센터에 문의해주세요"),
 
     //Region
-    KAKAO_PLACE_SEARCH(500, "R001", "카카오 장소 검색 API를 호출하는 도중 에러가 발생했습니다"),
-    KAKAO_REGULAR_EXPRESSION(500, "R002", "카카오 장소 검색 API가 반환한 주소가 정규식과 일치하지 않습니다. 고객센터에 문의해주세요"),
+    REGION_PROVINCE(500, "R001", "광역시/도를 불러오는 데 실패했습니다."),
+    REGION_CITY(500, "R002", "시/군/구를 불러오는 데 실패했습니다."),
 
     //Multipart
     MULTIPART_FILE_EXCEPTION(400, "MP001", "파일을 찾을 수 없습니다"),
