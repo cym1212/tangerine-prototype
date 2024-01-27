@@ -5,6 +5,7 @@ spring:
       - file:/config/application-place.yml
       - file:/config/application-prod-db.yml
       - file:/config/application-prod-s3.yml
+      - file:/config/application-region.yml
 discord:
   webhook-url: https://discord.com/api/webhooks/1196781531830698065/H-iPT0Qq7EJLbN2rd_zY8Jochs5JUIEXeAF5Ghil1ua1qiKeqOJPhW7Lu1dTXDkeBkcW
 server:
