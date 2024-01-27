@@ -1,6 +1,5 @@
 package io.mohajistudio.tangerine.prototype.global.auth.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import io.mohajistudio.tangerine.prototype.global.error.exception.CustomAuthenticationException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 @Component
 @RequiredArgsConstructor
 public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
-    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {

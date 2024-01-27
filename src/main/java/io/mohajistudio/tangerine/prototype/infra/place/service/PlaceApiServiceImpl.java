@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
-import io.mohajistudio.tangerine.prototype.infra.place.config.PlaceSearchApiProperties;
+import io.mohajistudio.tangerine.prototype.infra.place.config.PlaceApiProperties;
 import io.mohajistudio.tangerine.prototype.infra.place.dto.PlaceKakaoSearchApiResultDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,24 +23,23 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class PlaceApiServiceImpl implements PlaceApiService {
-    private final PlaceSearchApiProperties placeApiConfig;
+    private final PlaceApiProperties placeSearchApiProperties;
 
     public PlaceKakaoSearchApiResultDTO searchPlace(String query, int page, int size) {
         try {
             CloseableHttpClient client = HttpClientBuilder.create().build();
-            HttpGet getRequest = new HttpGet(placeApiConfig.getUrl() + "?query=" + query + "&page=" + page + "&size=" + size);
-            getRequest.addHeader(HttpHeaders.AUTHORIZATION, "KakaoAK " + placeApiConfig.getRestApiKey());
+            HttpGet getRequest = new HttpGet(placeSearchApiProperties.getUrl() + "?query=" + query + "&page=" + page + "&size=" + size);
+            getRequest.addHeader(HttpHeaders.AUTHORIZATION, "KakaoAK " + placeSearchApiProperties.getRestApiKey());
 
             CloseableHttpResponse response = client.execute(getRequest);
             ResponseHandler<String> handler = new BasicResponseHandler();
-            String result = handler.handleResponse(response);
-            ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-            PlaceKakaoSearchApiResultDTO placeKakaoSearchApiResultDTO = objectMapper.readValue(result, PlaceKakaoSearchApiResultDTO.class);
+            String jsonString = handler.handleResponse(response);
 
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                return placeKakaoSearchApiResultDTO;
+                ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+                return objectMapper.readValue(jsonString, PlaceKakaoSearchApiResultDTO.class);
             } else {
-                throw new BusinessException(result, ErrorCode.KAKAO_PLACE_SEARCH);
+                throw new BusinessException(jsonString, ErrorCode.KAKAO_PLACE_SEARCH);
             }
 
         } catch (Exception e) {
