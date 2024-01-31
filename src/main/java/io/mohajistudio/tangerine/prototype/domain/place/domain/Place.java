@@ -3,7 +3,7 @@ package io.mohajistudio.tangerine.prototype.domain.place.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
-import io.mohajistudio.tangerine.prototype.global.enums.PlaceSearchProvider;
+import io.mohajistudio.tangerine.prototype.global.enums.PlaceProvider;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.locationtech.jts.geom.Point;
+import org.springframework.data.domain.Persistable;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "place")
-public class Place extends BaseEntity {
+public class Place extends BaseEntity implements Persistable<Long> {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false, columnDefinition = "geometry(Point, 4326)")
@@ -41,8 +42,9 @@ public class Place extends BaseEntity {
     @Setter
     @Column(columnDefinition = "varchar(10)", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PlaceSearchProvider placeSearchProvider;
+    private PlaceProvider placeSearchProvider;
     @Setter
+    @Column(unique = true)
     private Long providerId;
 
     @JsonIgnore
@@ -51,5 +53,10 @@ public class Place extends BaseEntity {
 
     public String getAddress() {
         return getAddressProvince() + " " + getAddressCity() + " " + getAddressDistrict() + " " + getAddressDetail();
+    }
+
+    @Override
+    public boolean isNew() {
+        return getId() == null && getCreatedAt() == null;
     }
 }

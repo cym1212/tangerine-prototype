@@ -21,6 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name = "member")
 public class Member extends BaseEntity {
+    @Setter
     private String refreshToken;
 
     @Column(length = 50, nullable = false, unique = true)

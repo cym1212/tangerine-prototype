@@ -8,7 +8,6 @@ import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import io.mohajistudio.tangerine.prototype.global.common.PageableParam;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
-import io.mohajistudio.tangerine.prototype.infra.region.dto.RegionCityDTO;
 import io.mohajistudio.tangerine.prototype.infra.region.dto.RegionProvinceDTO;
 import io.mohajistudio.tangerine.prototype.infra.region.service.RegionService;
 import io.swagger.v3.oas.annotations.Operation;

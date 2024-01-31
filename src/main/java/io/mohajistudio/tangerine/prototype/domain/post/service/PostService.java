@@ -2,6 +2,8 @@ package io.mohajistudio.tangerine.prototype.domain.post.service;
 
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
+import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
+import io.mohajistudio.tangerine.prototype.domain.place.repository.PlaceRepository;
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.service.PlaceBlockImageService;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.*;
@@ -21,6 +23,7 @@ import java.util.*;
 import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
@@ -31,11 +34,11 @@ public class PostService {
     private final PlaceBlockImageRepository placeBlockImageRepository;
     private final ScrapPostRepository scrapPostRepository;
     private final PlaceBlockImageService placeBlockImageService;
+    private final PlaceRepository placeRepository;
 
     private static final int MIN_POSTS_INTERVAL_MINUTES = 10;
     private static final int MAX_POSTS_INTERVAL_HOURS = 24;
 
-    @Transactional
     public void addPost(Post post, Long memberId) {
         countPostsToday(memberId);
         checkBlockOrderNumberAndContentIsEmpty(post.getPlaceBlocks(), post.getTextBlocks());
@@ -52,6 +55,14 @@ public class PostService {
 
         post.getPlaceBlocks().forEach(placeBlock -> {
             placeBlock.setPost(post);
+
+            Place place = placeBlock.getPlace();
+            Optional<Place> findPlace = placeRepository.findByProviderId(place.getProviderId());
+            if (findPlace.isEmpty()) {
+                throw new BusinessException(ENTITY_NOT_FOUND);
+            }
+            placeBlock.setPlace(findPlace.get());
+
             placeBlockRepository.save(placeBlock);
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> {
                 placeBlockImage.setPlaceBlock(placeBlock);
@@ -78,7 +89,6 @@ public class PostService {
         return findPost.get();
     }
 
-    @Transactional
     public void modifyPost(Post modifyPost, Long memberId) {
         Optional<Post> findPost = postRepository.findById(modifyPost.getId());
 
@@ -153,7 +163,6 @@ public class PostService {
         }
     }
 
-    @Transactional
     public void modifyFavoritePost(Long id, Long memberId) {
         Optional<Post> findPost = postRepository.findById(id);
         if (findPost.isEmpty()) throw new UrlNotFoundException();
@@ -172,7 +181,6 @@ public class PostService {
         }
     }
 
-    @Transactional
     public void deletePost(Long id, Long memberId) {
         Optional<Post> findPost = postRepository.findByIdDetails(id);
         if (findPost.isEmpty()) throw new UrlNotFoundException();

@@ -1,7 +1,6 @@
 package io.mohajistudio.tangerine.prototype.domain.place.mapper;
 
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
-import io.mohajistudio.tangerine.prototype.domain.place.dto.PlaceDTO;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.infra.place.dto.PlaceKakaoSearchApiDTO;
@@ -19,44 +18,23 @@ public interface PlaceMapper {
     String regex = "^(?<province>\\S+)\\s+(?<city>\\S+)\\s+(?<district>\\S+)\\s+(?<detail>.+)$";
     Pattern pattern = Pattern.compile(regex);
 
-    @Mapping(source = "address", target = "addressProvince", qualifiedByName = "convertToProvince")
-    @Mapping(source = "address", target = "addressCity", qualifiedByName = "convertToCity")
-    @Mapping(source = "address", target = "addressDistrict", qualifiedByName = "convertToDistrict")
-    @Mapping(source = "address", target = "addressDetail", qualifiedByName = "convertToDetail")
-    @Mapping(source = ".", target = "coordinate", qualifiedByName = "setAddDTOCoordinate")
-    Place toEntity(PlaceDTO.Add placeAddDTO);
-
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "id", target = "providerId")
     @Mapping(source = "placeName", target = "name")
-    @Mapping(source = "roadAddressName", target = "roadAddress")
+    @Mapping(source = ".", target = "coordinate", qualifiedByName = "setCoordinate")
     @Mapping(source = "addressName", target = "addressProvince", qualifiedByName = "convertToProvince")
     @Mapping(source = "addressName", target = "addressCity", qualifiedByName = "convertToCity")
     @Mapping(source = "addressName", target = "addressDistrict", qualifiedByName = "convertToDistrict")
     @Mapping(source = "addressName", target = "addressDetail", qualifiedByName = "convertToDetail")
-    @Mapping(source = ".", target = "coordinate", qualifiedByName = "setKakaoCoordinate")
+    @Mapping(source = "roadAddressName", target = "roadAddress")
+    @Mapping(source = "categoryName", target = "description")
+    @Mapping(source = "placeUrl", target = "link")
     Place toEntity(PlaceKakaoSearchApiDTO placeKakaoSearchApiDTO);
 
-    @Mapping(source = ".", target = "address", qualifiedByName = "setAddress")
-    PlaceDTO.Details toDetailsDTO(Place place);
-
-    @Named("setAddress")
-    default String setAddress(Place place) {
-        return place.getAddress();
-    }
-
-    @Named("setKakaoCoordinate")
+    @Named("setCoordinate")
     default Point setCoordinate(PlaceKakaoSearchApiDTO placeKakaoSearchApiDTO) {
         double lat = Double.parseDouble(placeKakaoSearchApiDTO.getX());
         double lng = Double.parseDouble(placeKakaoSearchApiDTO.getY());
-        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-        return geometryFactory.createPoint(new Coordinate(lat, lng));
-    }
-
-    @Named("setAddDTOCoordinate")
-    default Point setCoordinate(PlaceDTO.Add placeDetailsDTO) {
-        double lat = placeDetailsDTO.getCoordinate().getLat();
-        double lng = placeDetailsDTO.getCoordinate().getLng();
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         return geometryFactory.createPoint(new Coordinate(lat, lng));
     }

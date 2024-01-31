@@ -29,10 +29,10 @@ public class JwtProvider {
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     private Key signingKey;
     private JwtParser jwtParser;
+    //todo 배포시 변경해야함
 //    private static final Long ACCESS_TOKEN_PERIOD = 1000L * 60L * 60L; // 1시간
     private static final Long ACCESS_TOKEN_PERIOD = 1000L * 60L * 60L * 24L * 14L; // 2주
     private static final Long REFRESH_TOKEN_PERIOD = 1000L * 60L * 60L * 24L * 14L; // 2주
-    private static final short REFRESH_TOKEN_EXPIRATION_THRESHOLD_DAYS = 7;
 
     @PostConstruct
     protected void init() {
@@ -92,7 +92,7 @@ public class JwtProvider {
     @Transactional
     public GeneratedTokenDTO reissueToken(String refreshToken) {
         GeneratedTokenDTO generatedTokenDTO;
-        String reissuedRefreshToken = null;
+        String reissuedRefreshToken;
         String reissuedAccessToken;
         Claims claims = verifyToken(refreshToken);
         SecurityMemberDTO securityMemberDTO = SecurityMemberDTO.fromClaims(claims);
@@ -113,22 +113,15 @@ public class JwtProvider {
             throw new BusinessException(MISMATCH_REFRESH_TOKEN);
         }
 
-        long remainingTokenExpiration = calculateRemainingTokenExpirationInMilliseconds(claims);
-
-        if (remainingTokenExpiration < REFRESH_TOKEN_EXPIRATION_THRESHOLD_DAYS) {
-            reissuedRefreshToken = generateToken(securityMemberDTO, REFRESH_TOKEN_PERIOD);
-        }
-
+        reissuedRefreshToken = generateToken(securityMemberDTO, REFRESH_TOKEN_PERIOD);
         reissuedAccessToken = generateToken(securityMemberDTO, ACCESS_TOKEN_PERIOD);
+        member.setRefreshToken(refreshToken);
+
+        memberRepository.save(member);
+
         generatedTokenDTO = GeneratedTokenDTO.builder().accessToken(reissuedAccessToken).refreshToken(reissuedRefreshToken).build();
 
         return generatedTokenDTO;
-    }
-
-    long calculateRemainingTokenExpirationInMilliseconds(Claims claims) {
-        long tokenExpiration = claims.getExpiration().getTime();
-        long nowDateToMilliseconds = new Date().getTime();
-        return ((long) Math.floor(tokenExpiration - nowDateToMilliseconds) / 1000L / 60L / 60L / 24L);
     }
 
     public Claims verifyToken(String token) {
