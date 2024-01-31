@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -21,11 +21,11 @@ public class PostDTO {
     @Length(min = 5, max = 100)
     private String title;
     @NotNull
-    @Past
+    @PastOrPresent
     @Schema(description = "여행 시작 날짜")
     private LocalDate visitStartDate;
     @NotNull
-    @Past
+    @PastOrPresent
     @Schema(description = "여행 도착 날짜")
     private LocalDate visitEndDate;
 
