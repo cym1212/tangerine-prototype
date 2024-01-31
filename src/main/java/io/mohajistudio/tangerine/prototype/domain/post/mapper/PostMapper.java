@@ -31,12 +31,6 @@ public interface PostMapper {
 
     Post toEntity(PostDTO.Add postAddDTO);
 
-    Place toEntity(PlaceDTO.Add placeAddDTO);
-
-    @Mapping(source = "address", target = "addressProvince", qualifiedByName = "convertToProvince")
-    @Mapping(source = "address", target = "addressCity", qualifiedByName = "convertToCity")
-    @Mapping(source = "address", target = "addressDistrict", qualifiedByName = "convertToDistrict")
-    @Mapping(source = "address", target = "addressDetail", qualifiedByName = "convertToDetail")
     @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setCoordinate")
     Place toPlaceDetailsDTO(PlaceDTO.Details placeDetailsDTO);
 
