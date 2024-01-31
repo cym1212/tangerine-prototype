@@ -28,7 +28,7 @@ public enum ErrorCode {
 
 
     //TOKEN
-    MISMATCH_REFRESH_TOKEN(401, "T001", "유효하지 않은 토큰입니다"),
+    MISMATCH_REFRESH_TOKEN(401, "T001", "유효하지 않은 리프레시 토큰입니다"),
     NO_PERMISSION(401, "T002", "요청에 대한 권한이 없습니다"),
 
     //POST
