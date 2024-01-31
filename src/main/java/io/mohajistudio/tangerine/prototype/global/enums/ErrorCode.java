@@ -19,6 +19,7 @@ public enum ErrorCode {
     INVALID_DATE_RANGE(400, "C011", "시작 날짜는 도착 날짜보다 최근일 수 없습니다"),
     NICKNAME_DUPLICATE(400, "C012", "이미 사용중인 닉네임입니다"),
     DATE_TIME_PARSE_FAILURE(400, "C013", "잘못된 DateTime 형식입니다"),
+    HTTP_MESSAGE_CONVERSION(500, "C014", "요청 데이터 변환에 실패했습니다. 고객센터로 문의해주세요"),
 
     // Member
     MEMBER_NOT_FOUND(404, "M001", "존재하지 않는 회원입니다"),

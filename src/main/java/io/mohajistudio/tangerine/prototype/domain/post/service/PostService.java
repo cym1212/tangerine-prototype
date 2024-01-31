@@ -2,6 +2,7 @@ package io.mohajistudio.tangerine.prototype.domain.post.service;
 
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
+import io.mohajistudio.tangerine.prototype.domain.place.repository.PlaceRepository;
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.service.PlaceBlockImageService;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.*;
@@ -31,6 +32,7 @@ public class PostService {
     private final PlaceBlockImageRepository placeBlockImageRepository;
     private final ScrapPostRepository scrapPostRepository;
     private final PlaceBlockImageService placeBlockImageService;
+    private final PlaceRepository placeRepository;
 
     private static final int MIN_POSTS_INTERVAL_MINUTES = 10;
     private static final int MAX_POSTS_INTERVAL_HOURS = 24;
@@ -52,6 +54,7 @@ public class PostService {
 
         post.getPlaceBlocks().forEach(placeBlock -> {
             placeBlock.setPost(post);
+            placeRepository.save(placeBlock.getPlace());
             placeBlockRepository.save(placeBlock);
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> {
                 placeBlockImage.setPlaceBlock(placeBlock);

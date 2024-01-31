@@ -18,16 +18,6 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     public final PlaceCategoryRepository placeCategoryRepository;
 
-    public void addPlace(Place place) {
-        placeRepository.save(place);
-    }
-
-    public Place addKakaoPlace(Place place) {
-        place.setPlaceSearchProvider(PlaceSearchProvider.KAKAO);
-
-        return placeRepository.save(place);
-    }
-
     public Page<Place> findPlaceListByPage(String query, Pageable pageable) {
         return placeRepository.findByName(query, pageable);
     }

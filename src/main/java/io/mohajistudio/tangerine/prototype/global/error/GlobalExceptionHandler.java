@@ -14,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -26,7 +27,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 import java.net.BindException;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Slf4j
@@ -43,6 +43,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest httpServletRequest) {
+        log.error(e.getMessage());
+        log.error(String.valueOf(e.getBindingResult()));
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());
         sendWebhook(httpServletRequest, e.getMessage(), ErrorCode.INVALID_INPUT_VALUE);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -154,6 +156,15 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.NO_SUCH_KEY);
         sendWebhook(httpServletRequest, e.getMessage(), ErrorCode.ILLEGAL_ARGUMENT);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageConversionException.class)
+    protected ResponseEntity<ErrorResponse> handleNoSuchKeyException(HttpMessageConversionException e, HttpServletRequest httpServletRequest) {
+        log.error(e.getMessage());
+        log.error(String.valueOf(e.getCause()));
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.HTTP_MESSAGE_CONVERSION);
+        sendWebhook(httpServletRequest, e.getMessage(), ErrorCode.HTTP_MESSAGE_CONVERSION);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public void sendWebhook(HttpServletRequest httpServletRequest, String errorMessage, ErrorCode errorCode) {
