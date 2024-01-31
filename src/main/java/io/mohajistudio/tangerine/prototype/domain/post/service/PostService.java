@@ -2,6 +2,7 @@ package io.mohajistudio.tangerine.prototype.domain.post.service;
 
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
+import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
 import io.mohajistudio.tangerine.prototype.domain.place.repository.PlaceRepository;
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.service.PlaceBlockImageService;
@@ -54,7 +55,14 @@ public class PostService {
 
         post.getPlaceBlocks().forEach(placeBlock -> {
             placeBlock.setPost(post);
-            placeRepository.save(placeBlock.getPlace());
+
+            Place place = placeBlock.getPlace();
+            Optional<Place> findPlace = placeRepository.findByProviderId(place.getProviderId());
+            if (findPlace.isEmpty()) {
+                throw new BusinessException(ENTITY_NOT_FOUND);
+            }
+            placeBlock.setPlace(findPlace.get());
+
             placeBlockRepository.save(placeBlock);
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> {
                 placeBlockImage.setPlaceBlock(placeBlock);

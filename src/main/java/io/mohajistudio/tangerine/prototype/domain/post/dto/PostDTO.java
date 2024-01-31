@@ -22,11 +22,11 @@ public class PostDTO {
     private String title;
     @NotNull
     @PastOrPresent
-    @Schema(description = "여행 시작 날짜")
+    @Schema(description = "방문 시작 날짜")
     private LocalDate visitStartDate;
     @NotNull
     @PastOrPresent
-    @Schema(description = "여행 도착 날짜")
+    @Schema(description = "방문 도착 날짜")
     private LocalDate visitEndDate;
 
     @Getter

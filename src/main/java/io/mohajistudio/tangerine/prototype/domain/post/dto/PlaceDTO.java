@@ -3,7 +3,6 @@ package io.mohajistudio.tangerine.prototype.domain.post.dto;
 import io.mohajistudio.tangerine.prototype.global.common.PointDTO;
 import io.mohajistudio.tangerine.prototype.global.enums.PlaceProvider;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +24,6 @@ public class PlaceDTO {
     private PlaceProvider placeSearchProvider;
     @Schema(description = "장소 정보 제공 출처의 Id", example = "11045491")
     private Long providerId;
-    @Valid
     @Schema(description = "좌표")
     private PointDTO coordinate;
 
@@ -39,7 +37,12 @@ public class PlaceDTO {
     }
 
     @Getter
+    @Setter
     @Schema(name = "PlaceDTO.Add", description = "장소를 추가할 때 사용할 DTO")
-    public static class Add extends PlaceDTO {
+    public static class Add {
+        @Schema(description = "장소 정보 제공 출처", example = "KAKAO")
+        private PlaceProvider placeSearchProvider;
+        @Schema(description = "장소 정보 제공 출처의 Id", example = "11045491")
+        private Long providerId;
     }
 }
