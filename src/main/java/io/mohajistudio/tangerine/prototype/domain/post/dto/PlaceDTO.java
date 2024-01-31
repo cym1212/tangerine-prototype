@@ -1,13 +1,12 @@
 package io.mohajistudio.tangerine.prototype.domain.post.dto;
 
 import io.mohajistudio.tangerine.prototype.global.common.PointDTO;
-import io.mohajistudio.tangerine.prototype.global.enums.PlaceSearchProvider;
+import io.mohajistudio.tangerine.prototype.global.enums.PlaceProvider;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.locationtech.jts.geom.Point;
 
 @Getter
 @Setter
@@ -23,7 +22,7 @@ public class PlaceDTO {
     @Schema(description = "장소 링크", example = "https://kangnam.ac.kr")
     private String link;
     @Schema(description = "장소 정보 제공 출처", example = "KAKAO")
-    private PlaceSearchProvider placeSearchProvider;
+    private PlaceProvider placeSearchProvider;
     @Schema(description = "장소 정보 제공 출처의 Id", example = "11045491")
     private Long providerId;
     @Valid

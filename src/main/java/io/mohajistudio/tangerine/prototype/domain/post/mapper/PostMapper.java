@@ -7,7 +7,6 @@ import io.mohajistudio.tangerine.prototype.domain.post.dto.PostDTO;
 import io.mohajistudio.tangerine.prototype.global.common.PointDTO;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
-import io.mohajistudio.tangerine.prototype.infra.place.dto.PlaceKakaoSearchApiDTO;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -39,17 +38,15 @@ public interface PostMapper {
     @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setCoordinate")
     Place toEntity(PlaceDTO.Add placeAddDTO);
 
+    @Mapping(source = "address", target = "addressProvince", qualifiedByName = "convertToProvince")
+    @Mapping(source = "address", target = "addressCity", qualifiedByName = "convertToCity")
+    @Mapping(source = "address", target = "addressDistrict", qualifiedByName = "convertToDistrict")
+    @Mapping(source = "address", target = "addressDetail", qualifiedByName = "convertToDetail")
     @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setCoordinate")
     Place toPlaceDetailsDTO(PlaceDTO.Details placeDetailsDTO);
 
-    @Mapping(source = ".", target = "address", qualifiedByName = "setAddress")
     @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setDTOCoordinate")
     PlaceDTO.Details toPlaceDetailsDTO(Place place);
-
-    @Named("setAddress")
-    default String setAddress(Place place) {
-        return place.getAddress();
-    }
 
     @Named("convertToProvince") // 2
     default String convertToProvince(String address) {
