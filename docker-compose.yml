@@ -2,6 +2,7 @@ version: '3'
 
 services:
   tangerine-prototype:
-    image: hch9510/tangerine-prototype:0.0.1
+    image: hch9510/tangerine-prototype:late
     ports:
       - "8080:8080"
+

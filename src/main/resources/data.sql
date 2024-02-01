@@ -33,9 +33,3 @@ INSERT INTO place_category (id, name)
 VALUES (10, '축제/이벤트');
 INSERT INTO place_category (id, name)
 VALUES (11, '팝업');
-
-INSERT INTO place (name, coordinate, thumbnail, address_province, address_city, address_district, address_detail,
-                   road_address, description, place_search_provider)
-VALUES ('강남대학교', ST_SetSRID(ST_MakePoint(37.27574, 127.13249), 4326), null, '경기도', '용인시', '기흥구', '구갈동 111',
-        '경기 용인시 기흥구 강남로 40',
-        null, 'MEMBER');
