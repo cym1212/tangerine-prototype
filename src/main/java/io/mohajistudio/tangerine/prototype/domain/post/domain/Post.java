@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
+import io.mohajistudio.tangerine.prototype.global.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -23,6 +24,7 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate visitStartDate;
+
     @Column(nullable = false)
     private LocalDate visitEndDate;
 
@@ -35,14 +37,17 @@ public class Post extends BaseEntity {
     private short placeBlockCnt = 0;
 
     //방문 지역
+    @Column(nullable = false)
     private String visitRegion;
+
+    @Setter
+    @Column(nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
+    private PostStatus status;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
-
-//    @OneToOne(mappedBy = "post", fetch = FetchType.LAZY)
-//    private TrendingPost trendingPost;
 
     @JsonIgnore
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)

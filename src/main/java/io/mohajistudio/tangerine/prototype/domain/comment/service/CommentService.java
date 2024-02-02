@@ -8,6 +8,7 @@ import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.domain.post.repository.PostRepository;
+import io.mohajistudio.tangerine.prototype.global.enums.CommentStatus;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.global.error.exception.UrlNotFoundException;
@@ -57,6 +58,7 @@ public class CommentService {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
+        comment.setStatus(CommentStatus.PUBLISHED);
         commentRepository.save(comment);
     }
 
@@ -117,7 +119,7 @@ public class CommentService {
 
         Comment comment = findComment.get();
 
-        if(!comment.getPost().getId().equals(postId)) {
+        if (!comment.getPost().getId().equals(postId)) {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
         }
 

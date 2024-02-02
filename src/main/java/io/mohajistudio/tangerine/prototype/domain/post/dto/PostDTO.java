@@ -4,6 +4,7 @@ import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberDTO;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
@@ -20,14 +21,20 @@ public class PostDTO {
     @Schema(description = "게시글의 제목", example = "테스트 제목")
     @Length(min = 5, max = 100)
     private String title;
+
     @NotNull
     @PastOrPresent
     @Schema(description = "방문 시작 날짜")
     private LocalDate visitStartDate;
+
     @NotNull
     @PastOrPresent
     @Schema(description = "방문 도착 날짜")
     private LocalDate visitEndDate;
+
+    @NotNull
+    @NotEmpty
+    private String visitRegion;
 
     @Getter
     @Setter

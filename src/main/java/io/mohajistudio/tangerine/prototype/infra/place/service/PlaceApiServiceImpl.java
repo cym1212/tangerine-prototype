@@ -18,6 +18,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 
 @Service
 @Slf4j
@@ -28,9 +31,9 @@ public class PlaceApiServiceImpl implements PlaceApiService {
     public PlaceKakaoSearchApiResultDTO searchPlace(String query, int page, int size) {
         try {
             CloseableHttpClient client = HttpClientBuilder.create().build();
-            HttpGet getRequest = new HttpGet(placeSearchApiProperties.getUrl() + "?query=" + query + "&page=" + page + "&size=" + size);
+            String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+            HttpGet getRequest = new HttpGet(placeSearchApiProperties.getUrl() + "?query=" + encodedQuery + "&page=" + page + "&size=" + size);
             getRequest.addHeader(HttpHeaders.AUTHORIZATION, "KakaoAK " + placeSearchApiProperties.getRestApiKey());
-
             CloseableHttpResponse response = client.execute(getRequest);
             ResponseHandler<String> handler = new BasicResponseHandler();
             String jsonString = handler.handleResponse(response);
@@ -43,8 +46,8 @@ public class PlaceApiServiceImpl implements PlaceApiService {
             }
 
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new BusinessException(ErrorCode.KAKAO_PLACE_SEARCH);
         }
     }
-
 }

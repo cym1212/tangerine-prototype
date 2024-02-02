@@ -9,6 +9,7 @@ import io.mohajistudio.tangerine.prototype.domain.placeblockimage.service.PlaceB
 import io.mohajistudio.tangerine.prototype.domain.post.domain.*;
 import io.mohajistudio.tangerine.prototype.domain.post.repository.*;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
+import io.mohajistudio.tangerine.prototype.global.enums.PostStatus;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.global.error.exception.UrlNotFoundException;
 import jakarta.transaction.Transactional;
@@ -45,6 +46,7 @@ public class PostService {
 
         Optional<Member> findMember = memberRepository.findById(memberId);
         findMember.ifPresent(post::setMember);
+        post.setStatus(PostStatus.PUBLISHED);
 
         postRepository.save(post);
 
