@@ -1,4 +1,4 @@
-package io.mohajistudio.tangerine.prototype.domain.notice;
+package io.mohajistudio.tangerine.prototype.domain.notice.domain;
 
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
