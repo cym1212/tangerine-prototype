@@ -41,10 +41,10 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     auth.requestMatchers(HttpMethod.PATCH, "/tokens").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/register").hasAuthority(AUTHORITY_GUEST);
-                    auth.requestMatchers(HttpMethod.GET, "/places", "/places/kakao", "/places/categories","admin/*").hasAnyAuthority(AUTHORITY_MEMBER);
-                    auth.requestMatchers(HttpMethod.POST, "/posts", "/places", "/posts/*/comments", "/places/kakao","/posts/place-blocks/place-block-images","/places/recommend","admin/*").hasAnyAuthority(AUTHORITY_MEMBER);
-                    auth.requestMatchers(HttpMethod.PATCH, "/logout", "/posts/*/favorites", "/posts/*", "/posts/*/comments/*", "/members/*/follows", "/posts/*/scrap","admin/*").hasAnyAuthority(AUTHORITY_MEMBER);
-                    auth.requestMatchers(HttpMethod.DELETE, "/posts/*", "/posts/*/comments/*","admin/*").hasAnyAuthority(AUTHORITY_MEMBER);
+                    auth.requestMatchers(HttpMethod.GET, "/places", "/places/kakao", "/places/categories").hasAnyAuthority(AUTHORITY_MEMBER);
+                    auth.requestMatchers(HttpMethod.POST, "/posts", "/places", "/posts/*/comments", "/places/kakao","/posts/place-blocks/place-block-images","/places/recommend").hasAnyAuthority(AUTHORITY_MEMBER);
+                    auth.requestMatchers(HttpMethod.PATCH, "/logout", "/posts/*/favorites", "/posts/*", "/posts/*/comments/*", "/members/*/follows", "/posts/*/scrap").hasAnyAuthority(AUTHORITY_MEMBER);
+                    auth.requestMatchers(HttpMethod.DELETE, "/posts/*", "/posts/*/comments/*").hasAnyAuthority(AUTHORITY_MEMBER);
                     auth.requestMatchers(HttpMethod.GET, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
                     auth.requestMatchers(HttpMethod.POST, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
                     auth.requestMatchers(HttpMethod.PATCH, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
