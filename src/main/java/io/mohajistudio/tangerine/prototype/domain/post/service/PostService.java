@@ -22,7 +22,7 @@ import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
-public class PostService {
+public class PostService{
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final FavoritePostRepository favoritePostRepository;

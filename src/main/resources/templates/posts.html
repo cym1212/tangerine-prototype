@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Posts</title>
+</head>
+<body>
+
+<h1>게시글 목록</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Visit Start Date</th>
+        <th>Visit End Date</th>
+        <th>Comment Count</th>
+        <th>Favorite Count</th>
+        <th>Block Count</th>
+        <th>Member</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="post : ${postPage.content}">
+        <td th:text="${post.id}"></td>
+        <td th:text="${post.title}"></td>
+        <td th:text="${post.visitStartDate}"></td>
+        <td th:text="${post.visitEndDate}"></td>
+        <td th:text="${post.commentCnt}"></td>
+        <td th:text="${post.favoriteCnt}"></td>
+        <td th:text="${post.blockCnt}"></td>
+        <td th:text="${post.member.memberProfile.name}"></td> <!-- Display member's username -->
+    </tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>
