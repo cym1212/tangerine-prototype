@@ -19,6 +19,7 @@ public enum ErrorCode {
     INVALID_DATE_RANGE(400, "C011", "시작 날짜는 도착 날짜보다 최근일 수 없습니다"),
     NICKNAME_DUPLICATE(400, "C012", "이미 사용중인 닉네임입니다"),
     DATE_TIME_PARSE_FAILURE(400, "C013", "잘못된 DateTime 형식입니다"),
+    HTTP_MESSAGE_CONVERSION(500, "C014", "요청 데이터 변환에 실패했습니다. 고객센터로 문의해주세요"),
 
     // Member
     MEMBER_NOT_FOUND(404, "M001", "존재하지 않는 회원입니다"),
@@ -27,7 +28,7 @@ public enum ErrorCode {
 
 
     //TOKEN
-    MISMATCH_REFRESH_TOKEN(401, "T001", "유효하지 않은 토큰입니다"),
+    MISMATCH_REFRESH_TOKEN(401, "T001", "유효하지 않은 리프레시 토큰입니다"),
     NO_PERMISSION(401, "T002", "요청에 대한 권한이 없습니다"),
 
     //POST
@@ -37,10 +38,13 @@ public enum ErrorCode {
     TOO_FREQUENT_POST(400, "P004", "게시글을 작성한 지 얼마 지나지 않았으므로 잠시 후 작성해주세요"),
     INVALID_REPRESENTATIVE_PLACE_BLOCK_IMAGE_ORDER_NUMBER(400, "P005", "잘못된 대표 이미지 순서 번호"),
 
+    //Search Place
+    KAKAO_PLACE_SEARCH(500, "SP001", "카카오 장소 검색 API를 호출하는 도중 에러가 발생했습니다"),
+    KAKAO_REGULAR_EXPRESSION(500, "SP002", "카카오 장소 검색 API가 반환한 주소가 정규식과 일치하지 않습니다. 고객센터에 문의해주세요"),
 
     //Region
-    KAKAO_PLACE_SEARCH(500, "R001", "카카오 장소 검색 API를 호출하는 도중 에러가 발생했습니다"),
-    KAKAO_REGULAR_EXPRESSION(500, "R002", "카카오 장소 검색 API가 반환한 주소가 정규식과 일치하지 않습니다. 고객센터에 문의해주세요"),
+    REGION_PROVINCE(500, "R001", "광역시/도를 불러오는 데 실패했습니다."),
+    REGION_CITY(500, "R002", "시/군/구를 불러오는 데 실패했습니다."),
 
     //Multipart
     MULTIPART_FILE_EXCEPTION(400, "MP001", "파일을 찾을 수 없습니다"),

@@ -3,6 +3,7 @@ package io.mohajistudio.tangerine.prototype.domain.comment.domain;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
+import io.mohajistudio.tangerine.prototype.global.enums.CommentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,11 @@ public class Comment extends BaseEntity {
 
     @Column(nullable = false)
     private int favoriteCnt = 0;
+
+    @Setter
+    @Column(nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
+    private CommentStatus status;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

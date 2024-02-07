@@ -8,6 +8,8 @@ import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import io.mohajistudio.tangerine.prototype.global.common.PageableParam;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
+import io.mohajistudio.tangerine.prototype.infra.region.dto.RegionProvinceDTO;
+import io.mohajistudio.tangerine.prototype.infra.region.service.RegionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -27,6 +30,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Tag(name = "Post", description = "Post API")
 public class PostController {
+    private final RegionService regionService;
     private final PostService postService;
     private final PostMapper postMapper;
 
@@ -101,5 +105,10 @@ public class PostController {
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         postService.modifyScrapPost(id, securityMember.getId());
+    }
+
+    @GetMapping("/regions")
+    public List<RegionProvinceDTO> regionList() {
+        return regionService.findAllRegions();
     }
 }

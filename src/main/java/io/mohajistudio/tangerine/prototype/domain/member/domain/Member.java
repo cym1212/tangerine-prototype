@@ -3,7 +3,7 @@ package io.mohajistudio.tangerine.prototype.domain.member.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.FavoriteComment;
-import io.mohajistudio.tangerine.prototype.domain.notice.Notification;
+import io.mohajistudio.tangerine.prototype.domain.notice.domain.Notification;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.*;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import io.mohajistudio.tangerine.prototype.global.enums.Provider;
@@ -21,6 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name = "member")
 public class Member extends BaseEntity {
+    @Setter
     private String refreshToken;
 
     @Column(length = 50, nullable = false, unique = true)

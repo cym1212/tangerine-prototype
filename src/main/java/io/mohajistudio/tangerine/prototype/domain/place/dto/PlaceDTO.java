@@ -21,12 +21,12 @@ public class PlaceDTO {
     private String roadAddress;
     @NotNull
     @Schema(description = "좌표")
-    private PointDTO coordinates;
+    private PointDTO coordinate;
 
-    public void setCoordinates(Point coordinates) {
-        double lat = coordinates.getX();
-        double lng = coordinates.getY();
-        this.coordinates = PointDTO.builder().lat(lat).lng(lng).build();
+    public void setCoordinate(Point coordinate) {
+        double lat = coordinate.getX();
+        double lng = coordinate.getY();
+        this.coordinate = PointDTO.builder().lat(lat).lng(lng).build();
     }
 
     @Getter

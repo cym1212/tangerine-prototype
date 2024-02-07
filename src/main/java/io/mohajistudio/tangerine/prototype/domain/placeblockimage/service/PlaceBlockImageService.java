@@ -21,12 +21,11 @@ public class PlaceBlockImageService {
 
     public List<PlaceBlockImage> uploadImagesToTemporary(List<MultipartFile> imageFiles, Long memberId) {
         List<PlaceBlockImage> placeBlockImages = new ArrayList<>();
-        short orderNumberCounter = 1;
 
         for (int i = 1; i <= imageFiles.size(); i++) {
             String imageUrl = s3UploadService.uploadImage(imageFiles.get(i - 1), TEMPORARY_PATH, memberId);
             ImageMimeType mimeType = ImageMimeType.fromValue(UploadUtils.getFileExtension(imageUrl));
-            PlaceBlockImage placeBlockImage = PlaceBlockImage.builder().imageUrl(imageUrl).imageMimeType(mimeType).orderNumber(orderNumberCounter++).build();
+            PlaceBlockImage placeBlockImage = PlaceBlockImage.builder().imageUrl(imageUrl).imageMimeType(mimeType).build();
             placeBlockImages.add(placeBlockImage);
         }
 

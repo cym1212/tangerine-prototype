@@ -7,3 +7,7 @@ spring:
     multipart:
       maxFileSize: 20MB
       maxRequestSize: 100MB
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true

@@ -3,6 +3,7 @@ package io.mohajistudio.tangerine.prototype.domain.post.dto;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,6 +43,7 @@ public class PlaceBlockDTO {
         private PlaceDTO.Details place;
         @Schema(description = "Representative PlaceBlockImage Id", example = "1")
         private Long representativePlaceBlockImageId;
+        @Min(1)
         @Schema(description = "대표 이미지 순서 번호", example = "1")
         private Short representativePlaceBlockImageOrderNumber;
     }
