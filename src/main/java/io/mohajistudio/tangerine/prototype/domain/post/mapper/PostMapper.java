@@ -69,7 +69,11 @@ public interface PostMapper {
     default String convertToDetail(String address) {
         Matcher matcher = pattern.matcher(address);
         if (matcher.matches()) {
-            return matcher.group("detail");
+            String detail = matcher.group("detail");
+            if (detail == null) {
+                return "";
+            }
+            return detail;
         }
         throw new BusinessException("지원하지 않는 주소 형식입니다, address = " + address, ErrorCode.INVALID_INPUT_VALUE);
     }
