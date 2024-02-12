@@ -30,9 +30,6 @@ public class PlaceBlockImage extends BaseEntity {
     @Column(nullable = false)
     private short orderNumber;
 
-    @OneToMany(mappedBy = "thumbnail")
-    Set<Post> posts;
-
     @Setter
     @JsonIgnore
     @ManyToOne(optional = false)

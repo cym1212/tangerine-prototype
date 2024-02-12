@@ -47,6 +47,7 @@ public class PostService {
         Optional<Member> findMember = memberRepository.findById(memberId);
         findMember.ifPresent(post::setMember);
         post.setStatus(PostStatus.PUBLISHED);
+        post.setPlaceBlockCnt((short) post.getPlaceBlocks().size());
 
         postRepository.save(post);
 
@@ -64,6 +65,7 @@ public class PostService {
                 throw new BusinessException(ENTITY_NOT_FOUND);
             }
             placeBlock.setPlace(findPlace.get());
+            placeBlockImageService.copyImagesToPermanent(placeBlock.getPlaceBlockImages());
 
             placeBlockRepository.save(placeBlock);
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> {
@@ -77,8 +79,8 @@ public class PostService {
             if (placeBlock.getRepresentativePlaceBlockImageId() == null) {
                 throw new BusinessException(INVALID_REPRESENTATIVE_PLACE_BLOCK_IMAGE_ORDER_NUMBER);
             }
-            placeBlockImageService.copyImagesToPermanent(placeBlock.getPlaceBlockImages());
         });
+
     }
 
     public Page<Post> findPostListByPage(Pageable pageable) {
@@ -107,7 +109,9 @@ public class PostService {
         checkBlockOrderNumberAndContentIsEmpty(modifyPost.getPlaceBlocks(), modifyPost.getTextBlocks());
         checkDeletedBlock(modifyPost.getPlaceBlocks(), modifyPost.getTextBlocks(), post.getPlaceBlocks(), post.getTextBlocks());
 
-        postRepository.update(post.getId(), modifyPost.getTitle(), modifyPost.getVisitStartDate(), modifyPost.getVisitEndDate());
+        post.setPlaceBlockCnt((short) post.getPlaceBlocks().size());
+
+        postRepository.update(post.getId(), modifyPost.getTitle(), modifyPost.getVisitStartDate(), modifyPost.getVisitEndDate(), modifyPost.getPlaceBlockCnt());
 
         modifyPost.getTextBlocks().forEach(textBlock -> modifyTextBlock(textBlock, post));
         modifyPost.getPlaceBlocks().forEach(placeBlock -> {
