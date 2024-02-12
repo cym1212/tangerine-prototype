@@ -50,7 +50,7 @@ public class MemberController {
     @GetMapping("/{memberId}/follows")
     @Operation(summary = "내가 팔로우 한 멤버 목록 조회", description = "page와 size 값을 넘기면 페이징 된 내가 팔로우한 멤버 목록을 반환합니다. 기본 값은 page는 1, size는 10 입니다.")
     public Page<MemberDTO> followListByPage(@PathVariable("memberId") Long memberId, @ModelAttribute PageableParam pageableParam) {
-        Pageable pageable = PageRequest.of(pageableParam.getPage() - 1, pageableParam.getSize());
+        Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
 
         return memberService.findFollowListByPage(memberId, pageable).map(memberMapper::toDTO);
     }
@@ -58,7 +58,7 @@ public class MemberController {
     @GetMapping("/{memberId}/followMembers")
     @Operation(summary = "나를 팔로우 한 멤버 목록 조회", description = "page와 size 값을 넘기면 페이징 된 나를 팔로우 한 멤버 목록을 반환합니다. 기본 값은 page는 1, size는 10 입니다.")
     public Page<MemberDTO> followMembersListByPage(@PathVariable("memberId") Long memberId, @ModelAttribute PageableParam pageableParam) {
-        Pageable pageable = PageRequest.of(pageableParam.getPage() - 1, pageableParam.getSize());
+        Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
 
         return memberService.findFollowMemberListByPage(memberId, pageable).map(memberMapper::toDTO);
     }
