@@ -33,7 +33,7 @@ public class Place extends BaseEntity implements Persistable<Long> {
     private String addressCity;//시/군/구
     @Column(columnDefinition = "varchar(20)", nullable = false)
     private String addressDistrict;//읍/면/동
-    @Column(columnDefinition = "varchar(20)", nullable = false)
+    @Column(columnDefinition = "varchar(20)")
     private String addressDetail;//이하
     private String roadAddress;
     @Column(length = 500)

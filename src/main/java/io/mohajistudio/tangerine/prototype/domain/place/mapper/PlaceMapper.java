@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 @Mapper
 public interface PlaceMapper {
-    String regex = "^(?<province>\\S+)\\s+(?<city>\\S+)\\s+(?<district>\\S+)\\s+(?<detail>.+)$";
+    String regex = "^(?<province>\\S+)\\s+(?<city>\\S+)\\s+(?<district>\\S+)\\s*(?<detail>.+)?$";
     Pattern pattern = Pattern.compile(regex);
 
     @Mapping(target = "id", ignore = true)
@@ -45,7 +45,7 @@ public interface PlaceMapper {
         if (matcher.matches()) {
             return matcher.group("province");
         }
-        throw new BusinessException("지원하지 않는 주소 형식입니다", ErrorCode.INVALID_INPUT_VALUE);
+        throw new BusinessException("지원하지 않는 주소 형식입니다, address = " + address, ErrorCode.INVALID_INPUT_VALUE);
     }
 
     @Named("convertToCity") // 2
@@ -54,7 +54,7 @@ public interface PlaceMapper {
         if (matcher.matches()) {
             return matcher.group("city");
         }
-        throw new BusinessException("지원하지 않는 주소 형식입니다", ErrorCode.INVALID_INPUT_VALUE);
+        throw new BusinessException("지원하지 않는 주소 형식입니다, address = " + address, ErrorCode.INVALID_INPUT_VALUE);
     }
 
     @Named("convertToDistrict") // 2
@@ -63,7 +63,7 @@ public interface PlaceMapper {
         if (matcher.matches()) {
             return matcher.group("district");
         }
-        throw new BusinessException("지원하지 않는 주소 형식입니다", ErrorCode.INVALID_INPUT_VALUE);
+        throw new BusinessException("지원하지 않는 주소 형식입니다, address = " + address, ErrorCode.INVALID_INPUT_VALUE);
     }
 
     @Named("convertToDetail") // 2
@@ -72,6 +72,6 @@ public interface PlaceMapper {
         if (matcher.matches()) {
             return matcher.group("detail");
         }
-        throw new BusinessException("지원하지 않는 주소 형식입니다", ErrorCode.INVALID_INPUT_VALUE);
+        throw new BusinessException("지원하지 않는 주소 형식입니다, address = " + address, ErrorCode.INVALID_INPUT_VALUE);
     }
 }
