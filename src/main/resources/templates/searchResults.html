@@ -2,18 +2,16 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Post Search</title>
+    <title>Search Results</title>
 </head>
 <body>
 
-<h1>게시글 검색</h1>
+<h1>게시글 검색 결과</h1>
 
-<form th:action="@{/admin/posts/searchlist}" method="get">
-    <label for="searchKeyword">검색어:</label>
-    <input type="text" id="searchKeyword" name="searchKeyword">
-    <button type="submit">검색</button>
-</form>
+<!-- 검색어를 다시 표시 -->
+<p>검색어: <span th:text="${searchKeyword}"></span></p>
 
+<!-- 검색 결과 테이블 -->
 <table>
     <thead>
     <tr>
@@ -28,17 +26,16 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="post : ${postPage.content}">
+    <!-- 검색 결과를 반복하며 표시 -->
+    <tr th:each="post : ${searchList.content}">
         <td th:text="${post.id}"></td>
         <td th:text="${post.title}"></td>
         <td th:text="${post.visitStartDate}"></td>
         <td th:text="${post.visitEndDate}"></td>
         <td th:text="${post.commentCnt}"></td>
         <td th:text="${post.favoriteCnt}"></td>
-        <td th:text="${post.blockCnt}"></td>
-        <td th:text="${post.member.memberProfile.name}"></td> <!-- Display member's username -->
-    </tr>
-
+        <td th:text="${post.placeBlockCnt}"></td>
+        <td th:text="${post.member.memberProfile.name}"></td>
     </tr>
     </tbody>
 </table>

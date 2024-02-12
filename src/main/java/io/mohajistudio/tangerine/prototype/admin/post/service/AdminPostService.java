@@ -16,12 +16,11 @@ public class AdminPostService {
     private final AdminPostRepository adminPostRepository;
 
     public Page<Post> adminPostList(Pageable pageable) {
-        log.info("service");
         return adminPostRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 
 
-    public Page<Post> postSearchList (String searchKeyword, Pageable pageable) {
+    public Page<Post> adminSearch(String searchKeyword, Pageable pageable) {
         return adminPostRepository.findByTitleContaining(searchKeyword, pageable);
     }
 }

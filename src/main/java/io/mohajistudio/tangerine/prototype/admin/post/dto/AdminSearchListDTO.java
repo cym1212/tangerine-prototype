@@ -6,6 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AdminSearchListDTO {
+public class AdminSearchListDTO extends AdminPostDTO{
     private String searchKeyword;
 }
