@@ -3,6 +3,7 @@ package io.mohajistudio.tangerine.prototype.domain.post.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
+import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import io.mohajistudio.tangerine.prototype.global.enums.PostStatus;
 import jakarta.persistence.*;
@@ -35,6 +36,9 @@ public class Post extends BaseEntity {
     private int favoriteCnt = 0;
 
     private short placeBlockCnt = 0;
+
+    @ManyToOne
+    private PlaceBlockImage thumbnail;
 
     //방문 지역
     @Column(nullable = false)
