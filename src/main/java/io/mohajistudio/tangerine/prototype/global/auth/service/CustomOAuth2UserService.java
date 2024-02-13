@@ -42,6 +42,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
         OAuth2AttributeDTO oAuth2Attribute = OAuth2AttributeDTO.of(registrationId, userNameAttributeName, originAttributes);
+
+        return processOAuth2Login(oAuth2Attribute);
+    }
+
+    private boolean checkSameEmailDifferentProvider(Member member, OAuth2AttributeDTO oAuth2Attribute) {
+        return member.getEmail().equals(oAuth2Attribute.getEmail()) && member.getProvider().name().equals(oAuth2Attribute.getProvider());
+    }
+
+    public OAuth2User processOAuth2Login(OAuth2AttributeDTO oAuth2Attribute) {
         Map<String, Object> memberAttribute = oAuth2Attribute.convertToMap();
 
         Optional<Member> findMember = memberRepository.findByEmail(oAuth2Attribute.getEmail());
@@ -63,9 +72,5 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         memberAttribute.put("id", member.getId());
 
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRole().name())), memberAttribute, "id");
-    }
-
-    boolean checkSameEmailDifferentProvider(Member member, OAuth2AttributeDTO oAuth2Attribute) {
-        return member.getEmail().equals(oAuth2Attribute.getEmail()) && member.getProvider().name().equals(oAuth2Attribute.getProvider());
     }
 }

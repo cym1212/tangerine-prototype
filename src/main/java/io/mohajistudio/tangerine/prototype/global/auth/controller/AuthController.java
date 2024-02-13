@@ -1,5 +1,6 @@
 package io.mohajistudio.tangerine.prototype.global.auth.controller;
 
+import io.mohajistudio.tangerine.prototype.global.auth.dto.AppLoginDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.dto.GeneratedTokenDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.dto.TokenModifyDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.dto.RegisterDTO;
@@ -35,6 +36,12 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
         authService.logout(securityMember.getId());
+    }
+
+    @PostMapping("/app/login/kakao")
+    @Operation(summary = "네이티브에서 카카오 로그인", description = "AccessToken을 넘겨주어 검증 후 회원이 아닐경우 계정을 생성합니다.")
+    public GeneratedTokenDTO appKakaoLogin(@Valid @RequestBody AppLoginDTO appLoginDTO) {
+        return authService.loginKakao(appLoginDTO.getAccessToken());
     }
 
     @PatchMapping("/tokens")

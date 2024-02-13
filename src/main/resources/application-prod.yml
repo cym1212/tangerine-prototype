@@ -1,7 +1,7 @@
 spring:
   config:
     import:
-      - file:/config/application-secret.yml
+      - file:/config/application-prod-secret.yml
       - file:/config/application-place.yml
       - file:/config/application-prod-db.yml
       - file:/config/application-prod-s3.yml
