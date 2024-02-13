@@ -38,6 +38,7 @@ public class Post extends BaseEntity {
     @Setter
     private short placeBlockCnt = 0;
 
+    @Setter
     private String thumbnail;
 
     //방문 지역

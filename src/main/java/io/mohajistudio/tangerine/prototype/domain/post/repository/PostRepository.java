@@ -1,6 +1,7 @@
 package io.mohajistudio.tangerine.prototype.domain.post.repository;
 
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
+import io.mohajistudio.tangerine.prototype.global.enums.PostStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -52,6 +53,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     void update(@Param("id") Long id, @Param("title") String title, @Param("visitStartDate") LocalDate visitStartDate, @Param("visitEndDate") LocalDate visitEndDate, @Param("placeBlockCnt") short placeBlockCnt);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Post p set p.deletedAt = :deletedAt where p.id = :id and p.deletedAt IS NULL")
-    void delete(@Param("id") Long id, @Param("deletedAt") LocalDateTime deletedAt);
+    @Query("update Post p set p.deletedAt = :deletedAt, p.status = :postStatus where p.id = :id and p.deletedAt IS NULL")
+    void delete(@Param("id") Long id, @Param("deletedAt") LocalDateTime deletedAt, @Param("postStatus") PostStatus postStatus);
 }

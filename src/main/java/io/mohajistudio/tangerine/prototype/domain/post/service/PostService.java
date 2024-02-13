@@ -46,9 +46,11 @@ public class PostService {
 
         Optional<Member> findMember = memberRepository.findById(memberId);
         findMember.ifPresent(post::setMember);
+
         post.setStatus(PostStatus.PUBLISHED);
         post.setPlaceBlockCnt((short) post.getPlaceBlocks().size());
 
+        post.setThumbnail(placeBlockImageService.copyImageToPermanent(post.getThumbnail()));
         postRepository.save(post);
 
         post.getTextBlocks().forEach(textBlock -> {
@@ -80,7 +82,6 @@ public class PostService {
                 throw new BusinessException(INVALID_REPRESENTATIVE_PLACE_BLOCK_IMAGE_ORDER_NUMBER);
             }
         });
-
     }
 
     public Page<Post> findPostListByPage(Pageable pageable) {
@@ -198,7 +199,7 @@ public class PostService {
 
         LocalDateTime deletedAt = LocalDateTime.now();
 
-        postRepository.delete(id, deletedAt);
+        postRepository.delete(id, deletedAt, PostStatus.DELETED);
 
         post.getTextBlocks().forEach(textBlock -> textBlockRepository.delete(textBlock.getId(), deletedAt));
         post.getPlaceBlocks().forEach(placeBlock -> {

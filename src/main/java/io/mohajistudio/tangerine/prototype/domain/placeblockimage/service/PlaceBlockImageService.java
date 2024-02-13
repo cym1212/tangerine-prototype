@@ -35,9 +35,14 @@ public class PlaceBlockImageService {
     public void copyImagesToPermanent(Set<PlaceBlockImage> placeBlockImages) {
         placeBlockImages.forEach(placeBlockImage -> {
             if (placeBlockImage.getImageUrl().contains(TEMPORARY_PATH)) {
-                String newFileName = s3UploadService.copyImage(placeBlockImage.getImageUrl(), TEMPORARY_PATH, PERMANENT_PATH);
+                String newFileName = copyImageToPermanent(placeBlockImage.getImageUrl());
                 placeBlockImage.setImageUrl(newFileName);
             }
         });
+    }
+
+    public String copyImageToPermanent(String imageUrl) {
+        s3UploadService.copyImage(imageUrl, TEMPORARY_PATH, PERMANENT_PATH);
+        return imageUrl.replace(TEMPORARY_PATH, PERMANENT_PATH);
     }
 }
