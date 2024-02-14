@@ -10,5 +10,5 @@ import lombok.Setter;
 public class AppLoginDTO {
     @NotNull
     @NotEmpty
-    private String accessToken;
+    private String token;
 }

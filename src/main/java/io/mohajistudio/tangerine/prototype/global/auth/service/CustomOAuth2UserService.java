@@ -41,7 +41,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-        OAuth2AttributeDTO oAuth2Attribute = OAuth2AttributeDTO.of(registrationId, userNameAttributeName, originAttributes);
+        OAuth2AttributeDTO oAuth2Attribute = OAuth2AttributeDTO.of(registrationId, originAttributes);
 
         return processOAuth2Login(oAuth2Attribute);
     }
@@ -56,7 +56,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Optional<Member> findMember = memberRepository.findByEmail(oAuth2Attribute.getEmail());
         Member member;
         if (findMember.isEmpty()) {
-            member = Member.createGuest(Provider.fromValue(oAuth2Attribute.getProvider()), oAuth2Attribute.getEmail());
+            member = Member.createGuest(Provider.fromValue(oAuth2Attribute.getProvider()), oAuth2Attribute.getProviderId(), oAuth2Attribute.getEmail());
             memberRepository.save(member);
         } else {
             member = findMember.get();

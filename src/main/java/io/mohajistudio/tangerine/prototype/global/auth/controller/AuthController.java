@@ -41,7 +41,13 @@ public class AuthController {
     @PostMapping("/app/login/kakao")
     @Operation(summary = "네이티브에서 카카오 로그인", description = "AccessToken을 넘겨주어 검증 후 회원이 아닐경우 계정을 생성합니다.")
     public GeneratedTokenDTO appKakaoLogin(@Valid @RequestBody AppLoginDTO appLoginDTO) {
-        return authService.loginKakao(appLoginDTO.getAccessToken());
+        return authService.loginKakao(appLoginDTO.getToken());
+    }
+
+    @PostMapping("/app/login/google")
+    @Operation(summary = "네이티브에서 구글 로그인", description = "idToken을 넘겨주어 검증 후 회원이 아닐경우 계정을 생성합니다.")
+    public GeneratedTokenDTO appGoogleLogin(@Valid @RequestBody AppLoginDTO appLoginDTO) {
+        return authService.loginGoogle(appLoginDTO.getToken());
     }
 
     @PatchMapping("/tokens")

@@ -35,7 +35,11 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
+    @Column(unique = true, nullable = false)
+    private String providerId;
+
     private int followCnt = 0; //팔로우 한 멤버 수
+
     private int followMemberCnt = 0; //팔로우 받은 멤버 수
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
@@ -73,7 +77,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private Set<FavoritePost> favoritePosts;
 
-    public static Member createGuest(Provider provider, String email) {
-        return Member.builder().provider(provider).role(Role.GUEST).email(email).build();
+    public static Member createGuest(Provider provider, String providerId, String email) {
+        return Member.builder().provider(provider).role(Role.GUEST).email(email).providerId(providerId).build();
     }
 }

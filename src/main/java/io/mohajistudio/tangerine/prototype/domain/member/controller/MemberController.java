@@ -1,9 +1,9 @@
 package io.mohajistudio.tangerine.prototype.domain.member.controller;
 
+import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberDTO;
 import io.mohajistudio.tangerine.prototype.domain.member.mapper.MemberMapper;
 import io.mohajistudio.tangerine.prototype.domain.member.service.MemberService;
-import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberProfileDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import io.mohajistudio.tangerine.prototype.global.common.PageableParam;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
@@ -29,9 +29,10 @@ public class MemberController {
     private final MemberMapper memberMapper;
 
     @GetMapping("/{memberId}")
-    @Operation(summary = "멤버 프로필", description = "멤버 프로필을 조회합니다.")
-    public MemberProfileDTO memberDetails(@PathVariable("memberId") Long memberId) {
-        return memberService.findMemberProfile(memberId);
+    @Operation(summary = "멤버 조회", description = "멤버를 조회합니다.")
+    public MemberDTO memberDetails(@PathVariable("memberId") Long memberId) {
+        Member member = memberService.findMember(memberId);
+        return memberMapper.toDTO(member);
     }
 
     @PatchMapping("/{memberId}/follows")

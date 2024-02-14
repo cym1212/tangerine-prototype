@@ -24,18 +24,16 @@ import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.MISMATC
 @Transactional
 @RequiredArgsConstructor
 public class MemberService {
-    private final MemberProfileRepository memberProfileRepository;
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
-    private final MemberMapper memberMapper;
 
-    public MemberProfileDTO findMemberProfile(Long memberId) {
-        Optional<MemberProfile> findMemberProfile = memberProfileRepository.findByMemberId(memberId);
-        if (findMemberProfile.isEmpty()) {
+    public Member findMember(Long memberId) {
+        Optional<Member> findMember = memberRepository.findById(memberId);
+        if (findMember.isEmpty()) {
             throw new BusinessException(MEMBER_NOT_FOUND);
         }
 
-        return memberMapper.toDTO(findMemberProfile.get());
+        return findMember.get();
     }
 
     public void modifyFollowMember(Long memberId, Long followMemberId) {
