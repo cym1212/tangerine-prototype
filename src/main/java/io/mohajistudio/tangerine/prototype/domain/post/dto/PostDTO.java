@@ -36,6 +36,10 @@ public class PostDTO {
     @NotEmpty
     private String visitRegion;
 
+    @NotNull
+    @NotEmpty
+    private String thumbnail;
+
     @Getter
     @Setter
     @Schema(name = "PostDTO.Details", description = "게시글의 상세를 반환할 때 사용할 DTO")
@@ -73,7 +77,7 @@ public class PostDTO {
         @Schema(description = "좋아요 개수")
         private int favoriteCnt;
         @Schema(description = "블럭 개수")
-        private short blockCnt;
+        private short placeBlockCnt;
         @Schema(description = "작성자")
         private MemberDTO member;
     }

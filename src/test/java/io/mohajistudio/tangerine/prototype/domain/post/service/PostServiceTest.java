@@ -52,8 +52,6 @@ class PostServiceTest {
 
         placeBlocks.add(PlaceBlock.builder().content("두 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 2).placeCategory(category).place(place).placeBlockImages(placeBlockImages).representativePlaceBlockImageOrderNumber((short) 1).build());
 
-        post.setTextBlocks(textBlocks);
-        post.setPlaceBlocks(placeBlocks);
         return post;
     }
 
@@ -87,8 +85,6 @@ class PostServiceTest {
         placeBlocks.add(PlaceBlock.builder().content("수정된 두 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 2).placeCategory(category).place(place).placeBlockImages(placeBlockImages).representativePlaceBlockImageOrderNumber((short) 1).id(placeBlockIds.get(0)).build());
         placeBlocks.add(PlaceBlock.builder().content("추가된 세 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 3).placeCategory(category).place(place).placeBlockImages(placeBlockImages2).representativePlaceBlockImageOrderNumber((short) 1).build());
 
-        modifyPost.setTextBlocks(textBlocks);
-        modifyPost.setPlaceBlocks(placeBlocks);
         return modifyPost;
     }
 
