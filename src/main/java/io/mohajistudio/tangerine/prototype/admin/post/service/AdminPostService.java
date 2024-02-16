@@ -21,6 +21,6 @@ public class AdminPostService {
 
 
     public Page<Post> adminSearch(String searchKeyword, Pageable pageable) {
-        return adminPostRepository.findByTitleContaining(searchKeyword, pageable);
+        return adminPostRepository.findByTitleOrNicknameContaining(searchKeyword, pageable);
     }
 }

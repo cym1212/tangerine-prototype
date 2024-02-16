@@ -47,8 +47,22 @@ public class AdminPostController {
     @GetMapping("searchlist")
     public String adminSearchList(@ModelAttribute PageableParam pageableParam, String  searchKeyword, Model model) {
         Pageable pageable = PageRequest.of(pageableParam.getPage() - 1, pageableParam.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+
         Page<Post> searchList = adminPostService.adminSearch(searchKeyword, pageable);
+
+//        List<Post> postList = searchList.getContent();
+//        List<AdminSearchListDTO> searchListDTOList = new ArrayList<>();
+//
+//        for (Post post : postList) {
+//            AdminSearchListDTO searchListDTO = adminPostMapper.toSearchListDTOForAdmin(post);
+//            searchListDTOList.add(searchListDTO);
+//        }
+//
+//        model.addAttribute("searchListDTOForAdmin", searchListDTOList);
+
         model.addAttribute("searchList", searchList);
+
+        System.out.println("searchList = " + searchList);
         return "searchResults";
     }
 }
