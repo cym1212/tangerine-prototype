@@ -5,10 +5,7 @@ import io.mohajistudio.tangerine.prototype.global.auth.dto.RegisterDTO;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import io.mohajistudio.tangerine.prototype.global.enums.Gender;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -32,7 +29,7 @@ public class MemberProfile extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    private String thumbnail;
+    private String profileImage;
 
     @Column(length = 20, unique = true)
     private String nickname;
@@ -42,6 +39,6 @@ public class MemberProfile extends BaseEntity {
     Member member;
 
     public static MemberProfile createMemberProfileFrom(RegisterDTO registerDTO, Member member) {
-        return MemberProfile.builder().birthday(registerDTO.getBirthday()).phone(registerDTO.getPhone()).gender(registerDTO.getGender()).thumbnail(registerDTO.getThumbnail()).nickname(registerDTO.getNickname()).name(registerDTO.getName()).member(member).build();
+        return MemberProfile.builder().birthday(registerDTO.getBirthday()).phone(registerDTO.getPhone()).gender(registerDTO.getGender()).profileImage(registerDTO.getProfileImage()).nickname(registerDTO.getNickname()).name(registerDTO.getName()).member(member).build();
     }
 }

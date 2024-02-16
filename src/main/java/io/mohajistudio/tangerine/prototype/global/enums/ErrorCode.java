@@ -21,7 +21,8 @@ public enum ErrorCode {
     DATE_TIME_PARSE_FAILURE(400, "C013", "잘못된 DateTime 형식입니다"),
     HTTP_MESSAGE_CONVERSION(500, "C014", "요청 데이터 변환에 실패했습니다. 고객센터로 문의해주세요"),
     APP_OAUTH2_LOGIN_FAIL(500, "C015", "앱에서 OAuth2 로그인에 실패했습니다. 고객센터로 문의해주세요"),
-
+    IMAGE_RESIZE_FAIL(500, "C016", "이미지 리사이징에 실패하였습니다."),
+    MISSING_SERVLET_REQUEST_PART(400, "C017", "MultipartFile의 필수 파라미터가 존재하지 않습니다"),
     // Member
     MEMBER_NOT_FOUND(404, "M001", "존재하지 않는 회원입니다"),
     MEMBER_PROFILE_DUPLICATION(400, "M002", "이미 존재하는 회원입니다"),

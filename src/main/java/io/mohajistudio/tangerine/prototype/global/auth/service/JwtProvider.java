@@ -58,7 +58,7 @@ public class JwtProvider {
 
         saveRefreshToken(securityMemberDTO.getId(), refreshToken);
 
-        return GeneratedTokenDTO.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+        return GeneratedTokenDTO.builder().accessToken(accessToken).refreshToken(refreshToken).isRegistered(true).build();
     }
 
     public GeneratedTokenDTO generateGuestToken(Long id, String email, String provider, String role) {

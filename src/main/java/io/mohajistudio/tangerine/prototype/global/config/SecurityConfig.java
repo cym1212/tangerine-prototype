@@ -29,8 +29,10 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint userAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtProvider jwtProvider;
+    private static final String[] AUTHORITY_EVERY_MEMBER = {"GUEST", "MEMBER", "MANAGER", "ADMIN"};
     private static final String[] AUTHORITY_MEMBER = {"MEMBER", "MANAGER", "ADMIN"};
     private static final String AUTHORITY_GUEST = "GUEST";
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,6 +41,9 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/", "/members/*", "/posts", "/posts/*", "/login/*", "/posts/*/comments", "/members/*/follows", "/members/*/followMembers", "/nickname-duplicate", "/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     auth.requestMatchers(HttpMethod.PATCH, "/tokens").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/app/login/*").permitAll();
+
+                    //GUEST & MEMBER
+                    auth.requestMatchers(HttpMethod.POST, "members/member-profiles/profile-images").hasAnyAuthority(AUTHORITY_EVERY_MEMBER);
 
                     //GUEST
                     auth.requestMatchers(HttpMethod.POST, "/register").hasAuthority(AUTHORITY_GUEST);

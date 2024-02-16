@@ -22,7 +22,7 @@ public class MemberProfileDTO {
     @Schema(description = "멤버 핸드폰 번호", example = "01012345678")
     private String phone;
     @Schema(description = "멤버 프로필 이미지", example = "https://thumbnail.com")
-    private String thumbnail;
+    private String profileImage;
     @Schema(description = "멤버 생년월일", example = "1999-01-07")
     private LocalDate birthday;
 }

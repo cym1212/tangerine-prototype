@@ -57,7 +57,8 @@ public class S3UploadService {
         String destinationKey = sourceKey.replace(orderImagePath, newImagePath);
 
         CopyObjectRequest copyObjectRequest = CopyObjectRequest.builder().sourceBucket(s3Config.getBucket()).destinationBucket(s3Config.getBucket()).sourceKey(sourceKey).destinationKey(destinationKey).build();
-        CopyObjectResponse copyRes = s3Client.copyObject(copyObjectRequest);
-        return copyRes.copyObjectResult().toString();
+        s3Client.copyObject(copyObjectRequest);
+
+        return imageUrl.replace(orderImagePath, newImagePath);
     }
 }

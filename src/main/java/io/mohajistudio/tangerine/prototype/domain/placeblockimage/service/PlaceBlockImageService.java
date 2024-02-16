@@ -42,7 +42,6 @@ public class PlaceBlockImageService {
     }
 
     public String copyImageToPermanent(String imageUrl) {
-        s3UploadService.copyImage(imageUrl, TEMPORARY_PATH, PERMANENT_PATH);
-        return imageUrl.replace(TEMPORARY_PATH, PERMANENT_PATH);
+        return s3UploadService.copyImage(imageUrl, TEMPORARY_PATH, PERMANENT_PATH);
     }
 }

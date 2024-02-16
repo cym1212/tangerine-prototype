@@ -18,6 +18,7 @@ import io.mohajistudio.tangerine.prototype.global.enums.Role;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberProfileRepository;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
+import io.mohajistudio.tangerine.prototype.infra.upload.service.S3UploadService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +49,10 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final ClientRegistrationRepository clientRegistrationRepository;
+    private final S3UploadService s3UploadService;
     private static final String KAKAO_API_URL = "https://kapi.kakao.com/v2/user/me";
+    private static final String TEMPORARY_PATH = "temp/";
+    private static final String PERMANENT_PATH = "profile-images/";
 
     public GeneratedTokenDTO register(SecurityMemberDTO securityMember, RegisterDTO registerDTO) {
         Optional<Member> findMember = memberRepository.findById(securityMember.getId());
@@ -68,7 +72,12 @@ public class AuthService {
 
         memberRepository.updateRole(member.getId(), Role.MEMBER);
 
+        if (registerDTO.getProfileImage() != null) {
+            registerDTO.setProfileImage(s3UploadService.copyImage(registerDTO.getProfileImage(), TEMPORARY_PATH, PERMANENT_PATH));
+        }
+
         MemberProfile memberProfile = MemberProfile.createMemberProfileFrom(registerDTO, member);
+
         memberProfileRepository.save(memberProfile);
 
         securityMember.setRole(Role.MEMBER);
