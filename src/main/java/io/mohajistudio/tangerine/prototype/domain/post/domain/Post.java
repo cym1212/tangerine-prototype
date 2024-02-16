@@ -3,6 +3,7 @@ package io.mohajistudio.tangerine.prototype.domain.post.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
+import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import io.mohajistudio.tangerine.prototype.global.enums.PostStatus;
 import jakarta.persistence.*;
@@ -34,7 +35,11 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private int favoriteCnt = 0;
 
+    @Setter
     private short placeBlockCnt = 0;
+
+    @Setter
+    private String thumbnail;
 
     //방문 지역
     @Column(nullable = false)
@@ -66,15 +71,4 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private Set<PlaceBlock> placeBlocks;
-
-    public void setPlaceBlocks(Set<PlaceBlock> placeBlocks) {
-        this.placeBlocks = placeBlocks;
-        placeBlockCnt += (short) placeBlocks.size();
-        placeBlocks.forEach(placeBlock -> placeBlock.setPost(this));
-    }
-
-    public void setTextBlocks(Set<TextBlock> textBlocks) {
-        this.textBlocks = textBlocks;
-        textBlocks.forEach(textBlock -> textBlock.setPost(this));
-    }
 }

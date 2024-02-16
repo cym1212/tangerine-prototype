@@ -42,7 +42,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         if (!registered) {
             generatedTokenDTO = jwtProvider.generateGuestToken(id, email, provider, role);
-            response.setStatus(HttpStatus.NOT_FOUND.value());
             jsonObject.addProperty("isRegistered", false);
         } else {
             generatedTokenDTO = jwtProvider.generateTokens(id, email, provider, role);

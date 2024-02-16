@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
@@ -165,6 +166,13 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = ErrorResponse.of(ErrorCode.HTTP_MESSAGE_CONVERSION);
         sendWebhook(httpServletRequest, e.getMessage(), ErrorCode.HTTP_MESSAGE_CONVERSION);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    protected ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(MissingServletRequestPartException e, HttpServletRequest httpServletRequest) {
+        log.error(e.getMessage());
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.MISSING_SERVLET_REQUEST_PART);
+        sendWebhook(httpServletRequest, e.getMessage(), ErrorCode.MISSING_SERVLET_REQUEST_PART);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     public void sendWebhook(HttpServletRequest httpServletRequest, String errorMessage, ErrorCode errorCode) {
