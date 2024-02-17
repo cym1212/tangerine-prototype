@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Search Results</title>
+    <title>Post Search Results</title>
 </head>
 <body>
 
@@ -27,14 +27,14 @@
     </thead>
     <tbody>
     <!-- 검색 결과를 반복하며 표시 -->
-    <tr th:each="post : ${searchList.content}">
+    <tr th:each="post : ${search.content}">
         <td th:text="${post.id}"></td>
         <td th:text="${post.title}"></td>
         <td th:text="${post.visitStartDate}"></td>
         <td th:text="${post.visitEndDate}"></td>
         <td th:text="${post.commentCnt}"></td>
         <td th:text="${post.favoriteCnt}"></td>
-        <td th:text="${post.placeBlockCnt}"></td>
+        <td th:text="${post.blockCnt}"></td>
         <td th:text="${post.member.memberProfile.name}"></td>
     </tr>
     </tbody>

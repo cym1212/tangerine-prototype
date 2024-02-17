@@ -71,4 +71,24 @@ public class AdminPostDTO {
         @Schema(description = "작성자")
         private AdminMemberDTO member;
     }
+
+    @Getter
+    @Setter
+    @Schema(name = "AdminPostDTO.Details", description = "게시글 목록을 반환할 때 사용할 DTO")
+    public static class Search extends AdminPostDTO {
+        @Schema(description = "Post Id", example = "1")
+        private Long id;
+        @Schema(description = "댓글 개수")
+        private int commentCnt;
+        @Schema(description = "좋아요 개수")
+        private int favoriteCnt;
+        @Schema(description = "블럭 개수")
+        private short blockCnt;
+        @Schema(description = "작성자")
+        private AdminMemberDTO member;
+        @Schema(description = "검색어")
+        private String searchKeyword;
+    }
+
+
 }

@@ -40,9 +40,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> {
                     //ALL
-                    auth.requestMatchers(HttpMethod.GET, "/", "/members/*", "/posts", "/posts/*", "/login/*", "/posts/*/comments", "/members/*/follows", "/members/*/followMembers", "/nickname-duplicate", "/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
-                    auth.requestMatchers(HttpMethod.PATCH, "/tokens").permitAll();
-                    auth.requestMatchers(HttpMethod.POST, "/app/login/*").permitAll();
+                    auth.requestMatchers(HttpMethod.GET,"/admin/**", "/", "/members/*", "/posts", "/posts/*", "/login/*", "/posts/*/comments", "/members/*/follows", "/members/*/followMembers", "/nickname-duplicate", "/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                    auth.requestMatchers(HttpMethod.PATCH, "/admin/**","/tokens").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/admin/**","/app/login/*").permitAll();
+                    auth.requestMatchers(HttpMethod.DELETE, "/admin/**").permitAll();
 
                     //GUEST & MEMBER
                     auth.requestMatchers(HttpMethod.POST, "members/member-profiles/profile-images").hasAnyAuthority(AUTHORITY_EVERY_MEMBER);
@@ -55,10 +56,10 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.POST, "/posts", "/places", "/posts/*/comments", "/places/kakao", "/posts/place-blocks/place-block-images", "/places/recommend").hasAnyAuthority(AUTHORITY_MEMBER);
                     auth.requestMatchers(HttpMethod.PATCH, "/logout", "/posts/*/favorites", "/posts/*", "/posts/*/comments/*", "/members/*/follows", "/posts/*/scrap").hasAnyAuthority(AUTHORITY_MEMBER);
                     auth.requestMatchers(HttpMethod.DELETE, "/posts/*", "/posts/*/comments/*").hasAnyAuthority(AUTHORITY_MEMBER);
-                    auth.requestMatchers(HttpMethod.GET, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
-                    auth.requestMatchers(HttpMethod.POST, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
-                    auth.requestMatchers(HttpMethod.PATCH, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
-                    auth.requestMatchers(HttpMethod.DELETE, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
+//                    auth.requestMatchers(HttpMethod.GET, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
+//                    auth.requestMatchers(HttpMethod.POST, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
+//                    auth.requestMatchers(HttpMethod.PATCH, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
+//                    auth.requestMatchers(HttpMethod.DELETE, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
 
                 }).csrf(AbstractHttpConfigurer::disable).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2Login(oauth2Login -> {
