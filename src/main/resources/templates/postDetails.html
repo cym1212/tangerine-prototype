@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Post Details</title>
+</head>
+<body>
+
+<h1>게시글 상세 정보</h1>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Visit Start Date</th>
+        <th>Visit End Date</th>
+        <th>Comment Count</th>
+        <th>Favorite Count</th>
+        <th>Block Count</th>
+        <th>Member</th>
+        <th>Coordinates</th>
+        <th>Text Blocks</th>
+        <th>Place Blocks</th>
+    </tr>
+    <tr>
+        <td th:text="${adminPostDetails.id}"></td>
+        <td th:text="${adminPostDetails.title}"></td>
+        <td th:text="${adminPostDetails.visitStartDate}"></td>
+        <td th:text="${adminPostDetails.visitEndDate}"></td>
+        <td th:text="${adminPostDetails.commentCnt}"></td>
+        <td th:text="${adminPostDetails.favoriteCnt}"></td>
+        <td th:text="${adminPostDetails.blockCnt}"></td>
+        <td th:text="${adminPostDetails.member.memberProfile.name}"></td>
+        <td th:text="${adminPostDetails.coordinates}"></td>
+        <td>
+            <ul>
+                <li th:each="textBlock : ${adminPostDetails.textBlocks}" th:text="${textBlock.content}"></li>
+            </ul>
+        </td>
+
+    </tr>
+</table>
+
+</body>
+</html>
