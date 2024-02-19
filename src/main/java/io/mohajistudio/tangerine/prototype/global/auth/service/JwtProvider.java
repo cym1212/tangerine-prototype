@@ -119,7 +119,7 @@ public class JwtProvider {
 
         memberRepository.save(member);
 
-        generatedTokenDTO = GeneratedTokenDTO.builder().accessToken(reissuedAccessToken).refreshToken(reissuedRefreshToken).build();
+        generatedTokenDTO = GeneratedTokenDTO.builder().accessToken(reissuedAccessToken).refreshToken(reissuedRefreshToken).isRegistered(true).build();
 
         return generatedTokenDTO;
     }

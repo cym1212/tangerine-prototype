@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final FavoriteCommentRepository favoriteCommentRepository;
 
-    public void AddComment(Comment comment, Long postId, Long memberId) {
+    public Comment AddComment(Comment comment, Long postId, Long memberId) {
         Optional<Member> findMember = memberRepository.findById(memberId);
         findMember.ifPresent(comment::setMember);
 
@@ -39,16 +40,18 @@ public class CommentService {
         if (findPost.isEmpty()) {
             throw new UrlNotFoundException();
         }
-        comment.setPost(findPost.get());
+        Post post = findPost.get();
 
-        if (comment.getReplyComment() == null && comment.getParentComment() == null) { //대댓글이 아닐경우
+        comment.setPost(post);
+
+        if (comment.getReplyComment() == null && comment.getParentComment() == null) {
             Integer maxGroupNumber = commentRepository.findMaxGroupNumberByPostId(postId);
             if (maxGroupNumber == null) {
                 comment.setGroupNumber(0);
             } else {
                 comment.setGroupNumber(maxGroupNumber + 1);
             }
-        } else if (comment.getReplyComment() != null && comment.getParentComment() != null) { //대댓글일 경우
+        } else if (comment.getReplyComment() != null && comment.getParentComment() != null) {
             Integer parentGroupNumber = commentRepository.findGroupNumberById(comment.getParentComment().getId());
             if (parentGroupNumber == null) {
                 throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
@@ -60,6 +63,10 @@ public class CommentService {
 
         comment.setStatus(CommentStatus.PUBLISHED);
         commentRepository.save(comment);
+
+        postRepository.updateCommentCnt(post.getId(), post.getCommentCnt() + 1);
+
+        return comment;
     }
 
     public Page<Comment> findCommentListByPage(Long postId, Pageable pageable) {
@@ -68,7 +75,15 @@ public class CommentService {
             throw new UrlNotFoundException();
         }
 
-        return commentRepository.findByPostId(postId, pageable);
+        Page<Comment> commentListByPage = commentRepository.findByPostId(postId, pageable);
+
+        commentListByPage.forEach((comment) -> {
+            if (comment.getDeletedAt() != null) {
+                comment.deleteContent();
+            }
+        });
+
+        return commentListByPage;
     }
 
     public void modifyComment(Comment modifyComment, Long postId, Long memberId) {
@@ -88,8 +103,17 @@ public class CommentService {
     public void deleteComment(Long commentId, Long postId, Long memberId) {
         validateComment(commentId, postId, memberId);
 
+        Optional<Post> findPost = postRepository.findById(postId);
+
+        if (findPost.isEmpty()) {
+            throw new UrlNotFoundException();
+        }
+
         LocalDateTime deletedAt = LocalDateTime.now();
-        commentRepository.delete(commentId, deletedAt);
+
+        commentRepository.delete(commentId, deletedAt, CommentStatus.DELETED);
+
+        postRepository.updateCommentCnt(postId, findPost.get().getCommentCnt() - 1);
     }
 
     private void validateComment(Long commentId, Long postId, Long memberId) {
@@ -112,6 +136,8 @@ public class CommentService {
             throw new UrlNotFoundException();
         }
 
+        Post post = findPost.get();
+
         Optional<Comment> findComment = commentRepository.findById(id);
         if (findComment.isEmpty()) {
             throw new UrlNotFoundException();
@@ -123,16 +149,20 @@ public class CommentService {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
-        Optional<FavoriteComment> findFavoriteComment = favoriteCommentRepository.findByMemberIdAndPostId(memberId, id);
+        Optional<FavoriteComment> findFavoriteComment = favoriteCommentRepository.findByMemberIdAndCommentId(memberId, id);
         if (findFavoriteComment.isPresent()) {
             FavoriteComment favoriteComment = findFavoriteComment.get();
-            favoriteCommentRepository.delete(favoriteComment);
+            favoriteCommentRepository.deleteById(favoriteComment.getId());
             commentRepository.updateFavoriteCnt(comment.getId(), comment.getFavoriteCnt() - 1);
         } else {
             Member member = Member.builder().id(memberId).build();
-            FavoriteComment favoriteComment = FavoriteComment.builder().member(member).comment(comment).build();
+            FavoriteComment favoriteComment = FavoriteComment.builder().member(member).comment(comment).post(post).build();
             favoriteCommentRepository.save(favoriteComment);
-            postRepository.updateFavoriteCnt(comment.getId(), comment.getFavoriteCnt() + 1);
+            commentRepository.updateFavoriteCnt(comment.getId(), comment.getFavoriteCnt() + 1);
         }
+    }
+
+    public Set<FavoriteComment> findFavoriteCommentListAtPost(Long postId, Long memberId) {
+        return favoriteCommentRepository.findByMemberIdAndPostId(memberId, postId);
     }
 }
