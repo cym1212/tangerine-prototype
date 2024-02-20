@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Persistable;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @SuperBuilder
@@ -49,7 +49,7 @@ public class Place extends BaseEntity implements Persistable<Long> {
 
     @JsonIgnore
     @OneToMany(mappedBy = "place")
-    private List<PlaceBlock> placeBlocks;
+    private Set<PlaceBlock> placeBlocks;
 
     public String getAddress() {
         return getAddressProvince() + " " + getAddressCity() + " " + getAddressDistrict() + " " + getAddressDetail();

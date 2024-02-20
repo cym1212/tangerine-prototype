@@ -38,7 +38,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> {
                     //ALL
-                    auth.requestMatchers(HttpMethod.GET, "/", "/members/*", "/posts", "/posts/*", "/login/*", "/posts/*/comments", "/members/*/follows", "/members/*/followMembers", "/nickname-duplicate", "/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/", "/members/*", "/members/*/posts", "/members/*/place-blocks", "/posts", "/posts/*", "/login/*", "/posts/*/comments", "/members/*/follows", "/members/*/followMembers", "/nickname-duplicate", "/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     auth.requestMatchers(HttpMethod.PATCH, "/tokens").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/app/login/*").permitAll();
 

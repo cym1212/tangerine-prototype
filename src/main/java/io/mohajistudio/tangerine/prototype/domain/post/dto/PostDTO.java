@@ -49,6 +49,8 @@ public class PostDTO {
         private LocalDateTime createdAt;
         @Schema(description = "수정 시간", example = "2023-02-17T11:44:30.327959")
         private LocalDateTime modifiedAt;
+        @Schema(description = "좋아하는 게시글 여부", example = "true")
+        private Boolean isFavorite;
 
         @Valid
         @ArraySchema(arraySchema = @Schema(description = "텍스트 블럭"))

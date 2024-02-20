@@ -60,6 +60,7 @@ public class PostService {
 
         post.getPlaceBlocks().forEach(placeBlock -> {
             placeBlock.setPost(post);
+            placeBlock.setMember(post.getMember());
 
             Place place = placeBlock.getPlace();
             Optional<Place> findPlace = placeRepository.findByProviderId(place.getProviderId());
@@ -88,10 +89,18 @@ public class PostService {
         return postRepository.findAll(pageable);
     }
 
-    public Post findPostDetails(Long id) {
+    public Post findPostDetails(Long id, Long memberId) {
         Optional<Post> findPost = postRepository.findByIdDetails(id);
         if (findPost.isEmpty()) throw new UrlNotFoundException();
-        return findPost.get();
+
+        Post post = findPost.get();
+
+        if (memberId != null) {
+            Optional<FavoritePost> findFavoritePost = favoritePostRepository.findByMemberIdAndPostId(id, memberId);
+            post.setIsFavorite(findFavoritePost.isPresent());
+        }
+
+        return post;
     }
 
     public void modifyPost(Post modifyPost, Long memberId) {
@@ -134,6 +143,7 @@ public class PostService {
     private void modifyPlaceBlock(PlaceBlock placeBlock, Post post) {
         if (placeBlock.getId() == null) {
             placeBlock.setPost(post);
+            placeBlock.setMember(post.getMember());
             placeBlockRepository.save(placeBlock);
         } else {
             Optional<PlaceBlock> findPlaceBlock = placeBlockRepository.findById(placeBlock.getId());
@@ -178,7 +188,7 @@ public class PostService {
         Optional<FavoritePost> findFavoritePost = favoritePostRepository.findByMemberIdAndPostId(memberId, id);
         if (findFavoritePost.isPresent()) {
             FavoritePost favoritePost = findFavoritePost.get();
-            favoritePostRepository.delete(favoritePost);
+            favoritePostRepository.deleteById(favoritePost.getId());
             postRepository.updateFavoriteCnt(post.getId(), post.getFavoriteCnt() - 1);
         } else {
             Member member = Member.builder().id(memberId).build();

@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @SuperBuilder
@@ -21,5 +21,5 @@ public class PlaceCategory extends BaseEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "placeCategory")
-    private List<PlaceBlock> placeBlocks;
+    private Set<PlaceBlock> placeBlocks;
 }
