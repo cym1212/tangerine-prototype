@@ -2,8 +2,8 @@ package io.mohajistudio.tangerine.prototype.domain.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
+import io.mohajistudio.tangerine.prototype.domain.comment.domain.FavoriteComment;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
-import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import io.mohajistudio.tangerine.prototype.global.enums.PostStatus;
 import jakarta.persistence.*;
@@ -30,6 +30,7 @@ public class Post extends BaseEntity {
     private LocalDate visitEndDate;
 
     @Column(nullable = false)
+    @Setter
     private int commentCnt = 0;
 
     @Column(nullable = false)
@@ -44,6 +45,10 @@ public class Post extends BaseEntity {
     //방문 지역
     @Column(nullable = false)
     private String visitRegion;
+
+    @Transient
+    @Setter
+    private Boolean isFavorite;
 
     @Setter
     @Column(nullable = false, length = 10)
@@ -71,4 +76,7 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private Set<PlaceBlock> placeBlocks;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private Set<FavoriteComment> favoriteComments;
 }

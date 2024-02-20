@@ -1,6 +1,7 @@
 package io.mohajistudio.tangerine.prototype.domain.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.place.domain.PlaceCategory;
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
@@ -19,7 +20,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name = "place_block")
 public class PlaceBlock extends BaseEntity {
-
     @Column(nullable = false)
     private short orderNumber;
 
@@ -51,6 +51,10 @@ public class PlaceBlock extends BaseEntity {
 
     @OneToMany(mappedBy = "placeBlock", fetch = FetchType.EAGER)
     private Set<PlaceBlockImage> placeBlockImages;
+
+    @Setter
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Member member;
 
     public void setPlaceBlockImages(Set<PlaceBlockImage> placeBlockImages) {
         this.placeBlockImages = placeBlockImages;

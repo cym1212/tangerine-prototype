@@ -25,6 +25,13 @@ public class CommentDTO {
 
     @Getter
     @Setter
+    public static class Reply {
+        private Long id;
+        private MemberDTO member;
+    }
+
+    @Getter
+    @Setter
     @Schema(name = "CommentDTO.Add", description = "게시글 추가를 위한 DTO")
     public static class Add extends CommentDTO {
         @Schema(description = "ParentComment Id")
@@ -36,7 +43,7 @@ public class CommentDTO {
     @Getter
     @Setter
     @Schema(name = "CommentDTO.Details", description = "댓글의 상세를 반환할 때 사용할 DTO")
-    public static class Details extends CommentDTO.Add {
+    public static class Details extends CommentDTO {
         @Schema(description = "Comment Id", example = "1")
         private Long id;
         @Schema(description = "그룹 번호", example = "1")
@@ -49,6 +56,10 @@ public class CommentDTO {
         private LocalDateTime modifiedAt;
         @Schema(description = "작성자")
         private MemberDTO member;
+        @Schema(description = "ParentComment Id")
+        private CommentDTO.Compact parentComment;
+        @Schema(description = "ReplyComment")
+        private CommentDTO.Reply replyComment;
     }
 
     @Getter

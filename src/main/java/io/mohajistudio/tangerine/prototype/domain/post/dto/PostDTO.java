@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -44,6 +45,13 @@ public class PostDTO {
     @Setter
     @Schema(name = "PostDTO.Details", description = "게시글의 상세를 반환할 때 사용할 DTO")
     public static class Details extends PostDTO.Compact {
+        @Schema(description = "작성 시간", example = "2023-02-17T11:44:30.327959")
+        private LocalDateTime createdAt;
+        @Schema(description = "수정 시간", example = "2023-02-17T11:44:30.327959")
+        private LocalDateTime modifiedAt;
+        @Schema(description = "좋아하는 게시글 여부", example = "true")
+        private Boolean isFavorite;
+
         @Valid
         @ArraySchema(arraySchema = @Schema(description = "텍스트 블럭"))
         private Set<TextBlockDTO.Details> textBlocks;
