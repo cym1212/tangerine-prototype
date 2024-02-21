@@ -77,6 +77,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private Set<FavoritePost> favoritePosts;
 
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private Set<PlaceBlock> placeBlocks;
+
     public static Member createGuest(Provider provider, String providerId, String email) {
         return Member.builder().provider(provider).role(Role.GUEST).email(email).providerId(providerId).build();
     }

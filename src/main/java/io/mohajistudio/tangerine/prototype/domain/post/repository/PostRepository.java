@@ -41,12 +41,23 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "where p.deletedAt IS NULL")
     Page<Post> findAll(Pageable pageable);
 
+    @Query("select distinct p from Post p " +
+            "join fetch p.member m " +
+            "join fetch m.memberProfile mp " +
+            "WHERE p.deletedAt IS NULL " +
+            "AND p.member.id = :memberId")
+    Page<Post> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+
     @Query("SELECT p FROM Post p WHERE p.member.id = :memberId AND p.createdAt >= :twentyFourHoursAgo ORDER BY p.createdAt DESC")
     List<Post> countPostsToday(@Param("memberId") Long memberId, @Param("twentyFourHoursAgo") LocalDateTime twentyFourHoursAgo);
 
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.favoriteCnt = :favoriteCnt where p.id = :id and p.deletedAt IS NULL")
     void updateFavoriteCnt(@Param("id") Long id, @Param("favoriteCnt") int favoriteCnt);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Post p set p.commentCnt = :commentCnt where p.id = :id and p.deletedAt IS NULL")
+    void updateCommentCnt(@Param("id") Long id, @Param("commentCnt") int commentCnt);
 
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.title = :title, p.visitStartDate = :visitStartDate, p.visitEndDate = :visitEndDate, p.placeBlockCnt = :placeBlockCnt where p.id = :id and p.deletedAt IS NULL")

@@ -4,8 +4,12 @@ import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberDTO;
 import io.mohajistudio.tangerine.prototype.domain.member.mapper.MemberMapper;
 import io.mohajistudio.tangerine.prototype.domain.member.service.MemberService;
-import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
-import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceBlockImageDTO;
+import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
+import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceBlockDTO;
+import io.mohajistudio.tangerine.prototype.domain.post.dto.PostDTO;
+import io.mohajistudio.tangerine.prototype.domain.post.mapper.PlaceBlockMapper;
+import io.mohajistudio.tangerine.prototype.domain.post.mapper.PostMapper;
 import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import io.mohajistudio.tangerine.prototype.global.common.PageableParam;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
@@ -31,6 +35,8 @@ import java.util.Objects;
 public class MemberController {
     private final MemberService memberService;
     private final MemberMapper memberMapper;
+    private final PostMapper postMapper;
+    private final PlaceBlockMapper placeBlockMapper;
 
     @GetMapping("/{memberId}")
     @Operation(summary = "멤버 조회", description = "멤버를 조회합니다.")
@@ -75,5 +81,23 @@ public class MemberController {
         Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
 
         return memberService.findFollowMemberListByPage(memberId, pageable).map(memberMapper::toDTO);
+    }
+
+    @GetMapping("/{memberId}/posts")
+    @Operation(summary = "특정 멤버가 작성한 게시글", description = "특정 멤버가 작성한 게시글들을 조회힙니다.")
+    public Page<PostDTO.Compact> postListByPage(@PathVariable("memberId") Long memberId, @ModelAttribute PageableParam pageableParam) {
+        Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
+
+        Page<Post> postListByPage = memberService.findPostListByPage(memberId, pageable);
+        return postListByPage.map(postMapper::toCompactDTO);
+    }
+
+    @GetMapping("/{memberId}/place-blocks")
+    @Operation(summary = "특정 멤버가 작성한 게시글", description = "특정 멤버가 작성한 게시글들을 조회힙니다.")
+    public Page<PlaceBlockDTO.Details> placeBlockListByPage(@PathVariable("memberId") Long memberId, @ModelAttribute PageableParam pageableParam) {
+        Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
+
+        Page<PlaceBlock> postListByPage = memberService.findPlaceBlockListByPage(memberId, pageable);
+        return postListByPage.map(placeBlockMapper::toDetailsDTO);
     }
 }

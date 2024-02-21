@@ -4,7 +4,12 @@ import io.mohajistudio.tangerine.prototype.domain.member.domain.Follow;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.FollowRepository;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
+import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
+import io.mohajistudio.tangerine.prototype.domain.post.repository.PlaceBlockRepository;
+import io.mohajistudio.tangerine.prototype.domain.post.repository.PostRepository;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
+import io.mohajistudio.tangerine.prototype.global.error.exception.UrlNotFoundException;
 import io.mohajistudio.tangerine.prototype.global.utils.ImageUtils;
 import io.mohajistudio.tangerine.prototype.infra.upload.service.S3UploadService;
 import jakarta.transaction.Transactional;
@@ -24,6 +29,8 @@ import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.MISMATC
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final PostRepository postRepository;
+    private final PlaceBlockRepository placeBlockRepository;
     private final FollowRepository followRepository;
     private final S3UploadService s3UploadService;
     private final ImageUtils imageResizer;
@@ -88,5 +95,19 @@ public class MemberService {
 
     public Page<Member> findFollowMemberListByPage(Long memberId, Pageable pageable) {
         return followRepository.findFollowMember(memberId, pageable).map(Follow::getMember);
+    }
+
+    public Page<Post> findPostListByPage(Long memberId, Pageable pageable) {
+        Optional<Member> findMember = memberRepository.findById(memberId);
+        if (findMember.isEmpty()) throw new UrlNotFoundException();
+
+        return postRepository.findByMemberId(memberId, pageable);
+    }
+
+    public Page<PlaceBlock> findPlaceBlockListByPage(Long memberId, Pageable pageable) {
+        Optional<Member> findMember = memberRepository.findById(memberId);
+        if (findMember.isEmpty()) throw new UrlNotFoundException();
+
+        return placeBlockRepository.findByMemberId(memberId, pageable);
     }
 }

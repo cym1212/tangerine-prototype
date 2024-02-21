@@ -20,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "comment")
 public class Comment extends BaseEntity {
+    @Setter
     @Column(nullable = false)
     private String content;
 
@@ -57,4 +58,8 @@ public class Comment extends BaseEntity {
 
     @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY)
     private List<FavoriteComment> favoriteComments;
+
+    public void deleteContent() {
+        this.content = null;
+    }
 }

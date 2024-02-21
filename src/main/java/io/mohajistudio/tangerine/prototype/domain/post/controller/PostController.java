@@ -60,7 +60,10 @@ public class PostController {
     @GetMapping("/{id}")
     @Operation(summary = "게시글 상세 조회", description = "게시글 상세를 조회합니다.")
     public PostDTO.Details postDetails(@PathVariable("id") Long id) {
-        Post postDetails = postService.findPostDetails(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
+
+        Post postDetails = postService.findPostDetails(id, securityMember.getId());
         return postMapper.toDetailsDTO(postDetails);
     }
 

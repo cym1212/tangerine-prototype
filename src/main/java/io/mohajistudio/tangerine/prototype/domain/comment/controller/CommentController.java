@@ -1,7 +1,9 @@
 package io.mohajistudio.tangerine.prototype.domain.comment.controller;
 
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
+import io.mohajistudio.tangerine.prototype.domain.comment.domain.FavoriteComment;
 import io.mohajistudio.tangerine.prototype.domain.comment.dto.CommentDTO;
+import io.mohajistudio.tangerine.prototype.domain.comment.dto.FavoriteCommentDTO;
 import io.mohajistudio.tangerine.prototype.domain.comment.mapper.CommentMapper;
 import io.mohajistudio.tangerine.prototype.domain.comment.service.CommentService;
 import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
@@ -20,6 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/posts/{postId}/comments")
@@ -30,20 +34,21 @@ public class CommentController {
     private final CommentMapper commentMapper;
 
     @GetMapping
-    @Operation(summary = "페이징 된 댓글 목록", description = "page와 size 값을 넘기면 페이징 된 댓글 목록을 반환합니다. 기본 값은 page는 1, size는 10 입니다.")
+    @Operation(summary = "페이징 된 댓글 목록 조회", description = "page와 size 값을 넘기면 페이징 된 댓글 목록을 조회합니다. 기본 값은 page는 1, size는 10 입니다.")
     public Page<CommentDTO.Details> commentListByPage(@PathVariable(name = "postId") Long postId, @ModelAttribute PageableParam pageableParam) {
         Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
         Page<Comment> commentListByPage = commentService.findCommentListByPage(postId, pageable);
-        return commentListByPage.map(commentMapper::commentAddDtoToComment);
+        return commentListByPage.map(commentMapper::toDTO);
     }
 
     @PostMapping
     @Operation(summary = "댓글 추가", description = "댓글 형식에 맞게 데이터를 전달해주세요.")
-    public void commentAdd(@RequestBody @Valid CommentDTO.Add commentAddDTO, @PathVariable(name = "postId") Long postId) {
+    public CommentDTO.Details commentAdd(@RequestBody @Valid CommentDTO.Add commentAddDTO, @PathVariable(name = "postId") Long postId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
-        commentService.AddComment(commentMapper.commentAddDtoToComment(commentAddDTO), postId, securityMember.getId());
+        Comment comment = commentService.AddComment(commentMapper.toEntity(commentAddDTO), postId, securityMember.getId());
+        return commentMapper.toDTO(comment);
     }
 
     @PatchMapping("/{id}")
@@ -56,7 +61,7 @@ public class CommentController {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
-        commentService.modifyComment(commentMapper.commentAddDtoToComment(commentPatchDTO), postId, securityMember.getId());
+        commentService.modifyComment(commentMapper.toEntity(commentPatchDTO), postId, securityMember.getId());
     }
 
     @DeleteMapping("/{id}")
@@ -75,5 +80,15 @@ public class CommentController {
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         commentService.modifyFavoriteComment(id, postId, securityMember.getId());
+    }
+
+    @GetMapping("/favorites")
+    @Operation(summary = "게시글에 등록된 좋아하는 댓글 목록 조회", description = "게시글에 등록된 좋아하는 댓글 목록을 조회합니다.")
+    public Set<FavoriteCommentDTO> favoriteCommentList(@PathVariable(name = "postId") Long postId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
+
+        Set<FavoriteComment> favoriteCommentListAtPost = commentService.findFavoriteCommentListAtPost(postId, securityMember.getId());
+        return favoriteCommentListAtPost.stream().map(commentMapper::toDTO).collect(Collectors.toSet());
     }
 }
