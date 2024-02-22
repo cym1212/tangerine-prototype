@@ -60,8 +60,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     void updateCommentCnt(@Param("id") Long id, @Param("commentCnt") int commentCnt);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Post p set p.title = :title, p.visitStartDate = :visitStartDate, p.visitEndDate = :visitEndDate, p.placeBlockCnt = :placeBlockCnt where p.id = :id and p.deletedAt IS NULL")
-    void update(@Param("id") Long id, @Param("title") String title, @Param("visitStartDate") LocalDate visitStartDate, @Param("visitEndDate") LocalDate visitEndDate, @Param("placeBlockCnt") short placeBlockCnt);
+    @Query("update Post p set p.title = :title, p.visitStartDate = :visitStartDate, p.visitEndDate = :visitEndDate, p.placeBlockCnt = :placeBlockCnt, p.thumbnail = :thumbnail where p.id = :id and p.deletedAt IS NULL")
+    void update(@Param("id") Long id, @Param("title") String title, @Param("visitStartDate") LocalDate visitStartDate, @Param("visitEndDate") LocalDate visitEndDate, @Param("placeBlockCnt") short placeBlockCnt, @Param("thumbnail") String thumbnail);
 
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.deletedAt = :deletedAt, p.status = :postStatus where p.id = :id and p.deletedAt IS NULL")

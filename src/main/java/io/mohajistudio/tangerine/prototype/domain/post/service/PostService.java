@@ -42,15 +42,21 @@ public class PostService {
 
     public void addPost(Post post, Long memberId) {
         countPostsToday(memberId);
+
         checkBlockOrderNumberAndContentIsEmpty(post.getPlaceBlocks(), post.getTextBlocks());
 
         Optional<Member> findMember = memberRepository.findById(memberId);
+
         findMember.ifPresent(post::setMember);
 
         post.setStatus(PostStatus.PUBLISHED);
+
         post.setPlaceBlockCnt((short) post.getPlaceBlocks().size());
 
+        post.setVisitDate();
+
         post.setThumbnail(placeBlockImageService.copyImageToPermanent(post.getThumbnail()));
+
         postRepository.save(post);
 
         post.getTextBlocks().forEach(textBlock -> {
@@ -117,11 +123,16 @@ public class PostService {
         }
 
         checkBlockOrderNumberAndContentIsEmpty(modifyPost.getPlaceBlocks(), modifyPost.getTextBlocks());
+
         checkDeletedBlock(modifyPost.getPlaceBlocks(), modifyPost.getTextBlocks(), post.getPlaceBlocks(), post.getTextBlocks());
 
-        post.setPlaceBlockCnt((short) post.getPlaceBlocks().size());
+        modifyPost.setPlaceBlockCnt((short) post.getPlaceBlocks().size());
 
-        postRepository.update(post.getId(), modifyPost.getTitle(), modifyPost.getVisitStartDate(), modifyPost.getVisitEndDate(), modifyPost.getPlaceBlockCnt());
+        modifyPost.setVisitDate();
+
+        modifyPost.setThumbnail(placeBlockImageService.copyImageToPermanent(modifyPost.getThumbnail()));
+
+        postRepository.update(post.getId(), modifyPost.getTitle(), modifyPost.getVisitStartDate(), modifyPost.getVisitEndDate(), modifyPost.getPlaceBlockCnt(), modifyPost.getThumbnail());
 
         modifyPost.getTextBlocks().forEach(textBlock -> modifyTextBlock(textBlock, post));
         modifyPost.getPlaceBlocks().forEach(placeBlock -> {
