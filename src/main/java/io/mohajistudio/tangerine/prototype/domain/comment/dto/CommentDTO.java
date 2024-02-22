@@ -2,6 +2,7 @@ package io.mohajistudio.tangerine.prototype.domain.comment.dto;
 
 import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 public class CommentDTO {
     @NotNull
+    @NotEmpty
     @Schema(description = "내용", example = "댓글에 들어갈 내용")
     private String content;
 
@@ -26,7 +28,9 @@ public class CommentDTO {
     @Getter
     @Setter
     public static class Reply {
+        @Schema(description = "Reply Comment Id", example = "1")
         private Long id;
+        @Schema(description = "Reply 작성자", example = "1")
         private MemberDTO member;
     }
 
