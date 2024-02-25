@@ -174,7 +174,7 @@ public class PostService {
             if (findPlaceBlockImage.isEmpty()) {
                 throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
             }
-            placeBlockImageRepository.update(findPlaceBlockImage.get().getId(), placeBlockImage.getImageUrl(), placeBlockImage.getImageMimeType(), placeBlockImage.getOrderNumber());
+            placeBlockImageRepository.update(findPlaceBlockImage.get().getId(), placeBlockImage.getStorageKey(), placeBlockImage.getOrderNumber());
         }
     }
 
