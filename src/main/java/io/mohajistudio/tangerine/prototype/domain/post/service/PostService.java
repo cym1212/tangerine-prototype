@@ -95,6 +95,9 @@ public class PostService {
         return postRepository.findAll(pageable);
     }
 
+    public Page<Post> findPostListByKeywordPage(Pageable pageable, String keyword) {
+        return postRepository.findAllContainingKeyword(pageable, keyword);
+    }
     public Post findPostDetails(Long id, Long memberId) {
         Optional<Post> findPost = postRepository.findByIdDetails(id);
         if (findPost.isEmpty()) throw new UrlNotFoundException();

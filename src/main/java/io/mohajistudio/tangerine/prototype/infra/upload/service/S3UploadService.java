@@ -40,19 +40,14 @@ public class S3UploadService {
         } catch (IOException e) {
             throw new BusinessException(ErrorCode.STORAGE_UPLOAD_FAILURE);
         }
-        GetUrlRequest getUrlRequest = GetUrlRequest.builder()
-                .bucket(s3Config.getBucket())
-                .key(key)
-                .build();
 
-        return s3Client.utilities().getUrl(getUrlRequest).toString();
+        return key;
     }
 
     public String copyImage(String storageKey, String orderImagePath, String newImagePath) {
-        String sourceKey = UploadUtils.extractImagePath(storageKey);
-        String destinationKey = sourceKey.replace(orderImagePath, newImagePath);
+        String destinationKey = storageKey.replace(orderImagePath, newImagePath);
 
-        CopyObjectRequest copyObjectRequest = CopyObjectRequest.builder().sourceBucket(s3Config.getBucket()).destinationBucket(s3Config.getBucket()).sourceKey(sourceKey).destinationKey(destinationKey).build();
+        CopyObjectRequest copyObjectRequest = CopyObjectRequest.builder().sourceBucket(s3Config.getBucket()).destinationBucket(s3Config.getBucket()).sourceKey(storageKey).destinationKey(destinationKey).build();
         s3Client.copyObject(copyObjectRequest);
 
         return storageKey.replace(orderImagePath, newImagePath);

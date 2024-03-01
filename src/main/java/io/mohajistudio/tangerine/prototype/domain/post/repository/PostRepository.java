@@ -41,6 +41,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "where p.deletedAt IS NULL")
     Page<Post> findAll(Pageable pageable);
 
+    @Query("SELECT DISTINCT p FROM Post p " +
+            "JOIN FETCH p.member m " +
+            "JOIN FETCH m.memberProfile mp " +
+            "WHERE p.deletedAt IS NULL " +
+            "AND p.title ILIKE %:keyword%")
+    Page<Post> findAllContainingKeyword(Pageable pageable, @Param("keyword") String keyword);
+
     @Query("select distinct p from Post p " +
             "join fetch p.member m " +
             "join fetch m.memberProfile mp " +
@@ -66,4 +73,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.deletedAt = :deletedAt, p.status = :postStatus where p.id = :id and p.deletedAt IS NULL")
     void delete(@Param("id") Long id, @Param("deletedAt") LocalDateTime deletedAt, @Param("postStatus") PostStatus postStatus);
+
+
 }

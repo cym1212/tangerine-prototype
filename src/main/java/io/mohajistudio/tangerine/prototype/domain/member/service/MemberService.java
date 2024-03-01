@@ -10,8 +10,8 @@ import io.mohajistudio.tangerine.prototype.domain.post.repository.PlaceBlockRepo
 import io.mohajistudio.tangerine.prototype.domain.post.repository.PostRepository;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.global.error.exception.UrlNotFoundException;
-import io.mohajistudio.tangerine.prototype.global.utils.ImageUtils;
 import io.mohajistudio.tangerine.prototype.infra.upload.service.S3UploadService;
+import io.mohajistudio.tangerine.prototype.infra.upload.utils.UploadUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,11 +33,6 @@ public class MemberService {
     private final PlaceBlockRepository placeBlockRepository;
     private final FollowRepository followRepository;
     private final S3UploadService s3UploadService;
-    private final ImageUtils imageResizer;
-    private static final String TEMPORARY_PATH = "temp/";
-    private static final String PERMANENT_PATH = "profile-images/";
-    private static final int PROFILE_IMAGE_SIZE = 320;
-
 
     public Member findMember(Long memberId) {
         Optional<Member> findMember = memberRepository.findById(memberId);
@@ -84,9 +79,7 @@ public class MemberService {
     }
 
     public String uploadProfileImage(MultipartFile profileImage, Long memberId) {
-        MultipartFile resizedProfileImage = imageResizer.resizeImage(profileImage, PROFILE_IMAGE_SIZE, PROFILE_IMAGE_SIZE);
-
-        return s3UploadService.uploadImage(resizedProfileImage, TEMPORARY_PATH, memberId);
+        return s3UploadService.uploadImage(profileImage, UploadUtils.TEMPORARY_PATH, memberId);
     }
 
     public Page<Member> findFollowListByPage(Long memberId, Pageable pageable) {

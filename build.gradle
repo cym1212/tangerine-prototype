@@ -43,11 +43,6 @@ dependencies {
 	implementation 'com.google.api-client:google-api-client:1.32.1'
 	implementation 'com.google.code.gson:gson:2.10.1'
 
-	// 이미지 리사이징 및 크롭
-	implementation 'com.github.downgoon:marvin:1.5.5'
-	implementation 'com.github.downgoon:MarvinPlugins:1.5.5'
-	implementation 'org.imgscalr:imgscalr-lib:4.2'
-
 	// 파일의 메타 데이터를 불러옴
 	implementation 'com.drewnoakes:metadata-extractor:2.19.0'
 
