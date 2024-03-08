@@ -35,10 +35,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByIdDetails(@Param("id") Long id);
 
     @Override
-    @Query("select distinct p from Post p " +
-            "join fetch p.member m " +
-            "join fetch m.memberProfile mp " +
-            "where p.deletedAt IS NULL")
+    @Query("SELECT DISTINCT p from Post p " +
+            "JOIN FETCH p.member m " +
+            "JOIN FETCH m.memberProfile mp " +
+            "WHERE p.deletedAt IS NULL " +
+            "ORDER BY p.id DESC")
     Page<Post> findAll(Pageable pageable);
 
     @Query("SELECT DISTINCT p FROM Post p " +
@@ -55,8 +56,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "AND p.member.id = :memberId")
     Page<Post> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 
-    @Query("SELECT p FROM Post p WHERE p.member.id = :memberId AND p.createdAt >= :twentyFourHoursAgo ORDER BY p.createdAt DESC")
-    List<Post> countPostsToday(@Param("memberId") Long memberId, @Param("twentyFourHoursAgo") LocalDateTime twentyFourHoursAgo);
+    @Query("SELECT p FROM Post p WHERE p.member.id = :memberId AND p.createdAt >= :dateTime ORDER BY p.createdAt DESC")
+    List<Post> findAllByMemberIdAfter(@Param("memberId") Long memberId, @Param("dateTime") LocalDateTime dateTime);
 
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.favoriteCnt = :favoriteCnt where p.id = :id and p.deletedAt IS NULL")
@@ -73,6 +74,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.deletedAt = :deletedAt, p.status = :postStatus where p.id = :id and p.deletedAt IS NULL")
     void delete(@Param("id") Long id, @Param("deletedAt") LocalDateTime deletedAt, @Param("postStatus") PostStatus postStatus);
-
-
 }

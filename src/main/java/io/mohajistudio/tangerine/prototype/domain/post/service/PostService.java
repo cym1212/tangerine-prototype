@@ -41,7 +41,7 @@ public class PostService {
     private static final int MAX_POSTS_INTERVAL_HOURS = 24;
 
     public void addPost(Post post, Long memberId) {
-        countPostsToday(memberId);
+        checkPostInterval(memberId);
 
         checkBlockOrderNumberAndContentIsEmpty(post.getPlaceBlocks(), post.getTextBlocks());
 
@@ -55,7 +55,9 @@ public class PostService {
 
         post.setVisitDate();
 
-        post.setThumbnail(placeBlockImageService.copyImageToPermanent(post.getThumbnail()));
+        String thumbnail = placeBlockImageService.copyImageToPermanent(post.getThumbnail());
+
+        post.setThumbnail(thumbnail);
 
         postRepository.save(post);
 
@@ -282,10 +284,12 @@ public class PostService {
             blockIds.add(placeBlock.getId());
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> placeBlockImageIds.add(placeBlockImage.getId()));
         });
+
         modifyPlaceBlocks.forEach(placeBlock -> {
             modifyBlockIds.add(placeBlock.getId());
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> modifyPlaceBlockImageIds.add(placeBlockImage.getId()));
         });
+
         blockIds.forEach(blockId -> {
             if (!modifyBlockIds.contains(blockId)) placeBlockRepository.delete(blockId, deletedAt);
         });
@@ -296,9 +300,9 @@ public class PostService {
         });
     }
 
-    private void countPostsToday(Long memberId) {
-        LocalDateTime twentyFourHoursAgo = LocalDateTime.now().minusHours(MAX_POSTS_INTERVAL_HOURS);
-        List<Post> findPosts = postRepository.countPostsToday(memberId, twentyFourHoursAgo);
+    private void checkPostInterval(Long memberId) {
+        LocalDateTime maxPostsIntervalHours = LocalDateTime.now().minusHours(MAX_POSTS_INTERVAL_HOURS);
+        List<Post> findPosts = postRepository.findAllByMemberIdAfter(memberId, maxPostsIntervalHours);
         if (findPosts.size() >= 3) {
             throw new BusinessException(MAX_POSTS_PER_DAY);
         }
