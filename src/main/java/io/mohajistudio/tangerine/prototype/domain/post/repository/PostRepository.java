@@ -49,11 +49,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "AND p.title ILIKE %:keyword%")
     Page<Post> findAllContainingKeyword(Pageable pageable, @Param("keyword") String keyword);
 
-    @Query("select distinct p from Post p " +
-            "join fetch p.member m " +
-            "join fetch m.memberProfile mp " +
+    @Query("SELECT DISTINCT p FROM Post p " +
+            "JOIN FETCH p.member m " +
+            "JOIN FETCH m.memberProfile mp " +
             "WHERE p.deletedAt IS NULL " +
-            "AND p.member.id = :memberId")
+            "AND p.member.id = :memberId " +
+            "ORDER BY p.createdAt DESC")
     Page<Post> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 
     @Query("SELECT p FROM Post p WHERE p.member.id = :memberId AND p.createdAt >= :dateTime ORDER BY p.createdAt DESC")
