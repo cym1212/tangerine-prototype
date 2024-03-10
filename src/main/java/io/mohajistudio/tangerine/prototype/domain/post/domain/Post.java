@@ -5,7 +5,9 @@ import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.FavoriteComment;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
+import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.enums.PostStatus;
+import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -79,4 +81,26 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private Set<FavoriteComment> favoriteComments;
+
+    public void setVisitDate() {
+        placeBlocks.forEach(placeBlock -> {
+            if (placeBlock.getVisitStartDate().isAfter(placeBlock.getVisitEndDate())) {
+                throw new BusinessException(ErrorCode.INVALID_DATE_RANGE);
+            }
+
+            if (visitStartDate == null && visitEndDate == null) {
+                visitStartDate = placeBlock.getVisitStartDate();
+                visitEndDate = placeBlock.getVisitEndDate();
+                return;
+            }
+
+            if (placeBlock.getVisitStartDate().isBefore(visitStartDate)) {
+                visitStartDate = placeBlock.getVisitStartDate();
+            }
+
+            if (placeBlock.getVisitStartDate().isBefore(visitStartDate)) {
+                visitStartDate = placeBlock.getVisitEndDate();
+            }
+        });
+    }
 }

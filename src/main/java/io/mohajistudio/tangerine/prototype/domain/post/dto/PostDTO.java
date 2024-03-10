@@ -24,16 +24,6 @@ public class PostDTO {
     private String title;
 
     @NotNull
-    @PastOrPresent
-    @Schema(description = "방문 시작 날짜")
-    private LocalDate visitStartDate;
-
-    @NotNull
-    @PastOrPresent
-    @Schema(description = "방문 도착 날짜")
-    private LocalDate visitEndDate;
-
-    @NotNull
     @NotEmpty
     private String visitRegion;
 
@@ -45,6 +35,16 @@ public class PostDTO {
     @Setter
     @Schema(name = "PostDTO.Details", description = "게시글의 상세를 반환할 때 사용할 DTO")
     public static class Details extends PostDTO.Compact {
+        @NotNull
+        @PastOrPresent
+        @Schema(description = "방문 시작 날짜")
+        private LocalDate visitStartDate;
+
+        @NotNull
+        @PastOrPresent
+        @Schema(description = "방문 도착 날짜")
+        private LocalDate visitEndDate;
+
         @Schema(description = "작성 시간", example = "2023-02-17T11:44:30.327959")
         private LocalDateTime createdAt;
         @Schema(description = "수정 시간", example = "2023-02-17T11:44:30.327959")
@@ -78,6 +78,16 @@ public class PostDTO {
     @Setter
     @Schema(name = "PostDTO.Details", description = "게시글 목록을 반환할 때 사용할 DTO")
     public static class Compact extends PostDTO {
+        @NotNull
+        @PastOrPresent
+        @Schema(description = "방문 시작 날짜")
+        private LocalDate visitStartDate;
+
+        @NotNull
+        @PastOrPresent
+        @Schema(description = "방문 도착 날짜")
+        private LocalDate visitEndDate;
+
         @Schema(description = "Post Id", example = "1")
         private Long id;
         @Schema(description = "댓글 개수")

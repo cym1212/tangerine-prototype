@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,19 +37,23 @@ public class PostController {
 
     @GetMapping
     @Operation(summary = "페이징 된 게시글 목록", description = "page와 size 값을 넘기면 페이징 된 게시글 목록을 반환합니다. 기본 값은 page는 1, size는 10 입니다.")
-    public Page<PostDTO.Compact> postListByPage(@Parameter(name = "PageableParam") @ModelAttribute PageableParam pageableParam) {
+    public Page<PostDTO.Compact> postListByPage(@ModelAttribute PageableParam pageableParam, @RequestParam(value = "keyword", required = false) String keyword) {
         Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
-        Page<Post> postListWithPagination = postService.findPostListByPage(pageable);
+
+        Page<Post> postListWithPagination;
+
+        if (keyword == null) {
+            postListWithPagination = postService.findPostListByPage(pageable);
+        } else {
+            postListWithPagination = postService.findPostListByKeywordPage(pageable, keyword);
+        }
+
         return postListWithPagination.map(postMapper::toCompactDTO);
     }
 
     @PostMapping
     @Operation(summary = "게시글 추가", description = "게시글 형식에 맞게 데이터를 전달해주세요.")
     public void postAdd(@Valid @RequestBody PostDTO.Add postAddDTO) {
-        if(postAddDTO.getVisitStartDate().isAfter(postAddDTO.getVisitEndDate())) {
-            throw new BusinessException(ErrorCode.INVALID_DATE_RANGE);
-        }
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
@@ -70,7 +75,7 @@ public class PostController {
     @PatchMapping("/{id}")
     @Operation(summary = "게시글 수정", description = "게시글 형식에 맞게 데이터를 전달해주세요.")
     public void postModify(@PathVariable("id") Long id, @Valid @RequestBody PostDTO.Details postDetailsDTO) {
-        if(postDetailsDTO.getVisitStartDate().isAfter(postDetailsDTO.getVisitEndDate())) {
+        if (postDetailsDTO.getVisitStartDate().isAfter(postDetailsDTO.getVisitEndDate())) {
             throw new BusinessException(ErrorCode.INVALID_DATE_RANGE);
         }
 

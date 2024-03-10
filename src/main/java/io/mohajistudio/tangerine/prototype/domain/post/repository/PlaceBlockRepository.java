@@ -35,9 +35,10 @@ public interface PlaceBlockRepository extends JpaRepository<PlaceBlock, Long> {
     Optional<PlaceBlock> findById(@Param("id") Long id);
 
     @Query("SELECT distinct pb from PlaceBlock pb " +
-            "left join fetch pb.placeCategory " +
-            "left join fetch pb.place " +
-            "left join fetch pb.placeBlockImages " +
-            "WHERE pb.member.id = :memberId")
+            "LEFT JOIN FETCH pb.placeCategory " +
+            "LEFT JOIN FETCH pb.place " +
+            "LEFT JOIN FETCH pb.placeBlockImages " +
+            "WHERE pb.member.id = :memberId " +
+            "ORDER BY pb.createdAt DESC")
     Page<PlaceBlock> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 }

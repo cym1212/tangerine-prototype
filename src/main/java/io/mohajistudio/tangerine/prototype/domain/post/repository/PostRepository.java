@@ -35,21 +35,30 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByIdDetails(@Param("id") Long id);
 
     @Override
-    @Query("select distinct p from Post p " +
-            "join fetch p.member m " +
-            "join fetch m.memberProfile mp " +
-            "where p.deletedAt IS NULL")
+    @Query("SELECT DISTINCT p from Post p " +
+            "JOIN FETCH p.member m " +
+            "JOIN FETCH m.memberProfile mp " +
+            "WHERE p.deletedAt IS NULL " +
+            "ORDER BY p.id DESC")
     Page<Post> findAll(Pageable pageable);
 
-    @Query("select distinct p from Post p " +
-            "join fetch p.member m " +
-            "join fetch m.memberProfile mp " +
+    @Query("SELECT DISTINCT p FROM Post p " +
+            "JOIN FETCH p.member m " +
+            "JOIN FETCH m.memberProfile mp " +
             "WHERE p.deletedAt IS NULL " +
-            "AND p.member.id = :memberId")
+            "AND p.title ILIKE %:keyword%")
+    Page<Post> findAllContainingKeyword(Pageable pageable, @Param("keyword") String keyword);
+
+    @Query("SELECT DISTINCT p FROM Post p " +
+            "JOIN FETCH p.member m " +
+            "JOIN FETCH m.memberProfile mp " +
+            "WHERE p.deletedAt IS NULL " +
+            "AND p.member.id = :memberId " +
+            "ORDER BY p.createdAt DESC")
     Page<Post> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 
-    @Query("SELECT p FROM Post p WHERE p.member.id = :memberId AND p.createdAt >= :twentyFourHoursAgo ORDER BY p.createdAt DESC")
-    List<Post> countPostsToday(@Param("memberId") Long memberId, @Param("twentyFourHoursAgo") LocalDateTime twentyFourHoursAgo);
+    @Query("SELECT p FROM Post p WHERE p.member.id = :memberId AND p.createdAt >= :dateTime ORDER BY p.createdAt DESC")
+    List<Post> findAllByMemberIdAfter(@Param("memberId") Long memberId, @Param("dateTime") LocalDateTime dateTime);
 
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.favoriteCnt = :favoriteCnt where p.id = :id and p.deletedAt IS NULL")
@@ -60,8 +69,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     void updateCommentCnt(@Param("id") Long id, @Param("commentCnt") int commentCnt);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Post p set p.title = :title, p.visitStartDate = :visitStartDate, p.visitEndDate = :visitEndDate, p.placeBlockCnt = :placeBlockCnt where p.id = :id and p.deletedAt IS NULL")
-    void update(@Param("id") Long id, @Param("title") String title, @Param("visitStartDate") LocalDate visitStartDate, @Param("visitEndDate") LocalDate visitEndDate, @Param("placeBlockCnt") short placeBlockCnt);
+    @Query("update Post p set p.title = :title, p.visitStartDate = :visitStartDate, p.visitEndDate = :visitEndDate, p.placeBlockCnt = :placeBlockCnt, p.thumbnail = :thumbnail where p.id = :id and p.deletedAt IS NULL")
+    void update(@Param("id") Long id, @Param("title") String title, @Param("visitStartDate") LocalDate visitStartDate, @Param("visitEndDate") LocalDate visitEndDate, @Param("placeBlockCnt") short placeBlockCnt, @Param("thumbnail") String thumbnail);
 
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.deletedAt = :deletedAt, p.status = :postStatus where p.id = :id and p.deletedAt IS NULL")

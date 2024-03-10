@@ -26,7 +26,7 @@ public class S3UploadService {
     private final S3Config s3Config;
 
     public String uploadImage(MultipartFile multipartFile, String imagePath, Long memberId) {
-        String key = imagePath + getFileName(multipartFile, memberId);
+        String key = imagePath + UploadUtils.createFileName(Objects.requireNonNull(multipartFile.getOriginalFilename()), memberId);
 
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -40,25 +40,16 @@ public class S3UploadService {
         } catch (IOException e) {
             throw new BusinessException(ErrorCode.STORAGE_UPLOAD_FAILURE);
         }
-        GetUrlRequest getUrlRequest = GetUrlRequest.builder()
-                .bucket(s3Config.getBucket())
-                .key(key)
-                .build();
 
-        return s3Client.utilities().getUrl(getUrlRequest).toString();
+        return key;
     }
 
-    public String getFileName(MultipartFile multipartFile, Long memberId) {
-        return UploadUtils.createFileName(Objects.requireNonNull(multipartFile.getOriginalFilename()), memberId);
-    }
+    public String copyImage(String storageKey, String orderImagePath, String newImagePath) {
+        String destinationKey = storageKey.replace(orderImagePath, newImagePath);
 
-    public String copyImage(String imageUrl, String orderImagePath, String newImagePath) {
-        String sourceKey = UploadUtils.extractImagePath(imageUrl);
-        String destinationKey = sourceKey.replace(orderImagePath, newImagePath);
-
-        CopyObjectRequest copyObjectRequest = CopyObjectRequest.builder().sourceBucket(s3Config.getBucket()).destinationBucket(s3Config.getBucket()).sourceKey(sourceKey).destinationKey(destinationKey).build();
+        CopyObjectRequest copyObjectRequest = CopyObjectRequest.builder().sourceBucket(s3Config.getBucket()).destinationBucket(s3Config.getBucket()).sourceKey(storageKey).destinationKey(destinationKey).build();
         s3Client.copyObject(copyObjectRequest);
 
-        return imageUrl.replace(orderImagePath, newImagePath);
+        return storageKey.replace(orderImagePath, newImagePath);
     }
 }

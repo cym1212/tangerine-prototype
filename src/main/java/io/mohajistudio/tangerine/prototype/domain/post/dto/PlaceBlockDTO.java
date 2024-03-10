@@ -5,14 +5,26 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Setter
 public class PlaceBlockDTO {
+    @NotNull
+    @PastOrPresent
+    @Schema(description = "방문 시작 날짜")
+    private LocalDate visitStartDate;
+
+    @NotNull
+    @PastOrPresent
+    @Schema(description = "방문 도착 날짜")
+    private LocalDate visitEndDate;
+
     @NotNull
     @Schema(description = "순서 번호", example = "2")
     private short orderNumber;
