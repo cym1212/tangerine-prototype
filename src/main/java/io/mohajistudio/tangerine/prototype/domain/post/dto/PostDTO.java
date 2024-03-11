@@ -51,9 +51,12 @@ public class PostDTO {
         private Boolean isFavorite;
 
         @Valid
+        @Max(10)
+        @Min(1)
         @ArraySchema(arraySchema = @Schema(description = "텍스트 블럭"))
         private Set<TextBlockDTO.Details> textBlocks;
         @Valid
+        @Max(10)
         @ArraySchema(arraySchema = @Schema(description = "장소 블럭"))
         private Set<PlaceBlockDTO.Details> placeBlocks;
     }
@@ -63,14 +66,12 @@ public class PostDTO {
     @Schema(name = "PostDTO.Add", description = "게시글 추가를 위한 DTO")
     public static class Add extends PostDTO {
         @Valid
-        @NotNull
         @Max(10)
         @Min(1)
         @ArraySchema(arraySchema = @Schema(description = "텍스트 블럭"))
         private Set<TextBlockDTO.Add> textBlocks;
 
         @Valid
-        @NotNull
         @Max(10)
         @ArraySchema(arraySchema = @Schema(description = "장소 블럭"))
         private Set<PlaceBlockDTO.Add> placeBlocks;
