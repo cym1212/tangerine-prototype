@@ -4,9 +4,7 @@ import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberDTO;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -20,7 +18,7 @@ import java.util.Set;
 public class PostDTO {
     @NotNull
     @Schema(description = "게시글의 제목", example = "테스트 제목")
-    @Length(min = 5, max = 100)
+    @Length(min = 2, max = 100)
     private String title;
 
     @NotNull
@@ -53,9 +51,12 @@ public class PostDTO {
         private Boolean isFavorite;
 
         @Valid
+        @Max(10)
+        @Min(1)
         @ArraySchema(arraySchema = @Schema(description = "텍스트 블럭"))
         private Set<TextBlockDTO.Details> textBlocks;
         @Valid
+        @Max(10)
         @ArraySchema(arraySchema = @Schema(description = "장소 블럭"))
         private Set<PlaceBlockDTO.Details> placeBlocks;
     }
@@ -65,11 +66,13 @@ public class PostDTO {
     @Schema(name = "PostDTO.Add", description = "게시글 추가를 위한 DTO")
     public static class Add extends PostDTO {
         @Valid
-        @NotNull
+        @Max(10)
+        @Min(1)
         @ArraySchema(arraySchema = @Schema(description = "텍스트 블럭"))
         private Set<TextBlockDTO.Add> textBlocks;
+
         @Valid
-        @NotNull
+        @Max(10)
         @ArraySchema(arraySchema = @Schema(description = "장소 블럭"))
         private Set<PlaceBlockDTO.Add> placeBlocks;
     }

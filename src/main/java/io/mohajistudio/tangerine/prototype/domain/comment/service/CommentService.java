@@ -75,15 +75,7 @@ public class CommentService {
             throw new UrlNotFoundException();
         }
 
-        Page<Comment> commentListByPage = commentRepository.findByPostId(postId, pageable);
-
-        commentListByPage.forEach((comment) -> {
-            if (comment.getDeletedAt() != null) {
-                comment.deleteContent();
-            }
-        });
-
-        return commentListByPage;
+        return commentRepository.findByPostId(postId, pageable);
     }
 
     public void modifyComment(Comment modifyComment, Long postId, Long memberId) {
