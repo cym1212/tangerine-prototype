@@ -5,9 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+@Getter
 @SuperBuilder
 @Entity
 @AllArgsConstructor
@@ -16,4 +18,6 @@ import lombok.experimental.SuperBuilder;
 public class TrendingPost extends BaseEntity {
     @OneToOne
     private Post post;
+
+    private double score;
 }
