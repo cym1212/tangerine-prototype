@@ -10,13 +10,22 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface PlaceBlockRepository extends JpaRepository<PlaceBlock, Long> {
     @Modifying
-    @Query("update PlaceBlock pb set pb.content = :content, pb.orderNumber = :orderNumber, pb.rating = :rating, pb.placeCategory = :placeCategory, pb.place = :place where pb.id = :id")
-    void update(@Param("id") Long id, @Param("content") String content, @Param("orderNumber") short orderNumber, @Param("rating") short rating, @Param("placeCategory") PlaceCategory placeCategory, @Param("place") Place place);
+    @Query("update PlaceBlock pb " +
+            "set pb.content = :content, " +
+            "pb.orderNumber = :orderNumber, " +
+            "pb.rating = :rating, " +
+            "pb.placeCategory = :placeCategory, " +
+            "pb.place = :place, " +
+            "pb.visitStartDate = :visitStartDate, " +
+            "pb.visitEndDate = :visitEndDate " +
+            "where pb.id = :id")
+    void update(@Param("id") Long id, @Param("content") String content, @Param("orderNumber") short orderNumber, @Param("rating") short rating, @Param("placeCategory") PlaceCategory placeCategory, @Param("place") Place place, @Param("visitStartDate") LocalDate visitStartDate, @Param("visitEndDate") LocalDate visitEndDate);
 
     @Modifying
     @Query("UPDATE PlaceBlock pb SET pb.representativePlaceBlockImageId = :representativePlaceBlockImageId where pb.id = :id")
@@ -39,6 +48,7 @@ public interface PlaceBlockRepository extends JpaRepository<PlaceBlock, Long> {
             "LEFT JOIN FETCH pb.place " +
             "LEFT JOIN FETCH pb.placeBlockImages " +
             "WHERE pb.member.id = :memberId " +
+            "AND pb.deletedAt IS NULL " +
             "ORDER BY pb.createdAt DESC")
     Page<PlaceBlock> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 }

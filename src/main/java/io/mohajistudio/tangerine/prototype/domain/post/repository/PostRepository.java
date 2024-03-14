@@ -19,18 +19,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select p from Post p where p.id = :id and p.deletedAt IS NULL")
     Optional<Post> findById(@Param("id") Long id);
 
-    @Query("select distinct p from Post p " +
-            "join fetch p.member m " +
-            "join fetch m.memberProfile mp " +
-            "left join fetch p.textBlocks tb " +
-            "left join fetch p.placeBlocks pb " +
-            "left join fetch pb.placeBlockImages pbi " +
-            "left join fetch pb.placeCategory c " +
-            "left join fetch pb.place pl " +
-            "where p.id = :id " +
-            "and p.deletedAt IS NULL " +
-            "and tb.deletedAt IS NULL " +
-            "and pb.deletedAt IS NULL"
+    @Query("SELECT p " +
+            "FROM Post p " +
+            "JOIN FETCH p.member m " +
+            "JOIN FETCH m.memberProfile mp " +
+            "LEFT JOIN FETCH p.textBlocks " +
+            "LEFT JOIN FETCH p.placeBlocks pb " +
+            "LEFT JOIN FETCH pb.placeBlockImages pbi " +
+            "LEFT JOIN FETCH pb.placeCategory c " +
+            "LEFT JOIN FETCH pb.place pl " +
+            "WHERE p.id = :id " +
+            "AND p.deletedAt IS NULL"
     )
     Optional<Post> findByIdDetails(@Param("id") Long id);
 
@@ -69,8 +68,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     void updateCommentCnt(@Param("id") Long id, @Param("commentCnt") int commentCnt);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Post p set p.title = :title, p.visitStartDate = :visitStartDate, p.visitEndDate = :visitEndDate, p.placeBlockCnt = :placeBlockCnt, p.thumbnail = :thumbnail where p.id = :id and p.deletedAt IS NULL")
-    void update(@Param("id") Long id, @Param("title") String title, @Param("visitStartDate") LocalDate visitStartDate, @Param("visitEndDate") LocalDate visitEndDate, @Param("placeBlockCnt") short placeBlockCnt, @Param("thumbnail") String thumbnail);
+    @Query("update Post p set p.title = :title, p.visitStartDate = :visitStartDate, p.visitEndDate = :visitEndDate, p.placeBlockCnt = :placeBlockCnt, p.thumbnail = :thumbnail, p.modifiedAt = :modifiedAt where p.id = :id and p.deletedAt IS NULL")
+    void update(@Param("id") Long id, @Param("title") String title, @Param("visitStartDate") LocalDate visitStartDate, @Param("visitEndDate") LocalDate visitEndDate, @Param("placeBlockCnt") short placeBlockCnt, @Param("thumbnail") String thumbnail, @Param("modifiedAt") LocalDateTime modifiedAt);
 
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.deletedAt = :deletedAt, p.status = :postStatus where p.id = :id and p.deletedAt IS NULL")

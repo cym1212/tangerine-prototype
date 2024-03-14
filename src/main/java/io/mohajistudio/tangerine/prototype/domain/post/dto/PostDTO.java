@@ -33,30 +33,21 @@ public class PostDTO {
     @Setter
     @Schema(name = "PostDTO.Details", description = "게시글의 상세를 반환할 때 사용할 DTO")
     public static class Details extends PostDTO.Compact {
-        @NotNull
-        @PastOrPresent
-        @Schema(description = "방문 시작 날짜")
-        private LocalDate visitStartDate;
-
-        @NotNull
-        @PastOrPresent
-        @Schema(description = "방문 도착 날짜")
-        private LocalDate visitEndDate;
-
         @Schema(description = "작성 시간", example = "2023-02-17T11:44:30.327959")
         private LocalDateTime createdAt;
+
         @Schema(description = "수정 시간", example = "2023-02-17T11:44:30.327959")
         private LocalDateTime modifiedAt;
+
         @Schema(description = "좋아하는 게시글 여부", example = "true")
         private Boolean isFavorite;
 
         @Valid
-        @Max(10)
-        @Min(1)
         @ArraySchema(arraySchema = @Schema(description = "텍스트 블럭"))
         private Set<TextBlockDTO.Details> textBlocks;
+
         @Valid
-        @Max(10)
+        @Size(max = 10, min = 1)
         @ArraySchema(arraySchema = @Schema(description = "장소 블럭"))
         private Set<PlaceBlockDTO.Details> placeBlocks;
     }
@@ -66,13 +57,11 @@ public class PostDTO {
     @Schema(name = "PostDTO.Add", description = "게시글 추가를 위한 DTO")
     public static class Add extends PostDTO {
         @Valid
-        @Max(10)
-        @Min(1)
         @ArraySchema(arraySchema = @Schema(description = "텍스트 블럭"))
         private Set<TextBlockDTO.Add> textBlocks;
 
         @Valid
-        @Max(10)
+        @Size(max = 10, min = 1)
         @ArraySchema(arraySchema = @Schema(description = "장소 블럭"))
         private Set<PlaceBlockDTO.Add> placeBlocks;
     }
@@ -81,25 +70,26 @@ public class PostDTO {
     @Setter
     @Schema(name = "PostDTO.Details", description = "게시글 목록을 반환할 때 사용할 DTO")
     public static class Compact extends PostDTO {
-        @NotNull
-        @PastOrPresent
         @Schema(description = "방문 시작 날짜")
         private LocalDate visitStartDate;
 
-        @NotNull
-        @PastOrPresent
         @Schema(description = "방문 도착 날짜")
         private LocalDate visitEndDate;
 
         @Schema(description = "Post Id", example = "1")
         private Long id;
+
         @Schema(description = "댓글 개수")
         private int commentCnt;
+
         @Schema(description = "좋아요 개수")
         private int favoriteCnt;
-        @Schema(description = "블럭 개수")
-        private short placeBlockCnt;
+
+        @Schema(description = "플레이스 블럭 개수")
+        private int placeBlockCnt;
+
         @Schema(description = "작성자")
         private MemberDTO member;
+
     }
 }

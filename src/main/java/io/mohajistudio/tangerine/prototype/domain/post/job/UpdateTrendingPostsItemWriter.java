@@ -35,7 +35,11 @@ public class UpdateTrendingPostsItemWriter implements ItemWriter<TrendingPost>, 
     @Override
     public ExitStatus afterStep(@NonNull @NotNull StepExecution stepExecution) {
         trendingPostRepository.deleteAll();
+        for (int i = 0; i < trendingPostList.size(); i++) {
+            trendingPostList.get(i).setId((long) i);
+        }
         trendingPostRepository.saveAll(trendingPostList);
+        trendingPostList.clear();
         return ExitStatus.COMPLETED;
     }
 }

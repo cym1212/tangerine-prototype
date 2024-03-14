@@ -13,6 +13,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -38,7 +39,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private int favoriteCnt = 0;
 
-    @Setter
+    @Column(nullable = false)
     private short placeBlockCnt = 0;
 
     @Setter
@@ -82,7 +83,26 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private Set<FavoriteComment> favoriteComments;
 
-    public void setVisitDate() {
+    public void validate() {
+        setVisitDate();
+        setPlaceBlockCnt();
+        checkBlockOrderNumberAndContentIsEmpty();
+    }
+
+    public void removeDeletedBlockAndImage() {
+        placeBlocks.removeIf(placeBlock -> placeBlock.getDeletedAt() == null);
+
+        placeBlocks.forEach(
+                placeBlock -> placeBlock.getPlaceBlockImages().removeIf(placeBlockImage -> placeBlockImage.getDeletedAt() == null)
+        );
+
+        textBlocks.removeIf(textBlock -> textBlock.getDeletedAt() == null);
+    }
+
+    private void setVisitDate() {
+        visitStartDate = null;
+        visitEndDate = null;
+
         placeBlocks.forEach(placeBlock -> {
             if (placeBlock.getVisitStartDate().isAfter(placeBlock.getVisitEndDate())) {
                 throw new BusinessException(ErrorCode.INVALID_DATE_RANGE);
@@ -98,9 +118,41 @@ public class Post extends BaseEntity {
                 visitStartDate = placeBlock.getVisitStartDate();
             }
 
-            if (placeBlock.getVisitStartDate().isBefore(visitStartDate)) {
-                visitStartDate = placeBlock.getVisitEndDate();
+            if (placeBlock.getVisitEndDate().isAfter(visitEndDate)) {
+                visitEndDate = placeBlock.getVisitEndDate();
             }
         });
+    }
+
+    private void setPlaceBlockCnt() {
+        placeBlockCnt = (short) getPlaceBlocks().size();
+    }
+
+    private void checkBlockOrderNumberAndContentIsEmpty() {
+        Set<Short> orderNumbers = new HashSet<>();
+
+        placeBlocks.forEach(placeBlock -> {
+            if (!orderNumbers.add(placeBlock.getOrderNumber())) {
+                throw new BusinessException(ErrorCode.INVALID_ORDER_NUMBER);
+            }
+            if (placeBlock.getContent().isEmpty()) {
+                throw new BusinessException(ErrorCode.CONTENT_IS_EMPTY);
+            }
+        });
+        textBlocks.forEach(textBlock -> {
+            if (!orderNumbers.add(textBlock.getOrderNumber())) {
+                throw new BusinessException(ErrorCode.INVALID_ORDER_NUMBER);
+            }
+            if (textBlock.getContent().isEmpty()) {
+                throw new BusinessException(ErrorCode.CONTENT_IS_EMPTY);
+            }
+        });
+
+        int totalSize = placeBlocks.size() + textBlocks.size();
+        for (short i = 1; i <= totalSize; i++) {
+            if (!orderNumbers.contains(i)) {
+                throw new BusinessException(ErrorCode.INVALID_ORDER_NUMBER);
+            }
+        }
     }
 }
