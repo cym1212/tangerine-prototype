@@ -2,7 +2,9 @@ package io.mohajistudio.tangerine.prototype.domain.member.service;
 
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Follow;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
+import io.mohajistudio.tangerine.prototype.domain.member.domain.MemberProfile;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.FollowRepository;
+import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberProfileRepository;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
@@ -14,11 +16,13 @@ import io.mohajistudio.tangerine.prototype.infra.upload.service.S3UploadService;
 import io.mohajistudio.tangerine.prototype.infra.upload.utils.UploadUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.MEMBER_NOT_FOUND;
@@ -29,6 +33,7 @@ import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.MISMATC
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final MemberProfileRepository memberProfileRepository;
     private final PostRepository postRepository;
     private final PlaceBlockRepository placeBlockRepository;
     private final FollowRepository followRepository;
@@ -102,5 +107,13 @@ public class MemberService {
         if (findMember.isEmpty()) throw new UrlNotFoundException();
 
         return placeBlockRepository.findByMemberId(memberId, pageable);
+    }
+
+    public void modifyMemberProfile(Long memberId, MemberProfile memberProfile) {
+        Member member = findMember(memberId);
+
+        LocalDateTime modifiedAt = LocalDateTime.now();
+
+        memberProfileRepository.update(member.getMemberProfile().getId(), modifiedAt, memberProfile.getName(), memberProfile.getNickname(), memberProfile.getIntroduction(), memberProfile.getPhone(), memberProfile.getProfileImage());
     }
 }

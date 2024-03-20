@@ -89,7 +89,9 @@ public class CommentService {
 
         validateComment(modifyComment.getId(), postId, memberId);
 
-        commentRepository.update(memberId, modifyComment.getContent());
+        LocalDateTime modifiedAt = LocalDateTime.now();
+
+        commentRepository.update(memberId, modifiedAt, modifyComment.getContent());
     }
 
     public void deleteComment(Long commentId, Long postId, Long memberId) {

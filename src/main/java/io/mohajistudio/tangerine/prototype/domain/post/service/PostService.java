@@ -108,8 +108,6 @@ public class PostService {
             post.setIsFavorite(findFavoritePost.isPresent());
         }
 
-        post.removeDeletedBlockAndImage();
-
         return post;
     }
 
@@ -134,15 +132,16 @@ public class PostService {
 
         LocalDateTime modifiedAt = LocalDateTime.now();
 
-        postRepository.update(post.getId(), modifyPost.getTitle(), modifyPost.getVisitStartDate(), modifyPost.getVisitEndDate(), modifyPost.getPlaceBlockCnt(), modifyPost.getThumbnail(), modifiedAt);
+        postRepository.update(post.getId(), modifiedAt, modifyPost.getTitle(), modifyPost.getVisitStartDate(), modifyPost.getVisitEndDate(), modifyPost.getPlaceBlockCnt(), modifyPost.getThumbnail());
 
         modifyPost.getTextBlocks().forEach(textBlock -> modifyTextBlock(textBlock, post));
         modifyPost.getPlaceBlocks().forEach(placeBlock -> {
             modifyPlaceBlock(placeBlock, post);
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> {
                         modifyPlaceBlockImage(placeBlock, placeBlockImage);
-                        if (placeBlock.getRepresentativePlaceBlockImageId() == null && placeBlock.getRepresentativePlaceBlockImageOrderNumber() == placeBlockImage.getOrderNumber()) {
+                        if (placeBlock.getRepresentativePlaceBlockImageOrderNumber() == placeBlockImage.getOrderNumber()) {
                             placeBlock.setRepresentativePlaceBlockImageId(placeBlockImage.getId());
+                            placeBlockRepository.update(placeBlock.getId(), placeBlockImage.getId());
                         }
                     }
             );

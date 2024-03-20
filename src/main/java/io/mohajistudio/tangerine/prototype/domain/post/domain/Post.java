@@ -11,6 +11,7 @@ import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessExcept
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@SQLRestriction("deleted_at is NULL")
 @Table(name = "post")
 public class Post extends BaseEntity {
     @Column(nullable = false)
@@ -87,16 +89,6 @@ public class Post extends BaseEntity {
         setVisitDate();
         setPlaceBlockCnt();
         checkBlockOrderNumberAndContentIsEmpty();
-    }
-
-    public void removeDeletedBlockAndImage() {
-        placeBlocks.removeIf(placeBlock -> placeBlock.getDeletedAt() == null);
-
-        placeBlocks.forEach(
-                placeBlock -> placeBlock.getPlaceBlockImages().removeIf(placeBlockImage -> placeBlockImage.getDeletedAt() == null)
-        );
-
-        textBlocks.removeIf(textBlock -> textBlock.getDeletedAt() == null);
     }
 
     private void setVisitDate() {

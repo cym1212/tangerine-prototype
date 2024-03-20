@@ -36,19 +36,20 @@ public interface PlaceBlockRepository extends JpaRepository<PlaceBlock, Long> {
     void delete(@Param("id") Long id, @Param("deletedAt") LocalDateTime deletedAt);
 
     @Override
-    @Query("select pb from PlaceBlock pb " +
-            "left join fetch pb.placeCategory " +
-            "left join fetch pb.place " +
-            "left join fetch pb.placeBlockImages " +
-            "where pb.id = :id")
-    Optional<PlaceBlock> findById(@Param("id") Long id);
-
-    @Query("SELECT distinct pb from PlaceBlock pb " +
+    @Query("SELECT pb FROM PlaceBlock pb " +
             "LEFT JOIN FETCH pb.placeCategory " +
             "LEFT JOIN FETCH pb.place " +
             "LEFT JOIN FETCH pb.placeBlockImages " +
+            "WHERE pb.id = :id")
+    Optional<PlaceBlock> findById(@Param("id") Long id);
+
+    @Query("SELECT DISTINCT pb FROM PlaceBlock pb " +
+            "LEFT JOIN FETCH pb.placeCategory " +
+            "LEFT JOIN FETCH pb.place " +
+            "LEFT JOIN FETCH pb.placeBlockImages pbi " +
             "WHERE pb.member.id = :memberId " +
             "AND pb.deletedAt IS NULL " +
+            "AND pbi.deletedAt IS NULL " +
             "ORDER BY pb.createdAt DESC")
     Page<PlaceBlock> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 }
