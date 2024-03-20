@@ -6,12 +6,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @SuperBuilder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLRestriction("deleted_at is NULL")
 @Table(name = "text_block")
 public class TextBlock extends BaseEntity {
 

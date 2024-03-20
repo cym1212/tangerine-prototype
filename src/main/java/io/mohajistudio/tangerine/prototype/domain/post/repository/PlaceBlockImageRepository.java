@@ -15,5 +15,5 @@ public interface PlaceBlockImageRepository extends JpaRepository<PlaceBlockImage
 
     @Modifying
     @Query("update PlaceBlockImage pbi set pbi.deletedAt = :deletedAt where pbi.id = :id")
-    void delete(@Param("id") Long id,@Param("deletedAt") LocalDateTime deletedAt);
+    void delete(@Param("id") Long id, @Param("deletedAt") LocalDateTime deletedAt);
 }

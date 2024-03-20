@@ -11,10 +11,8 @@ import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessExcept
 import io.mohajistudio.tangerine.prototype.infra.region.dto.RegionProvinceDTO;
 import io.mohajistudio.tangerine.prototype.infra.region.service.RegionService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -75,10 +73,6 @@ public class PostController {
     @PatchMapping("/{id}")
     @Operation(summary = "게시글 수정", description = "게시글 형식에 맞게 데이터를 전달해주세요.")
     public void postModify(@PathVariable("id") Long id, @Valid @RequestBody PostDTO.Details postDetailsDTO) {
-        if (postDetailsDTO.getVisitStartDate().isAfter(postDetailsDTO.getVisitEndDate())) {
-            throw new BusinessException(ErrorCode.INVALID_DATE_RANGE);
-        }
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 

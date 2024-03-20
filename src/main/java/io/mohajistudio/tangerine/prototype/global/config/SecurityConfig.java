@@ -38,20 +38,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> {
                     //ALL
-                    auth.requestMatchers(HttpMethod.GET, "/", "/members/*", "/members/*/posts", "/members/*/place-blocks", "/posts", "/posts/*", "/login/*", "/posts/*/comments", "/members/*/follows", "/members/*/followMembers", "/nickname-duplicate", "/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/", "/members/*", "/members/*/posts", "/members/*/place-blocks", "/trending-posts", "/posts", "/posts/*", "/login/*", "/posts/*/comments", "/posts/*/comments/favorites", "/members/*/follows", "/members/*/followMembers", "/nickname-duplicate", "/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     auth.requestMatchers(HttpMethod.PATCH, "/tokens").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/app/login/*").permitAll();
 
                     //GUEST & MEMBER
-                    auth.requestMatchers(HttpMethod.POST, "members/member-profiles/profile-images").hasAnyAuthority(AUTHORITY_EVERY_MEMBER);
+                    auth.requestMatchers(HttpMethod.POST, "members/*/member-profiles/profile-images").hasAnyAuthority(AUTHORITY_EVERY_MEMBER);
 
                     //GUEST
                     auth.requestMatchers(HttpMethod.POST, "/register").hasAuthority(AUTHORITY_GUEST);
 
                     //MEMBER
-                    auth.requestMatchers(HttpMethod.GET, "/places", "/places/kakao", "/places/categories", "/posts/regions", "/posts/*/comments/favorites").hasAnyAuthority(AUTHORITY_MEMBER);
+                    auth.requestMatchers(HttpMethod.GET, "/places", "/places/kakao", "/places/categories", "/posts/regions").hasAnyAuthority(AUTHORITY_MEMBER);
                     auth.requestMatchers(HttpMethod.POST, "/posts", "/places", "/posts/*/comments", "/places/kakao", "/posts/place-blocks/place-block-images", "/places/recommend").hasAnyAuthority(AUTHORITY_MEMBER);
-                    auth.requestMatchers(HttpMethod.PATCH, "/logout", "/posts/*/favorites", "/posts/*", "/posts/*/comments/*", "/members/*/follows", "/posts/*/scrap", "/posts/*/comments/*/favorites").hasAnyAuthority(AUTHORITY_MEMBER);
+                    auth.requestMatchers(HttpMethod.PATCH, "/logout", "/posts/*/favorites", "/posts/*", "/posts/*/comments/*", "/members/*/follows", "/posts/*/scrap", "/posts/*/comments/*/favorites", "/members/*/member-profiles").hasAnyAuthority(AUTHORITY_MEMBER);
                     auth.requestMatchers(HttpMethod.DELETE, "/posts/*", "/posts/*/comments/*").hasAnyAuthority(AUTHORITY_MEMBER);
                 }).csrf(AbstractHttpConfigurer::disable).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2Login(oauth2Login -> {

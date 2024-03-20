@@ -6,12 +6,14 @@ import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @SuperBuilder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLRestriction("deleted_at is NULL")
 @Table(name = "place_block_image")
 public class PlaceBlockImage extends BaseEntity {
 

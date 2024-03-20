@@ -7,6 +7,9 @@ spring:
     multipart:
       maxFileSize: 20MB
       maxRequestSize: 100MB
+  batch:
+    jdbc:
+      initialize-schema: always
   data:
     web:
       pageable:

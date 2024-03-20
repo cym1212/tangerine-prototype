@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,12 +15,10 @@ import java.util.List;
 @Setter
 public class PlaceBlockDTO {
     @NotNull
-    @PastOrPresent
     @Schema(description = "방문 시작 날짜")
     private LocalDate visitStartDate;
 
     @NotNull
-    @PastOrPresent
     @Schema(description = "방문 도착 날짜")
     private LocalDate visitEndDate;
 
@@ -41,20 +38,24 @@ public class PlaceBlockDTO {
     @Setter
     @Schema(name = "PlaceBlockDTO.Details", description = "장소 블럭의 상세를 반환할 때 사용할 DTO")
     public static class Details extends PlaceBlockDTO {
-        @NotNull
         @Schema(description = "PlaceBlock Id", example = "1")
         private Long id;
+
         @Valid
         @Schema(description = "카테고리")
         private PlaceCategoryDTO.Details placeCategory;
+
         @Valid
         @ArraySchema(arraySchema = @Schema(description = "장소 블럭 이미지"))
         private List<PlaceBlockImageDTO.Details> placeBlockImages;
+
         @Valid
         @Schema(description = "장소")
         private PlaceDTO.Details place;
+
         @Schema(description = "Representative PlaceBlockImage Id", example = "1")
         private Long representativePlaceBlockImageId;
+
         @Min(1)
         @Schema(description = "대표 이미지 순서 번호", example = "1")
         private Short representativePlaceBlockImageOrderNumber;
