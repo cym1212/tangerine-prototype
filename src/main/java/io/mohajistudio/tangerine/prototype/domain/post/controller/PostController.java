@@ -63,10 +63,14 @@ public class PostController {
     @GetMapping("/{id}")
     @Operation(summary = "게시글 상세 조회", description = "게시글 상세를 조회합니다.")
     public PostDTO.Details postDetails(@PathVariable("id") Long id) {
+        Long memberId = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
+        if(authentication.getPrincipal() != "anonymousUser") {
+            SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
+            memberId = securityMember.getId();
+        }
 
-        Post postDetails = postService.findPostDetails(id, securityMember.getId());
+        Post postDetails = postService.findPostDetails(id, memberId);
         return postMapper.toDetailsDTO(postDetails);
     }
 
