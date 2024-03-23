@@ -1,8 +1,6 @@
 package io.mohajistudio.tangerine.prototype.domain.post.repository;
 
 import io.mohajistudio.tangerine.prototype.domain.post.domain.TrendingPost;
-import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +12,7 @@ public interface TrendingPostRepository extends JpaRepository<TrendingPost, Long
             "JOIN FETCH tp.post p " +
             "JOIN FETCH p.member m " +
             "JOIN FETCH m.memberProfile mp " +
-            "WHERE p.deletedAt IS NULL")
-    Page<TrendingPost> findAll(@NotNull @NonNull Pageable pageable);
+            "WHERE p.deletedAt IS NULL " +
+            "ORDER BY tp.id ASC")
+    Page<TrendingPost> findAll(Pageable pageable);
 }
