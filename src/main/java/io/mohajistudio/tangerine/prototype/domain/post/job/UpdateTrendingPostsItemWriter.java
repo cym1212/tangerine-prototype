@@ -26,16 +26,16 @@ public class UpdateTrendingPostsItemWriter implements ItemWriter<TrendingPost>, 
     @Override
     public void write(Chunk<? extends TrendingPost> chunk) {
         trendingPostList.addAll(chunk.getItems());
-        List<TrendingPost> sortedTrendingPostList = trendingPostList.stream().sorted(Comparator.comparingDouble(TrendingPost::getScore)).toList();
-        sortedTrendingPostList.subList(0, Math.min(trendingPostList.size(), TRENDING_POST_SIZE));
-        trendingPostList.clear();
-        trendingPostList.addAll(sortedTrendingPostList);
+        trendingPostList.sort(Comparator.comparingDouble(TrendingPost::getScore).reversed());
+        if (trendingPostList.size() > TRENDING_POST_SIZE) {
+            trendingPostList.subList(0, TRENDING_POST_SIZE).clear();
+        }
     }
 
     @Override
     public ExitStatus afterStep(@NonNull @NotNull StepExecution stepExecution) {
         trendingPostRepository.deleteAll();
-        for (int i = 0; i < trendingPostList.size(); i++) {
+        for (int i = 1; i <= trendingPostList.size(); i++) {
             trendingPostList.get(i).setId((long) i);
         }
         trendingPostRepository.saveAll(trendingPostList);

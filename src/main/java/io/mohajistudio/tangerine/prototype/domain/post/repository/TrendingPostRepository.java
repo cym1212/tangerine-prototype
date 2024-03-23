@@ -14,6 +14,7 @@ public interface TrendingPostRepository extends JpaRepository<TrendingPost, Long
             "JOIN FETCH tp.post p " +
             "JOIN FETCH p.member m " +
             "JOIN FETCH m.memberProfile mp " +
-            "WHERE p.deletedAt IS NULL")
+            "WHERE p.deletedAt IS NULL " +
+            "ORDER BY tp.id ASC")
     Page<TrendingPost> findAll(@NotNull @NonNull Pageable pageable);
 }

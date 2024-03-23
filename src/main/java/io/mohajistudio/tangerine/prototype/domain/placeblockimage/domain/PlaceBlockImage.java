@@ -24,6 +24,8 @@ public class PlaceBlockImage extends BaseEntity {
     @Column(nullable = false)
     private short orderNumber;
 
+    private String caption;
+
     @Setter
     @JsonIgnore
     @ManyToOne(optional = false)
