@@ -16,11 +16,14 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c LEFT JOIN FETCH c.post WHERE c.id = :id")
     Optional<Comment> findById(@Param("id") Long id);
 
+    @Query("SELECT c FROM Comment c " +
+            "LEFT JOIN FETCH c.member m " +
+            "LEFT JOIN FETCH m.memberProfile mp " +
+            "WHERE c.id = :id")
+    Optional<Comment> findByIdWithMember(@Param("id") Long id);
+
     @Query("SELECT MAX(c.groupNumber) FROM Comment c WHERE c.post.id = :postId")
     Integer findMaxGroupNumberByPostId(@Param("postId") Long postId);
-
-    @Query("SELECT c.groupNumber FROM Comment c WHERE c.id = :id")
-    Integer findGroupNumberById(@Param("id") Long id);
 
     @Query("SELECT c FROM Comment c " +
             "LEFT JOIN FETCH c.member m " +

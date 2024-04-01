@@ -149,7 +149,7 @@ public class AuthService {
     }
 
     public void logout(Long memberId) {
-        memberRepository.updateRefreshToken(memberId, null);
+        memberRepository.logout(memberId);
     }
 
     public void checkNicknameDuplicate(String nickname) {

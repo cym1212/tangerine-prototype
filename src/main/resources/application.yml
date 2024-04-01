@@ -1,7 +1,6 @@
 springdoc:
   swagger-ui:
     path: /swagger
-
 spring:
   servlet:
     multipart:
@@ -14,3 +13,6 @@ spring:
     web:
       pageable:
         one-indexed-parameters: true
+  messages:
+    encoding: UTF-8
+    basename: messages.messages

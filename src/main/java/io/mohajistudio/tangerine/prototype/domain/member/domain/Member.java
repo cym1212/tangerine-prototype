@@ -3,7 +3,7 @@ package io.mohajistudio.tangerine.prototype.domain.member.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.FavoriteComment;
-import io.mohajistudio.tangerine.prototype.domain.notice.domain.Notification;
+import io.mohajistudio.tangerine.prototype.domain.notification.domain.Notification;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.*;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import io.mohajistudio.tangerine.prototype.global.enums.Provider;
@@ -38,6 +38,8 @@ public class Member extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String providerId;
 
+    private String notificationToken;
+
     private int followCnt = 0; //팔로우 한 멤버 수
 
     private int followMemberCnt = 0; //팔로우 받은 멤버 수
@@ -45,9 +47,12 @@ public class Member extends BaseEntity {
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private MemberProfile memberProfile;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private Set<Notification> notifications;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "relatedMember", fetch = FetchType.LAZY)
+    private Set<Notification> relatedNotifications;
 
     @JsonIgnore
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)

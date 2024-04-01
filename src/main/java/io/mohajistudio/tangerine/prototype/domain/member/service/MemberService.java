@@ -16,7 +16,6 @@ import io.mohajistudio.tangerine.prototype.infra.upload.service.S3UploadService;
 import io.mohajistudio.tangerine.prototype.infra.upload.utils.UploadUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -115,5 +114,12 @@ public class MemberService {
         LocalDateTime modifiedAt = LocalDateTime.now();
 
         memberProfileRepository.update(member.getMemberProfile().getId(), modifiedAt, memberProfile.getName(), memberProfile.getNickname(), memberProfile.getIntroduction(), memberProfile.getPhone(), memberProfile.getProfileImage());
+    }
+
+    public void modifyNotificationToken(Long memberId, String notificationToken) {
+        Optional<Member> findMember = memberRepository.findById(memberId);
+        if (findMember.isEmpty()) throw new UrlNotFoundException();
+
+        memberRepository.updateNotificationToken(memberId, notificationToken);
     }
 }
