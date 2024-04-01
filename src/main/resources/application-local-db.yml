@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://changheehome.myqnapcloud.com:5432/trenvel
+    username: mohajistudio
+    password: mohaji2022!
+    driver-class-name: org.postgresql.Driver
+    hibernate:
+      ddl-auto: validate
+    defer-datasource-initialization: false
+    generate-ddl: false
+  flyway:
+    enabled: true
+    baselineOnMigrate: true
+    baseline-version: 0
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: validate
+    defer-datasource-initialization: false
+    generate-ddl: false
+    show-sql: true

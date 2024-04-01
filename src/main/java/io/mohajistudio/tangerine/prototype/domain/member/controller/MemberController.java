@@ -89,7 +89,7 @@ public class MemberController {
     }
 
     @GetMapping("/{memberId}/follows")
-    @Operation(summary = "내가 팔로우 한 멤버 목록 조회", description = "page와 size 값을 넘기면 페이징 된 내가 팔로우한 멤버 목록을 반환합니다. 기본 값은 page는 1, size는 10 입니다.")
+    @Operation(summary = "팔로우 한 멤버 목록 조회", description = "page와 size 값을 넘기면 페이징 된 내가 팔로우한 멤버 목록을 반환합니다. 기본 값은 page는 1, size는 10 입니다.")
     public Page<MemberDTO> followListByPage(@PathVariable("memberId") Long memberId, @ModelAttribute PageableParam pageableParam) {
         Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
 
@@ -120,5 +120,18 @@ public class MemberController {
 
         Page<PlaceBlock> postListByPage = memberService.findPlaceBlockListByPage(memberId, pageable);
         return postListByPage.map(placeBlockMapper::toDetailsDTO);
+    }
+
+    @PatchMapping("/{memberId}/notification-token")
+    @Operation(summary = "멤버의 ", description = "특정 멤버가 작성한 게시글들을 조회힙니다.")
+    public void notificationTokenModify(@PathVariable("memberId") Long memberId, @Valid @RequestBody MemberDTO.Notification memberNotificationDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
+
+        if (!Objects.equals(memberId, securityMember.getId())) {
+            throw new BusinessException(ErrorCode.NO_PERMISSION);
+        }
+
+        memberService.modifyNotificationToken(memberId, memberNotificationDTO.getNotificationToken());
     }
 }

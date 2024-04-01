@@ -6,6 +6,7 @@ import io.mohajistudio.tangerine.prototype.domain.comment.repository.CommentRepo
 import io.mohajistudio.tangerine.prototype.domain.comment.repository.FavoriteCommentRepository;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
+import io.mohajistudio.tangerine.prototype.domain.notification.service.NotificationService;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.domain.post.repository.PostRepository;
 import io.mohajistudio.tangerine.prototype.global.enums.CommentStatus;
@@ -31,12 +32,18 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final FavoriteCommentRepository favoriteCommentRepository;
+    private final NotificationService notificationService;
 
     public Comment AddComment(Comment comment, Long postId, Long memberId) {
         Optional<Member> findMember = memberRepository.findById(memberId);
-        findMember.ifPresent(comment::setMember);
 
-        Optional<Post> findPost = postRepository.findById(postId);
+        if(findMember.isEmpty()) {
+            throw new BusinessException(ErrorCode.NO_PERMISSION);
+        }
+        Member member = findMember.get();
+        comment.setMember(member);
+
+        Optional<Post> findPost = postRepository.findByIdWithMember(postId);
         if (findPost.isEmpty()) {
             throw new UrlNotFoundException();
         }
@@ -44,6 +51,7 @@ public class CommentService {
 
         comment.setPost(post);
 
+        // 부모 댓글과 대댓글 대상이 없는 경우
         if (comment.getReplyComment() == null && comment.getParentComment() == null) {
             Integer maxGroupNumber = commentRepository.findMaxGroupNumberByPostId(postId);
             if (maxGroupNumber == null) {
@@ -52,11 +60,18 @@ public class CommentService {
                 comment.setGroupNumber(maxGroupNumber + 1);
             }
         } else if (comment.getReplyComment() != null && comment.getParentComment() != null) {
-            Integer parentGroupNumber = commentRepository.findGroupNumberById(comment.getParentComment().getId());
-            if (parentGroupNumber == null) {
+            Optional<Comment> findParentComment = commentRepository.findByIdWithMember(comment.getParentComment().getId());
+            Optional<Comment> findReplyComment = commentRepository.findByIdWithMember(comment.getReplyComment().getId());
+
+            if (findParentComment.isEmpty() || findReplyComment.isEmpty()) {
                 throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
             }
-            comment.setGroupNumber(parentGroupNumber);
+            Comment parentComment = findParentComment.get();
+            Comment replyComment = findReplyComment.get();
+
+            comment.setGroupNumber(parentComment.getGroupNumber());
+            comment.setParentComment(parentComment);
+            comment.setReplyComment(replyComment);
         } else {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
         }
@@ -66,6 +81,7 @@ public class CommentService {
 
         postRepository.updateCommentCnt(post.getId(), post.getCommentCnt() + 1);
 
+        notificationService.sendCommentMessage(comment, post);
         return comment;
     }
 

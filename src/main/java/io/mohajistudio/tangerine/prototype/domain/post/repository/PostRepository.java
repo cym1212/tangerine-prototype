@@ -16,8 +16,14 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     @Override
-    @Query("select p from Post p where p.id = :id and p.deletedAt IS NULL")
+    @Query("select p from Post p where p.id = :id")
     Optional<Post> findById(@Param("id") Long id);
+
+    @Query("select p from Post p " +
+            "LEFT JOIN FETCH p.member m " +
+            "LEFT JOIN FETCH m.memberProfile mp " +
+            "WHERE p.id = :id")
+    Optional<Post> findByIdWithMember(@Param("id") Long id);
 
     @Query("SELECT p " +
             "FROM Post p " +

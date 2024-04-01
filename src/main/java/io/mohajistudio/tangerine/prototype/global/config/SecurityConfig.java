@@ -51,7 +51,7 @@ public class SecurityConfig {
                     //MEMBER
                     auth.requestMatchers(HttpMethod.GET, "/places", "/places/kakao", "/places/categories", "/posts/regions").hasAnyAuthority(AUTHORITY_MEMBER);
                     auth.requestMatchers(HttpMethod.POST, "/posts", "/places", "/posts/*/comments", "/places/kakao", "/posts/place-blocks/place-block-images", "/places/recommend").hasAnyAuthority(AUTHORITY_MEMBER);
-                    auth.requestMatchers(HttpMethod.PATCH, "/logout", "/posts/*/favorites", "/posts/*", "/posts/*/comments/*", "/members/*/follows", "/posts/*/scrap", "/posts/*/comments/*/favorites", "/members/*/member-profiles").hasAnyAuthority(AUTHORITY_MEMBER);
+                    auth.requestMatchers(HttpMethod.PATCH, "/logout", "/posts/*/favorites", "/posts/*", "/posts/*/comments/*", "/members/*/follows", "/posts/*/scrap", "/posts/*/comments/*/favorites", "/members/*/member-profiles", "/members/*/notification-token").hasAnyAuthority(AUTHORITY_MEMBER);
                     auth.requestMatchers(HttpMethod.DELETE, "/posts/*", "/posts/*/comments/*").hasAnyAuthority(AUTHORITY_MEMBER);
                 }).csrf(AbstractHttpConfigurer::disable).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2Login(oauth2Login -> {
