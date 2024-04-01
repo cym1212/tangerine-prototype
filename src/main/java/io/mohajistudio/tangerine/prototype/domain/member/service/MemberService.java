@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.MEMBER_NOT_FOUND;
@@ -112,6 +113,10 @@ public class MemberService {
         Member member = findMember(memberId);
 
         LocalDateTime modifiedAt = LocalDateTime.now();
+
+        if (!Objects.equals(member.getMemberProfile().getProfileImage(), memberProfile.getProfileImage())) {
+            memberProfile.setProfileImage(s3UploadService.copyImage(memberProfile.getProfileImage(), UploadUtils.TEMPORARY_PATH, UploadUtils.PROFILE_IMAGES_PATH));
+        }
 
         memberProfileRepository.update(member.getMemberProfile().getId(), modifiedAt, memberProfile.getName(), memberProfile.getNickname(), memberProfile.getIntroduction(), memberProfile.getPhone(), memberProfile.getProfileImage());
     }
