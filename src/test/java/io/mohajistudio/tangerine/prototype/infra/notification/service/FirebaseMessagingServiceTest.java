@@ -32,6 +32,5 @@ class FirebaseMessagingServiceTest {
     @Test
     void printMessageSource() {
         String message = messageSource.getMessage("notification.comment.title", null, Locale.getDefault());
-        log.info(message);
     }
 }
