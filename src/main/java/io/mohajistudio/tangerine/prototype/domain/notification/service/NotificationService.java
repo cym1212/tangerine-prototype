@@ -5,11 +5,13 @@ import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.notification.domain.Notification;
 import io.mohajistudio.tangerine.prototype.domain.notification.repository.NotificationRepository;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
-import io.mohajistudio.tangerine.prototype.infra.notification.dto.NotificationMessageDTO;
+import io.mohajistudio.tangerine.prototype.infra.notification.dto.PushNotificationDTO;
 import io.mohajistudio.tangerine.prototype.infra.notification.service.FirebaseMessagingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -54,8 +56,12 @@ public class NotificationService {
             Notification notification = Notification.builder().title(title).body(body).member(member).relatedComment(comment).relatedPost(post).relatedMember(comment.getMember()).build();
             notificationRepository.save(notification);
 
-            NotificationMessageDTO notificationMessageDTO = NotificationMessageDTO.builder().title(title).body(body).token(member.getNotificationToken()).data(notification.getData()).build();
+            PushNotificationDTO notificationMessageDTO = PushNotificationDTO.builder().title(title).body(body).token(member.getNotificationToken()).data(notification.getData()).build();
             firebaseMessagingService.sendNotificationByToken(notificationMessageDTO);
         }
+    }
+
+    public Page<Notification> findNotificationListByPage(Long memberId, Pageable pageable) {
+        return notificationRepository.findAll(memberId, pageable);
     }
 }
