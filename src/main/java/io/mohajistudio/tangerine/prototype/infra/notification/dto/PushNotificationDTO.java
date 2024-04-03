@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Getter
 @Builder
-public class NotificationMessageDTO {
+public class PushNotificationDTO {
     private String token;
     private String title;
     private String body;

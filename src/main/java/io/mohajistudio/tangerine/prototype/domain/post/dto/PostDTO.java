@@ -90,6 +90,12 @@ public class PostDTO {
 
         @Schema(description = "작성자")
         private MemberDTO member;
+    }
 
+    @Getter
+    @Setter
+    public static class Notification extends PostDTO {
+        @Schema(description = "Post Id", example = "1")
+        private Long id;
     }
 }

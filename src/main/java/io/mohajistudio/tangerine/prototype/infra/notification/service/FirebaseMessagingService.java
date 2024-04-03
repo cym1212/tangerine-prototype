@@ -4,7 +4,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import io.mohajistudio.tangerine.prototype.infra.notification.dto.NotificationMessageDTO;
+import io.mohajistudio.tangerine.prototype.infra.notification.dto.PushNotificationDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class FirebaseMessagingService {
     private final FirebaseMessaging firebaseMessaging;
 
-    public void sendNotificationByToken(NotificationMessageDTO notificationMessageDTO) {
+    public void sendNotificationByToken(PushNotificationDTO notificationMessageDTO) {
         if(notificationMessageDTO.getToken() == null) {
             return;
         }
