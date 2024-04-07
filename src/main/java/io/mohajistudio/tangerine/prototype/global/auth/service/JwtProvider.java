@@ -114,9 +114,8 @@ public class JwtProvider {
 
         reissuedRefreshToken = generateToken(securityMemberDTO, REFRESH_TOKEN_PERIOD);
         reissuedAccessToken = generateToken(securityMemberDTO, ACCESS_TOKEN_PERIOD);
-        member.setRefreshToken(refreshToken);
 
-        memberRepository.save(member);
+        memberRepository.updateRefreshToken(member.getId(), reissuedRefreshToken);
 
         generatedTokenDTO = GeneratedTokenDTO.builder().accessToken(reissuedAccessToken).refreshToken(reissuedRefreshToken).isRegistered(true).build();
 
