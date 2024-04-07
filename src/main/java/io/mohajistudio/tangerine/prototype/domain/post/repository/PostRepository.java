@@ -34,7 +34,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "LEFT JOIN FETCH pb.placeBlockImages pbi " +
             "LEFT JOIN FETCH pb.placeCategory c " +
             "LEFT JOIN FETCH pb.place pl " +
-            "WHERE p.id = :id"
+            "WHERE p.id = :id " +
+            "ORDER BY pbi.orderNumber ASC"
     )
     Optional<Post> findByIdDetails(@Param("id") Long id);
 
