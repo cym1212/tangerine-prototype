@@ -1,6 +1,5 @@
 package io.mohajistudio.tangerine.prototype.global.error;
 
-import io.jsonwebtoken.JwtException;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.global.error.exception.UrlNotFoundException;
@@ -173,13 +172,6 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage());
         final ErrorResponse response = ErrorResponse.of(ErrorCode.MISSING_SERVLET_REQUEST_PART);
         sendWebhook(httpServletRequest, e.getMessage(), ErrorCode.MISSING_SERVLET_REQUEST_PART);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(JwtException.class)
-    protected ResponseEntity<ErrorResponse> handleMJwtException(JwtException e, HttpServletRequest httpServletRequest) {
-        final ErrorResponse response = ErrorResponse.of(ErrorCode.NO_PERMISSION);
-        sendWebhook(httpServletRequest, e.getMessage(), ErrorCode.NO_PERMISSION);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

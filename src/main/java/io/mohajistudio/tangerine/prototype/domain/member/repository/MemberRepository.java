@@ -15,7 +15,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    @Query("SELECT m FROM Member m LEFT JOIN FETCH m.memberProfile WHERE m.id = :id")
+    @Query("select m from Member m left join fetch m.memberProfile where m.id = :id")
     Optional<Member> findById(@Param("id") Long id);
 
     @Modifying
@@ -33,12 +33,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Modifying
     @Query("UPDATE Member m SET m.followMemberCnt = :followMemberCnt WHERE m.id = :id")
     void updateFollowMemberCnt(@Param("id") Long id, @Param("followMemberCnt") int followMemberCount);
-
-    @Modifying
-    @Query("UPDATE Member m SET m.notificationToken = :notificationToken WHERE m.id = :id")
-    void updateNotificationToken(@Param("id") Long id, @Param("notificationToken") String notificationToken);
-
-    @Modifying
-    @Query("UPDATE Member m SET m.notificationToken = NULL, m.refreshToken = NULL WHERE m.id = :id")
-    void logout(@Param("id") Long id);
 }

@@ -1,5 +1,6 @@
 package io.mohajistudio.tangerine.prototype.domain.post.dto;
 
+import io.mohajistudio.tangerine.prototype.global.enums.ImageMimeType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -10,13 +11,19 @@ import lombok.Setter;
 @Setter
 public class PlaceBlockImageDTO {
     @NotNull
-    @Schema(description = "스토리지 이미지 경로", example = "/images/imageUrl.jpg")
-    private String storageKey;
-
+    @Schema(description = "이미지 경로", example = "https://imageUrl.com")
+    private String imageUrl;
+    @NotNull
+    @Schema(description = "이미지 확장자", example = "image/jpeg")
+    private ImageMimeType imageMimeType;
     @NotNull
     @Min(1)
     @Schema(description = "순서 번호", example = "1")
     private short orderNumber;
+
+    public void setImageMimeType(String imageMimeType) {
+        this.imageMimeType = ImageMimeType.fromValue(imageMimeType);
+    }
 
     @Getter
     @Setter

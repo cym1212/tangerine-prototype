@@ -8,6 +8,7 @@ import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBl
 import io.mohajistudio.tangerine.prototype.domain.post.domain.*;
 import io.mohajistudio.tangerine.prototype.domain.post.repository.*;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
+import io.mohajistudio.tangerine.prototype.global.enums.ImageMimeType;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +47,8 @@ class PostServiceTest {
         textBlocks.add(TextBlock.builder().content("첫 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 1).build());
         textBlocks.add(TextBlock.builder().content("세 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 3).build());
 
-        placeBlockImages.add(PlaceBlockImage.builder().storageKey("https://image-url-2-1.com").orderNumber((short) 1).build());
-        placeBlockImages.add(PlaceBlockImage.builder().storageKey("https://image-url-2-2.com").orderNumber((short) 2).build());
+        placeBlockImages.add(PlaceBlockImage.builder().imageUrl("https://image-url-2-1.com").imageMimeType(ImageMimeType.JPEG).orderNumber((short) 1).build());
+        placeBlockImages.add(PlaceBlockImage.builder().imageUrl("https://image-url-2-2.com").imageMimeType(ImageMimeType.PNG).orderNumber((short) 2).build());
 
         placeBlocks.add(PlaceBlock.builder().content("두 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 2).placeCategory(category).place(place).placeBlockImages(placeBlockImages).representativePlaceBlockImageOrderNumber((short) 1).build());
 
@@ -74,12 +75,12 @@ class PostServiceTest {
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> placeBlockImageIds.add(placeBlockImage.getId()));
         });
 
-        placeBlockImages.add(PlaceBlockImage.builder().storageKey("https://image-url-2-1.com").orderNumber((short) 1).id(placeBlockImageIds.get(0)).build());
-        placeBlockImages.add(PlaceBlockImage.builder().storageKey("https://image-url-2-2.com").orderNumber((short) 1).id(placeBlockImageIds.get(1)).build());
+        placeBlockImages.add(PlaceBlockImage.builder().imageUrl("https://image-url-2-1.com").imageMimeType(ImageMimeType.JPEG).orderNumber((short) 1).id(placeBlockImageIds.get(0)).build());
+        placeBlockImages.add(PlaceBlockImage.builder().imageUrl("https://image-url-2-2.com").imageMimeType(ImageMimeType.PNG).orderNumber((short) 1).id(placeBlockImageIds.get(1)).build());
 
         Set<PlaceBlockImage> placeBlockImages2 = new HashSet<>();
-        placeBlockImages2.add(PlaceBlockImage.builder().storageKey("https://image-url-3-1.com").orderNumber((short) 1).build());
-        placeBlockImages2.add(PlaceBlockImage.builder().storageKey("https://image-url-3-2.com").orderNumber((short) 1).build());
+        placeBlockImages2.add(PlaceBlockImage.builder().imageUrl("https://image-url-3-1.com").imageMimeType(ImageMimeType.JPEG).orderNumber((short) 1).build());
+        placeBlockImages2.add(PlaceBlockImage.builder().imageUrl("https://image-url-3-2.com").imageMimeType(ImageMimeType.PNG).orderNumber((short) 1).build());
 
         placeBlocks.add(PlaceBlock.builder().content("수정된 두 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 2).placeCategory(category).place(place).placeBlockImages(placeBlockImages).representativePlaceBlockImageOrderNumber((short) 1).id(placeBlockIds.get(0)).build());
         placeBlocks.add(PlaceBlock.builder().content("추가된 세 번째 블럭에 들어갈 내용입니다.").orderNumber((short) 3).placeCategory(category).place(place).placeBlockImages(placeBlockImages2).representativePlaceBlockImageOrderNumber((short) 1).build());

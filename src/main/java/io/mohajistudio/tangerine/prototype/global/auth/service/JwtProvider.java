@@ -29,7 +29,9 @@ public class JwtProvider {
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     private Key signingKey;
     private JwtParser jwtParser;
-    private static final Long ACCESS_TOKEN_PERIOD = 1000L * 60L * 60L; // 1시간
+    //todo 배포시 변경해야함
+//    private static final Long ACCESS_TOKEN_PERIOD = 1000L * 60L * 60L; // 1시간
+    private static final Long ACCESS_TOKEN_PERIOD = 1000L * 60L * 60L * 24L * 14L; // 2주
     private static final Long REFRESH_TOKEN_PERIOD = 1000L * 60L * 60L * 24L * 14L; // 2주
 
     @PostConstruct
@@ -93,7 +95,6 @@ public class JwtProvider {
         String reissuedRefreshToken;
         String reissuedAccessToken;
         Claims claims = verifyToken(refreshToken);
-
         SecurityMemberDTO securityMemberDTO = SecurityMemberDTO.fromClaims(claims);
 
         Optional<Member> findMember = memberRepository.findById(securityMemberDTO.getId());
@@ -114,8 +115,9 @@ public class JwtProvider {
 
         reissuedRefreshToken = generateToken(securityMemberDTO, REFRESH_TOKEN_PERIOD);
         reissuedAccessToken = generateToken(securityMemberDTO, ACCESS_TOKEN_PERIOD);
+        member.setRefreshToken(refreshToken);
 
-        memberRepository.updateRefreshToken(member.getId(), reissuedRefreshToken);
+        memberRepository.save(member);
 
         generatedTokenDTO = GeneratedTokenDTO.builder().accessToken(reissuedAccessToken).refreshToken(reissuedRefreshToken).isRegistered(true).build();
 

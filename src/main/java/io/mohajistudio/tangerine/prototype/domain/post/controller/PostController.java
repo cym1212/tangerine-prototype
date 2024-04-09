@@ -11,6 +11,7 @@ import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessExcept
 import io.mohajistudio.tangerine.prototype.infra.region.dto.RegionProvinceDTO;
 import io.mohajistudio.tangerine.prototype.infra.region.service.RegionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,23 +36,19 @@ public class PostController {
 
     @GetMapping
     @Operation(summary = "페이징 된 게시글 목록", description = "page와 size 값을 넘기면 페이징 된 게시글 목록을 반환합니다. 기본 값은 page는 1, size는 10 입니다.")
-    public Page<PostDTO.Compact> postListByPage(@ModelAttribute PageableParam pageableParam, @RequestParam(value = "keyword", required = false) String keyword) {
+    public Page<PostDTO.Compact> postListByPage(@Parameter(name = "PageableParam") @ModelAttribute PageableParam pageableParam) {
         Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
-
-        Page<Post> postListWithPagination;
-
-        if (keyword == null) {
-            postListWithPagination = postService.findPostListByPage(pageable);
-        } else {
-            postListWithPagination = postService.findPostListByKeywordPage(pageable, keyword);
-        }
-
+        Page<Post> postListWithPagination = postService.findPostListByPage(pageable);
         return postListWithPagination.map(postMapper::toCompactDTO);
     }
 
     @PostMapping
     @Operation(summary = "게시글 추가", description = "게시글 형식에 맞게 데이터를 전달해주세요.")
     public void postAdd(@Valid @RequestBody PostDTO.Add postAddDTO) {
+        if(postAddDTO.getVisitStartDate().isAfter(postAddDTO.getVisitEndDate())) {
+            throw new BusinessException(ErrorCode.INVALID_DATE_RANGE);
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
@@ -63,20 +60,20 @@ public class PostController {
     @GetMapping("/{id}")
     @Operation(summary = "게시글 상세 조회", description = "게시글 상세를 조회합니다.")
     public PostDTO.Details postDetails(@PathVariable("id") Long id) {
-        Long memberId = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication.getPrincipal() != "anonymousUser") {
-            SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
-            memberId = securityMember.getId();
-        }
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
-        Post postDetails = postService.findPostDetails(id, memberId);
+        Post postDetails = postService.findPostDetails(id, securityMember.getId());
         return postMapper.toDetailsDTO(postDetails);
     }
 
     @PatchMapping("/{id}")
     @Operation(summary = "게시글 수정", description = "게시글 형식에 맞게 데이터를 전달해주세요.")
     public void postModify(@PathVariable("id") Long id, @Valid @RequestBody PostDTO.Details postDetailsDTO) {
+        if(postDetailsDTO.getVisitStartDate().isAfter(postDetailsDTO.getVisitEndDate())) {
+            throw new BusinessException(ErrorCode.INVALID_DATE_RANGE);
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 

@@ -1,9 +1,7 @@
 package io.mohajistudio.tangerine.prototype.domain.post.mapper;
 
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
-import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
-import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceBlockDTO;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceDTO;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PostDTO;
 import io.mohajistudio.tangerine.prototype.global.common.PointDTO;
@@ -33,9 +31,6 @@ public interface PostMapper {
     Post toEntity(PostDTO.Details postDetailsDTO);
 
     Post toEntity(PostDTO.Add postAddDTO);
-
-    @Mapping(target = "representativePlaceBlockImageOrderNumber", ignore = true)
-    PlaceBlockDTO.Details toDTO(PlaceBlock placeBlock);
 
     @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setCoordinate")
     Place toPlaceDetailsDTO(PlaceDTO.Details placeDetailsDTO);

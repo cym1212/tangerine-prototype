@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -32,6 +33,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
 
         boolean registered = Boolean.TRUE.equals(oAuth2User.getAttribute("registered"));
+
         Long id = oAuth2User.getAttribute("id");
         String email = oAuth2User.getAttribute("email");
         String provider = oAuth2User.getAttribute("provider");
