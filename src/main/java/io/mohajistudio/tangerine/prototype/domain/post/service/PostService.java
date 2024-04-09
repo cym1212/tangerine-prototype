@@ -36,21 +36,24 @@ public class PostService{
     private final ScrapPostRepository scrapPostRepository;
     private final PlaceBlockImageService placeBlockImageService;
     private final PlaceRepository placeRepository;
-
     private static final int MIN_POSTS_INTERVAL_MINUTES = 10;
     private static final int MAX_POSTS_INTERVAL_HOURS = 24;
 
     public void addPost(Post post, Long memberId) {
-        countPostsToday(memberId);
-        checkBlockOrderNumberAndContentIsEmpty(post.getPlaceBlocks(), post.getTextBlocks());
+        checkPostInterval(memberId);
+
+        post.validate();
 
         Optional<Member> findMember = memberRepository.findById(memberId);
+
         findMember.ifPresent(post::setMember);
 
         post.setStatus(PostStatus.PUBLISHED);
-        post.setPlaceBlockCnt((short) post.getPlaceBlocks().size());
 
-        post.setThumbnail(placeBlockImageService.copyImageToPermanent(post.getThumbnail()));
+        String thumbnail = placeBlockImageService.copyImageToPermanent(post.getThumbnail());
+
+        post.setThumbnail(thumbnail);
+
         postRepository.save(post);
 
         post.getTextBlocks().forEach(textBlock -> {
@@ -89,8 +92,13 @@ public class PostService{
         return postRepository.findAll(pageable);
     }
 
+    public Page<Post> findPostListByKeywordPage(Pageable pageable, String keyword) {
+        return postRepository.findAllContainingKeyword(pageable, keyword);
+    }
+
     public Post findPostDetails(Long id, Long memberId) {
         Optional<Post> findPost = postRepository.findByIdDetails(id);
+
         if (findPost.isEmpty()) throw new UrlNotFoundException();
 
         Post post = findPost.get();
@@ -116,20 +124,24 @@ public class PostService{
             throw new BusinessException(ErrorCode.NO_PERMISSION);
         }
 
-        checkBlockOrderNumberAndContentIsEmpty(modifyPost.getPlaceBlocks(), modifyPost.getTextBlocks());
-        checkDeletedBlock(modifyPost.getPlaceBlocks(), modifyPost.getTextBlocks(), post.getPlaceBlocks(), post.getTextBlocks());
+        modifyPost.validate();
 
-        post.setPlaceBlockCnt((short) post.getPlaceBlocks().size());
+        checkDeletedBlocksAndImages(modifyPost.getPlaceBlocks(), modifyPost.getTextBlocks(), post.getPlaceBlocks(), post.getTextBlocks());
 
-        postRepository.update(post.getId(), modifyPost.getTitle(), modifyPost.getVisitStartDate(), modifyPost.getVisitEndDate(), modifyPost.getPlaceBlockCnt());
+        modifyPost.setThumbnail(placeBlockImageService.copyImageToPermanent(modifyPost.getThumbnail()));
+
+        LocalDateTime modifiedAt = LocalDateTime.now();
+
+        postRepository.update(post.getId(), modifiedAt, modifyPost.getTitle(), modifyPost.getVisitStartDate(), modifyPost.getVisitEndDate(), modifyPost.getPlaceBlockCnt(), modifyPost.getThumbnail());
 
         modifyPost.getTextBlocks().forEach(textBlock -> modifyTextBlock(textBlock, post));
         modifyPost.getPlaceBlocks().forEach(placeBlock -> {
             modifyPlaceBlock(placeBlock, post);
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> {
                         modifyPlaceBlockImage(placeBlock, placeBlockImage);
-                        if (placeBlock.getRepresentativePlaceBlockImageId() == null && placeBlock.getRepresentativePlaceBlockImageOrderNumber() == placeBlockImage.getOrderNumber()) {
+                        if (placeBlock.getRepresentativePlaceBlockImageOrderNumber() == placeBlockImage.getOrderNumber()) {
                             placeBlock.setRepresentativePlaceBlockImageId(placeBlockImage.getId());
+                            placeBlockRepository.update(placeBlock.getId(), placeBlockImage.getId());
                         }
                     }
             );
@@ -141,6 +153,15 @@ public class PostService{
     }
 
     private void modifyPlaceBlock(PlaceBlock placeBlock, Post post) {
+        if (placeBlock.getPlace().getId() == null) {
+            Place place = placeBlock.getPlace();
+            Optional<Place> findPlace = placeRepository.findByProviderId(place.getProviderId());
+            if (findPlace.isEmpty()) {
+                throw new BusinessException(ENTITY_NOT_FOUND);
+            }
+            placeBlock.setPlace(findPlace.get());
+        }
+
         if (placeBlock.getId() == null) {
             placeBlock.setPost(post);
             placeBlock.setMember(post.getMember());
@@ -150,7 +171,7 @@ public class PostService{
             if (findPlaceBlock.isEmpty()) {
                 throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
             }
-            placeBlockRepository.update(findPlaceBlock.get().getId(), placeBlock.getContent(), placeBlock.getOrderNumber(), placeBlock.getRating(), placeBlock.getPlaceCategory(), placeBlock.getPlace());
+            placeBlockRepository.update(findPlaceBlock.get().getId(), placeBlock.getContent(), placeBlock.getOrderNumber(), placeBlock.getRating(), placeBlock.getPlaceCategory(), placeBlock.getPlace(), placeBlock.getVisitStartDate(), placeBlock.getVisitEndDate());
         }
     }
 
@@ -163,7 +184,7 @@ public class PostService{
             if (findPlaceBlockImage.isEmpty()) {
                 throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
             }
-            placeBlockImageRepository.update(findPlaceBlockImage.get().getId(), placeBlockImage.getImageUrl(), placeBlockImage.getImageMimeType(), placeBlockImage.getOrderNumber());
+            placeBlockImageRepository.update(findPlaceBlockImage.get().getId(), placeBlockImage.getStorageKey(), placeBlockImage.getOrderNumber());
         }
     }
 
@@ -220,35 +241,7 @@ public class PostService{
         });
     }
 
-    private void checkBlockOrderNumberAndContentIsEmpty(Set<PlaceBlock> placeBlocks, Set<TextBlock> textBlocks) {
-        Set<Short> orderNumbers = new HashSet<>();
-
-        placeBlocks.forEach(placeBlock -> {
-            if (!orderNumbers.add(placeBlock.getOrderNumber())) {
-                throw new BusinessException(ErrorCode.INVALID_ORDER_NUMBER);
-            }
-            if (placeBlock.getContent().isEmpty()) {
-                throw new BusinessException(ErrorCode.CONTENT_IS_EMPTY);
-            }
-        });
-        textBlocks.forEach(textBlock -> {
-            if (!orderNumbers.add(textBlock.getOrderNumber())) {
-                throw new BusinessException(ErrorCode.INVALID_ORDER_NUMBER);
-            }
-            if (textBlock.getContent().isEmpty()) {
-                throw new BusinessException(ErrorCode.CONTENT_IS_EMPTY);
-            }
-        });
-
-        int totalSize = placeBlocks.size() + textBlocks.size();
-        for (short i = 1; i <= totalSize; i++) {
-            if (!orderNumbers.contains(i)) {
-                throw new BusinessException(ErrorCode.INVALID_ORDER_NUMBER);
-            }
-        }
-    }
-
-    private void checkDeletedBlock(Set<PlaceBlock> modifyPlaceBlocks, Set<TextBlock> modifyTextBlocks, Set<PlaceBlock> placeBlocks, Set<TextBlock> textBlocks) {
+    private void checkDeletedBlocksAndImages(Set<PlaceBlock> modifyPlaceBlocks, Set<TextBlock> modifyTextBlocks, Set<PlaceBlock> placeBlocks, Set<TextBlock> textBlocks) {
         Set<Long> blockIds = new HashSet<>();
         Set<Long> modifyBlockIds = new HashSet<>();
         Set<Long> placeBlockImageIds = new HashSet<>();
@@ -268,10 +261,12 @@ public class PostService{
             blockIds.add(placeBlock.getId());
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> placeBlockImageIds.add(placeBlockImage.getId()));
         });
+
         modifyPlaceBlocks.forEach(placeBlock -> {
             modifyBlockIds.add(placeBlock.getId());
             placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> modifyPlaceBlockImageIds.add(placeBlockImage.getId()));
         });
+
         blockIds.forEach(blockId -> {
             if (!modifyBlockIds.contains(blockId)) placeBlockRepository.delete(blockId, deletedAt);
         });
@@ -282,9 +277,9 @@ public class PostService{
         });
     }
 
-    private void countPostsToday(Long memberId) {
-        LocalDateTime twentyFourHoursAgo = LocalDateTime.now().minusHours(MAX_POSTS_INTERVAL_HOURS);
-        List<Post> findPosts = postRepository.countPostsToday(memberId, twentyFourHoursAgo);
+    private void checkPostInterval(Long memberId) {
+        LocalDateTime maxPostsIntervalHours = LocalDateTime.now().minusHours(MAX_POSTS_INTERVAL_HOURS);
+        List<Post> findPosts = postRepository.findAllByMemberIdAfter(memberId, maxPostsIntervalHours);
         if (findPosts.size() >= 3) {
             throw new BusinessException(MAX_POSTS_PER_DAY);
         }

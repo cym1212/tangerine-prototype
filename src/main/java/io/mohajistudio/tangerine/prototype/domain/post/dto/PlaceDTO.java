@@ -3,7 +3,6 @@ package io.mohajistudio.tangerine.prototype.domain.post.dto;
 import io.mohajistudio.tangerine.prototype.global.common.PointDTO;
 import io.mohajistudio.tangerine.prototype.global.enums.PlaceProvider;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,7 +30,6 @@ public class PlaceDTO {
     @Setter
     @Schema(name = "PlaceDTO.Details", description = "장소 상세를 반환할 때 사용할 DTO")
     public static class Details extends PlaceDTO {
-        @NotNull
         @Schema(description = "Place Id", example = "1")
         private Long id;
     }

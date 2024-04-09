@@ -33,8 +33,8 @@ public interface PlaceMapper {
 
     @Named("setCoordinate")
     default Point setCoordinate(PlaceKakaoSearchApiDTO placeKakaoSearchApiDTO) {
-        double lat = Double.parseDouble(placeKakaoSearchApiDTO.getX());
-        double lng = Double.parseDouble(placeKakaoSearchApiDTO.getY());
+        double lat = Double.parseDouble(placeKakaoSearchApiDTO.getY());
+        double lng = Double.parseDouble(placeKakaoSearchApiDTO.getX());
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         return geometryFactory.createPoint(new Coordinate(lat, lng));
     }

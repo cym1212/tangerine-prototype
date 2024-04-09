@@ -2,6 +2,8 @@ package io.mohajistudio.tangerine.prototype.domain.member.dto;
 
 import io.mohajistudio.tangerine.prototype.global.enums.Provider;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,4 +18,12 @@ public class MemberDTO {
 
     @Schema(description = "작성자 프로필")
     private MemberProfileDTO memberProfile;
+
+    @Getter
+    @Setter
+    public static class Notification {
+        @NotNull
+        @NotEmpty
+        private String notificationToken;
+    }
 }

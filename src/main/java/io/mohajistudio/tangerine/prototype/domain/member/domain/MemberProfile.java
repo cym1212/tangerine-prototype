@@ -1,7 +1,6 @@
 package io.mohajistudio.tangerine.prototype.domain.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.mohajistudio.tangerine.prototype.global.auth.dto.RegisterDTO;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import io.mohajistudio.tangerine.prototype.global.enums.Gender;
 import jakarta.persistence.*;
@@ -29,16 +28,17 @@ public class MemberProfile extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Column(length = 100)
+    private String introduction;
+
+    @Setter
     private String profileImage;
 
     @Column(length = 20, unique = true)
     private String nickname;
 
+    @Setter
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     Member member;
-
-    public static MemberProfile createMemberProfileFrom(RegisterDTO registerDTO, Member member) {
-        return MemberProfile.builder().birthday(registerDTO.getBirthday()).phone(registerDTO.getPhone()).gender(registerDTO.getGender()).profileImage(registerDTO.getProfileImage()).nickname(registerDTO.getNickname()).name(registerDTO.getName()).member(member).build();
-    }
 }

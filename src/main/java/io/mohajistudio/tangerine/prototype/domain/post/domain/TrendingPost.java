@@ -1,19 +1,25 @@
 package io.mohajistudio.tangerine.prototype.domain.post.domain;
 
-import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+@Getter
+@Setter
 @SuperBuilder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "trending_post")
-public class TrendingPost extends BaseEntity {
+public class TrendingPost {
+    @Id
+    private Long id;
+
     @OneToOne
     private Post post;
+
+    private double score;
 }

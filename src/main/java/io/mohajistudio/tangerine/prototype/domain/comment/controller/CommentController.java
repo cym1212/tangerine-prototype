@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -86,6 +87,9 @@ public class CommentController {
     @Operation(summary = "게시글에 등록된 좋아하는 댓글 목록 조회", description = "게시글에 등록된 좋아하는 댓글 목록을 조회합니다.")
     public Set<FavoriteCommentDTO> favoriteCommentList(@PathVariable(name = "postId") Long postId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.getPrincipal() == "anonymousUser") {
+            return new HashSet<>();
+        }
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
         Set<FavoriteComment> favoriteCommentListAtPost = commentService.findFavoriteCommentListAtPost(postId, securityMember.getId());

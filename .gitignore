@@ -34,6 +34,7 @@ application-prod-db.yml
 application-local-s3.yml
 application-prod-s3.yml
 application-region.yml
+firebase-service-account.json
 /src/main/generated/**
 /src/main/generated
 /src/main/gen

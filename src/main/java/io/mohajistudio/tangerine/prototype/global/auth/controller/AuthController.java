@@ -1,9 +1,11 @@
 package io.mohajistudio.tangerine.prototype.global.auth.controller;
 
+import io.mohajistudio.tangerine.prototype.domain.member.domain.MemberProfile;
+import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberProfileDTO;
+import io.mohajistudio.tangerine.prototype.domain.member.mapper.MemberMapper;
 import io.mohajistudio.tangerine.prototype.global.auth.dto.AppLoginDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.dto.GeneratedTokenDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.dto.TokenModifyDTO;
-import io.mohajistudio.tangerine.prototype.global.auth.dto.RegisterDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.domain.SecurityMemberDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.service.AuthService;
 import io.mohajistudio.tangerine.prototype.global.auth.service.JwtProvider;
@@ -21,13 +23,16 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
     private final JwtProvider jwtProvider;
+    private final MemberMapper memberMapper;
 
     @PostMapping("/register")
     @Operation(summary = "회원가입", description = "회원가입 형식에 맞게 데이터를 전달해주세요.")
-    public GeneratedTokenDTO register(@Valid @RequestBody RegisterDTO registerDTO) {
+    public GeneratedTokenDTO register(@Valid @RequestBody MemberProfileDTO memberProfileDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
-        return authService.register(securityMember, registerDTO);
+
+        MemberProfile memberProfile = memberMapper.toEntity(memberProfileDTO);
+        return authService.register(securityMember, memberProfile);
     }
 
     @PatchMapping("/logout")
@@ -51,7 +56,7 @@ public class AuthController {
     }
 
     @PatchMapping("/tokens")
-    @Operation(summary = "로그아웃", description = "Access Token과 남은 기간에 따라 Refresh Token을 재발급 합니다.")
+    @Operation(summary = "토큰 재발급", description = "Access Token과 남은 기간에 따라 Refresh Token을 재발급 합니다.")
     public GeneratedTokenDTO tokenModify(@Valid @RequestBody TokenModifyDTO tokenModifyRequest) {
         return jwtProvider.reissueToken(tokenModifyRequest.getRefreshToken());
     }
