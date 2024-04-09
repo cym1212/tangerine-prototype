@@ -10,7 +10,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
@@ -18,8 +20,15 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLRestriction("deleted_at is NULL")
 @Table(name = "place_block")
 public class PlaceBlock extends BaseEntity {
+    @Column
+    private LocalDate visitStartDate;
+
+    @Column
+    private LocalDate visitEndDate;
+
     @Column(nullable = false)
     private short orderNumber;
 
@@ -32,9 +41,6 @@ public class PlaceBlock extends BaseEntity {
 
     @Setter
     private Long representativePlaceBlockImageId;
-
-    @Transient
-    private short representativePlaceBlockImageOrderNumber;
 
     @Setter
     @JsonIgnore
@@ -60,4 +66,7 @@ public class PlaceBlock extends BaseEntity {
         this.placeBlockImages = placeBlockImages;
         placeBlockImages.forEach(placeBlockImage -> placeBlockImage.setPlaceBlock(this));
     }
+
+    @Transient
+    private short representativePlaceBlockImageOrderNumber;
 }

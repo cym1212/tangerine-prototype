@@ -1,0 +1,21 @@
+#spring:
+#  config:
+#    import:
+#      - classpath:application-prod-secret.yml
+#      - classpath:application-place.yml
+#      - classpath:application-prod-db.yml
+#      - classpath:application-prod-s3.yml
+#      - classpath:application-region.yml
+
+spring:
+  config:
+    import:
+      - file:/config/application-prod-secret.yml
+      - file:/config/application-place.yml
+      - file:/config/application-prod-db.yml
+      - file:/config/application-prod-s3.yml
+      - file:/config/application-region.yml
+discord:
+  webhook-url: https://discord.com/api/webhooks/1196781531830698065/H-iPT0Qq7EJLbN2rd_zY8Jochs5JUIEXeAF5Ghil1ua1qiKeqOJPhW7Lu1dTXDkeBkcW
+server:
+  port: 8081

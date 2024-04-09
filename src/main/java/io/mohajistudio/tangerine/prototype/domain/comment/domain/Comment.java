@@ -1,6 +1,7 @@
 package io.mohajistudio.tangerine.prototype.domain.comment.domain;
 
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
+import io.mohajistudio.tangerine.prototype.domain.notification.domain.Notification;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import io.mohajistudio.tangerine.prototype.global.enums.CommentStatus;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @SuperBuilder
@@ -41,25 +42,26 @@ public class Comment extends BaseEntity {
     private Member member;
 
     @Setter
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Post post;
 
-    @ManyToOne
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
     private Comment parentComment;
 
     @OneToMany(mappedBy = "parentComment")
-    private List<Comment> childComments;
+    private Set<Comment> childComments;
 
-    @ManyToOne
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
     private Comment replyComment;
 
     @OneToMany(mappedBy = "replyComment", fetch = FetchType.LAZY)
-    private List<Comment> repliedComments;
+    private Set<Comment> repliedComments;
 
     @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY)
-    private List<FavoriteComment> favoriteComments;
+    private Set<FavoriteComment> favoriteComments;
 
-    public void deleteContent() {
-        this.content = null;
-    }
+    @OneToMany(mappedBy = "relatedComment", fetch = FetchType.LAZY)
+    private Set<Notification> relatedNotifications;
 }
