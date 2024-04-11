@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,22 @@ public class CommentController {
     @Operation(summary = "페이징 된 댓글 목록 조회", description = "page와 size 값을 넘기면 페이징 된 댓글 목록을 조회합니다. 기본 값은 page는 1, size는 10 입니다.")
     public Page<CommentDTO.Details> commentListByPage(@PathVariable(name = "postId") Long postId, @ModelAttribute PageableParam pageableParam) {
         Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
-        Page<Comment> commentListByPage = commentService.findCommentListByPage(postId, pageable);
+
+        Page<Comment> commentListByPage = commentService.findCommentListByPage(postId, pageable, pageableParam.getSort());
+        return commentListByPage.map(commentMapper::toDTO);
+    }
+
+
+    @GetMapping("/{id}")
+    public CommentDTO.Details commentDetails(@PathVariable(name = "postId") Long postId, @PathVariable(name = "id") Long id) {
+        return commentMapper.toDTO(commentService.findComment(postId, id));
+    }
+
+    @GetMapping("/{id}/replies")
+    public Page<CommentDTO.Details> replyCommentListByPage(@PathVariable(name = "postId") Long postId, @PathVariable(name = "id") Long id, @ModelAttribute PageableParam pageableParam) {
+        Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
+
+        Page<Comment> commentListByPage = commentService.findReplyCommentListBypage(postId, id, pageable, pageableParam.getSort());
         return commentListByPage.map(commentMapper::toDTO);
     }
 

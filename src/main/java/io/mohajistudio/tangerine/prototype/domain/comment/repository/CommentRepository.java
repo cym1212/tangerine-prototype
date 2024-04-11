@@ -19,6 +19,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c " +
             "LEFT JOIN FETCH c.member m " +
             "LEFT JOIN FETCH m.memberProfile mp " +
+            "WHERE c.id = :id AND c.post.id = :postId")
+    Optional<Comment> findByIdDetails(@Param("id") Long id, @Param("postId") Long postId);
+
+    @Query("SELECT c FROM Comment c " +
+            "LEFT JOIN FETCH c.member m " +
+            "LEFT JOIN FETCH m.memberProfile mp " +
             "WHERE c.id = :id")
     Optional<Comment> findByIdWithMember(@Param("id") Long id);
 
@@ -31,8 +37,37 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "LEFT JOIN c.replyComment.member " +
             "LEFT JOIN c.replyComment.member.memberProfile " +
             "WHERE c.post.id = :postId " +
-            "ORDER BY c.groupNumber, c.createdAt")
-    Page<Comment> findByPostId(@Param("postId") Long postId, Pageable pageable);
+            "ORDER BY c.groupNumber DESC, c.id DESC")
+    Page<Comment> findByPostIdOrderByDesc(@Param("postId") Long postId, Pageable pageable);
+
+    @Query("SELECT c FROM Comment c " +
+            "LEFT JOIN FETCH c.member m " +
+            "LEFT JOIN FETCH m.memberProfile mp " +
+            "LEFT JOIN c.replyComment.member " +
+            "LEFT JOIN c.replyComment.member.memberProfile " +
+            "WHERE c.post.id = :postId " +
+            "ORDER BY c.groupNumber ASC, c.id ASC")
+    Page<Comment> findByPostIdOrderByAsc(@Param("postId") Long postId, Pageable pageable);
+
+    @Query("SELECT c FROM Comment c " +
+            "LEFT JOIN FETCH c.member m " +
+            "LEFT JOIN FETCH m.memberProfile mp " +
+            "LEFT JOIN c.replyComment.member " +
+            "LEFT JOIN c.replyComment.member.memberProfile " +
+            "WHERE c.post.id = :postId " +
+            "AND c.parentComment.id = :commentId " +
+            "ORDER BY c.id DESC")
+    Page<Comment> findByPostIdAndCommentIdOrderByDesc(@Param("postId") Long postId, @Param("commentId") Long commentId, Pageable pageable);
+
+    @Query("SELECT c FROM Comment c " +
+            "LEFT JOIN FETCH c.member m " +
+            "LEFT JOIN FETCH m.memberProfile mp " +
+            "LEFT JOIN c.replyComment.member " +
+            "LEFT JOIN c.replyComment.member.memberProfile " +
+            "WHERE c.post.id = :postId " +
+            "AND c.parentComment.id = :commentId " +
+            "ORDER BY c.id ASC")
+    Page<Comment> findByPostIdAndCommentIdOrderByAsc(@Param("postId") Long postId, @Param("commentId") Long commentId, Pageable pageable);
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Comment c SET c.modifiedAt = :modifiedAt, c.content = :content WHERE c.id = :id AND c.deletedAt IS NULL")
