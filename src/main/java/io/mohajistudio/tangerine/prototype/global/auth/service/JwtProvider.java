@@ -12,24 +12,14 @@ import jakarta.transaction.Transactional;
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.security.Key;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.*;
 
@@ -154,7 +144,7 @@ public class JwtProvider {
         findMember.ifPresent(member -> memberRepository.updateRefreshToken(member.getId(), refreshToken));
     }
 
-    public String createAppleClientSecret() {
+    public String createAppleClientSecret(PrivateKey privateKey) {
         Date expirationDate = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());
         Map<String, Object> jwtHeader = new HashMap<>();
         jwtHeader.put("kid", jwtConfig.getAppleKeyId());
@@ -166,24 +156,7 @@ public class JwtProvider {
                 .setExpiration(expirationDate)
                 .setAudience(jwtConfig.getAppleAud())
                 .setSubject(jwtConfig.getAppleClientId())
-                .signWith(getPrivateKey())
+                .signWith(privateKey)
                 .compact();
-    }
-
-    private PrivateKey getPrivateKey() {
-        try {
-            InputStream privateKey = new ClassPathResource(jwtConfig.getApplePrivateKey()).getInputStream();
-            String result = new BufferedReader(new InputStreamReader(privateKey)).lines().collect(Collectors.joining("\n"));
-            String key = result.replace("-----BEGIN PRIVATE KEY-----\n", "")
-                    .replace("-----END PRIVATE KEY-----", "").replaceAll("\\n", "");
-
-            byte[] decodedKey = Base64.getDecoder().decode(key);
-
-            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedKey);
-            KeyFactory keyFactory = KeyFactory.getInstance("EC");
-            return keyFactory.generatePrivate(keySpec);
-        } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new BusinessException(INTERNAL_SERVER_ERROR);
-        }
     }
 }
