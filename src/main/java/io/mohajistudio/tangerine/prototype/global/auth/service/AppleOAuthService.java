@@ -17,6 +17,8 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -83,11 +87,16 @@ public class AppleOAuthService {
 
     public PrivateKey getPrivateKey() {
         try {
-            log.info("jwtProperties.getApplePrivateKey() = " + jwtProperties.getApplePrivateKey());
-            InputStream privateKey = new ClassPathResource(jwtProperties.getApplePrivateKey()).getInputStream();
+            String privateKeyPath = jwtProperties.getApplePrivateKey();
+            InputStream privateKey;
+            if(privateKeyPath.startsWith("/config/")) {
+                Path serviceAccountPath = Paths.get(privateKeyPath);
+                Resource privateKeyResource = new FileSystemResource(serviceAccountPath);
+                privateKey = privateKeyResource.getInputStream();
+            } else {
+                privateKey = new ClassPathResource(privateKeyPath).getInputStream();
+            }
             String result = new BufferedReader(new InputStreamReader(privateKey)).lines().collect(Collectors.joining("\n"));
-            log.info("jwtProperties.getApplePrivateKey().result = " + result);
-
             String key = result.replace("-----BEGIN PRIVATE KEY-----\n", "")
                     .replace("-----END PRIVATE KEY-----", "").replaceAll("\\n", "");
 
