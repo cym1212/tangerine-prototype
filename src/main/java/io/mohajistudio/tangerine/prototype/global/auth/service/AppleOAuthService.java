@@ -92,7 +92,7 @@ public class AppleOAuthService {
             KeyFactory keyFactory = KeyFactory.getInstance("EC");
             return keyFactory.generatePrivate(keySpec);
         } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new BusinessException(INTERNAL_SERVER_ERROR);
+            throw new BusinessException("private key를 불러오는데 실패했습니다.", INTERNAL_SERVER_ERROR);
         }
     }
 }
