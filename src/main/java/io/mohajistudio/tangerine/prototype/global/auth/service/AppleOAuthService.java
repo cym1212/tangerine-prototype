@@ -9,6 +9,7 @@ import io.mohajistudio.tangerine.prototype.global.auth.dto.OAuth2AttributeDTO;
 import io.mohajistudio.tangerine.prototype.global.config.JwtProperties;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 
 import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.INTERNAL_SERVER_ERROR;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class AppleOAuthService {
@@ -81,8 +83,11 @@ public class AppleOAuthService {
 
     public PrivateKey getPrivateKey() {
         try {
+            log.info("jwtProperties.getApplePrivateKey() = " + jwtProperties.getApplePrivateKey());
             InputStream privateKey = new ClassPathResource(jwtProperties.getApplePrivateKey()).getInputStream();
             String result = new BufferedReader(new InputStreamReader(privateKey)).lines().collect(Collectors.joining("\n"));
+            log.info("jwtProperties.getApplePrivateKey().result = " + result);
+
             String key = result.replace("-----BEGIN PRIVATE KEY-----\n", "")
                     .replace("-----END PRIVATE KEY-----", "").replaceAll("\\n", "");
 
