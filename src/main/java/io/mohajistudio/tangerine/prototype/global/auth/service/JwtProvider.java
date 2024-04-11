@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
+import java.security.PrivateKey;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.*;
@@ -98,17 +101,17 @@ public class JwtProvider {
 
         Optional<Member> findMember = memberRepository.findById(securityMemberDTO.getId());
 
-        if(findMember.isEmpty()) {
+        if (findMember.isEmpty()) {
             throw new BusinessException(MEMBER_NOT_FOUND);
         }
 
         Member member = findMember.get();
 
-        if(member.getRefreshToken() == null) {
+        if (member.getRefreshToken() == null) {
             throw new BusinessException(MISMATCH_REFRESH_TOKEN);
         }
 
-        if(!member.getRefreshToken().equals(refreshToken)) {
+        if (!member.getRefreshToken().equals(refreshToken)) {
             throw new BusinessException(MISMATCH_REFRESH_TOKEN);
         }
 
@@ -139,5 +142,21 @@ public class JwtProvider {
     private void saveRefreshToken(Long id, String refreshToken) {
         Optional<Member> findMember = memberRepository.findById(id);
         findMember.ifPresent(member -> memberRepository.updateRefreshToken(member.getId(), refreshToken));
+    }
+
+    public String createAppleClientSecret(PrivateKey privateKey) {
+        Date expirationDate = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());
+        Map<String, Object> jwtHeader = new HashMap<>();
+        jwtHeader.put("kid", jwtConfig.getAppleKeyId());
+        jwtHeader.put("alg", "ES256");
+
+        return Jwts.builder().setHeaderParams(jwtHeader)
+                .setIssuer(jwtConfig.getAppleTeamId())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(expirationDate)
+                .setAudience(jwtConfig.getAppleAud())
+                .setSubject(jwtConfig.getAppleClientId())
+                .signWith(privateKey)
+                .compact();
     }
 }

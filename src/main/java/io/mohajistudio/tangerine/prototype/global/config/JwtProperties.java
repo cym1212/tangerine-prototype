@@ -11,4 +11,9 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "spring.jwt")
 public class JwtProperties {
     private String secretKey;
+    private String appleTeamId;
+    private String appleKeyId;
+    private String appleAud;
+    private String appleClientId;
+    private String applePrivateKey;
 }

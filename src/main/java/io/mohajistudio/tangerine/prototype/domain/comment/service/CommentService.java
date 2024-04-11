@@ -37,7 +37,7 @@ public class CommentService {
     public Comment AddComment(Comment comment, Long postId, Long memberId) {
         Optional<Member> findMember = memberRepository.findById(memberId);
 
-        if(findMember.isEmpty()) {
+        if (findMember.isEmpty()) {
             throw new BusinessException(ErrorCode.NO_PERMISSION);
         }
         Member member = findMember.get();
@@ -85,13 +85,20 @@ public class CommentService {
         return comment;
     }
 
-    public Page<Comment> findCommentListByPage(Long postId, Pageable pageable) {
-        Optional<Post> findPost = postRepository.findById(postId);
-        if (findPost.isEmpty()) {
+    public Comment findComment(Long postId, Long id) {
+        Optional<Comment> findComment = commentRepository.findByIdDetails(id, postId);
+        if(findComment.isEmpty()) {
             throw new UrlNotFoundException();
         }
+        return findComment.get();
+    }
 
-        return commentRepository.findByPostId(postId, pageable);
+    public Page<Comment> findCommentListByPage(Long postId, Pageable pageable, String sort) {
+        return sort.equals("ASC") ? commentRepository.findByPostIdOrderByAsc(postId, pageable) : commentRepository.findByPostIdOrderByDesc(postId, pageable);
+    }
+
+    public Page<Comment> findReplyCommentListBypage(Long postId, Long id, Pageable pageable, String sort) {
+        return sort.equals("ASC") ? commentRepository.findByPostIdAndCommentIdOrderByAsc(postId, id, pageable) : commentRepository.findByPostIdAndCommentIdOrderByDesc(postId, id, pageable);
     }
 
     public void modifyComment(Comment modifyComment, Long postId, Long memberId) {
