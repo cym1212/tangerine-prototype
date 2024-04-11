@@ -157,7 +157,7 @@ public class AuthService {
 
     public GeneratedTokenDTO loginApple(String code) {
         try {
-            String appleClientSecret = jwtProvider.createAppleClientSecret();
+            String appleClientSecret = jwtProvider.createAppleClientSecret(appleOAuthService.getPrivateKey());
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
 
