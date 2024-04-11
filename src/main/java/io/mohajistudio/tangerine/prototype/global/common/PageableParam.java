@@ -14,7 +14,16 @@ public class PageableParam {
     @Schema(description = "사이즈 크기로 나눈 페이지 번호로 0부터 시작", example = "1")
     int page = 0;
 
+    @Schema(description = "페이지 정렬(기본 내림차순)", example = "DESC")
+    String sort = "DESC";
+
     public void setPage(int page) {
         this.page = page - 1;
+    }
+
+    public void setSort(String sort) {
+        if (sort.equalsIgnoreCase("ASC")) {
+            this.sort = "ASC";
+        }
     }
 }

@@ -12,11 +12,24 @@ import jakarta.transaction.Transactional;
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.*;
 
@@ -98,17 +111,17 @@ public class JwtProvider {
 
         Optional<Member> findMember = memberRepository.findById(securityMemberDTO.getId());
 
-        if(findMember.isEmpty()) {
+        if (findMember.isEmpty()) {
             throw new BusinessException(MEMBER_NOT_FOUND);
         }
 
         Member member = findMember.get();
 
-        if(member.getRefreshToken() == null) {
+        if (member.getRefreshToken() == null) {
             throw new BusinessException(MISMATCH_REFRESH_TOKEN);
         }
 
-        if(!member.getRefreshToken().equals(refreshToken)) {
+        if (!member.getRefreshToken().equals(refreshToken)) {
             throw new BusinessException(MISMATCH_REFRESH_TOKEN);
         }
 
@@ -139,5 +152,38 @@ public class JwtProvider {
     private void saveRefreshToken(Long id, String refreshToken) {
         Optional<Member> findMember = memberRepository.findById(id);
         findMember.ifPresent(member -> memberRepository.updateRefreshToken(member.getId(), refreshToken));
+    }
+
+    public String createAppleClientSecret() {
+        Date expirationDate = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());
+        Map<String, Object> jwtHeader = new HashMap<>();
+        jwtHeader.put("kid", jwtConfig.getAppleKeyId());
+        jwtHeader.put("alg", "ES256");
+
+        return Jwts.builder().setHeaderParams(jwtHeader)
+                .setIssuer(jwtConfig.getAppleTeamId())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(expirationDate)
+                .setAudience(jwtConfig.getAppleAud())
+                .setSubject(jwtConfig.getAppleClientId())
+                .signWith(getPrivateKey())
+                .compact();
+    }
+
+    private PrivateKey getPrivateKey() {
+        try {
+            InputStream privateKey = new ClassPathResource(jwtConfig.getApplePrivateKey()).getInputStream();
+            String result = new BufferedReader(new InputStreamReader(privateKey)).lines().collect(Collectors.joining("\n"));
+            String key = result.replace("-----BEGIN PRIVATE KEY-----\n", "")
+                    .replace("-----END PRIVATE KEY-----", "").replaceAll("\\n", "");
+
+            byte[] decodedKey = Base64.getDecoder().decode(key);
+
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decodedKey);
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
+            return keyFactory.generatePrivate(keySpec);
+        } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new BusinessException(INTERNAL_SERVER_ERROR);
+        }
     }
 }
