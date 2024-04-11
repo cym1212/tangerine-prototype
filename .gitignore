@@ -34,6 +34,7 @@ application-prod-db.yml
 application-local-s3.yml
 application-prod-s3.yml
 application-region.yml
+AuthKey_B3PP3DJ3JW.p8
 firebase-service-account.json
 /src/main/generated/**
 /src/main/generated

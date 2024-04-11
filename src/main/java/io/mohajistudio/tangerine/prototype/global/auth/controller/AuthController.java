@@ -55,6 +55,12 @@ public class AuthController {
         return authService.loginGoogle(appLoginDTO.getToken());
     }
 
+    @PostMapping("/app/login/apple")
+    @Operation(summary = "네이티브에서 애플 로그인", description = "code를 넘겨주어 검증 후 회원이 아닐경우 계정을 생성합니다.")
+    public GeneratedTokenDTO appAppleLogin(@Valid @RequestBody AppLoginDTO appLoginDTO) {
+        return authService.loginApple(appLoginDTO.getToken());
+    }
+
     @PatchMapping("/tokens")
     @Operation(summary = "토큰 재발급", description = "Access Token과 남은 기간에 따라 Refresh Token을 재발급 합니다.")
     public GeneratedTokenDTO tokenModify(@Valid @RequestBody TokenModifyDTO tokenModifyRequest) {

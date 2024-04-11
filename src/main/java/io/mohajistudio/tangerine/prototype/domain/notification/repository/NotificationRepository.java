@@ -15,6 +15,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             "LEFT JOIN FETCH n.relatedMember rm " +
             "LEFT JOIN FETCH rm.memberProfile mp " +
             "LEFT JOIN FETCH n.relatedComment rc " +
-            "WHERE n.member.id = :memberId")
+            "WHERE n.member.id = :memberId " +
+            "ORDER BY n.id DESC ")
     Page<Notification> findAll(@Param("memberId") Long memberId, Pageable pageable);
 }

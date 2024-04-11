@@ -22,6 +22,7 @@ public class OAuth2AttributeDTO {
         return switch (registrationId) {
             case "kakao" -> ofKakao(registrationId, attributes);
             case "google" -> ofGoogle(registrationId, attributes);
+            case "apple" -> ofApple(registrationId, attributes);
             default -> throw new RuntimeException();
         };
     }
@@ -32,6 +33,9 @@ public class OAuth2AttributeDTO {
         Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
 
         return OAuth2AttributeDTO.builder().provider(provider).attributes(kakaoProfile).attributeKey("id").email((String) kakaoAccount.get("email")).providerId(String.valueOf(attributes.get("id"))).build();
+    }
+  private static OAuth2AttributeDTO ofApple(String provider, Map<String, Object> attributes) {
+        return OAuth2AttributeDTO.builder().provider(provider).attributes(attributes).attributeKey("id").email((String) attributes.get("email")).providerId(String.valueOf(attributes.get("sub"))).build();
     }
 
     private static OAuth2AttributeDTO ofGoogle(String provider, Map<String, Object> attributes) {
