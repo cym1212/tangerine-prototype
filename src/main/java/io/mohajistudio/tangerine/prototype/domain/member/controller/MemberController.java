@@ -114,7 +114,7 @@ public class MemberController {
     }
 
     @GetMapping("/{memberId}/place-blocks")
-    @Operation(summary = "특정 멤버가 작성한 게시글", description = "특정 멤버가 작성한 게시글들을 조회힙니다.")
+    @Operation(summary = "특정 멤버가 작성한 플레이스 블록", description = "특정 멤버가 작성한 플레이스 블록들을 조회힙니다.")
     public Page<PlaceBlockDTO.Details> placeBlockListByPage(@PathVariable("memberId") Long memberId, @ModelAttribute PageableParam pageableParam) {
         Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
 

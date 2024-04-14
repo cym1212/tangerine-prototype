@@ -19,7 +19,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class SchedulerConfig {
     private final JobLauncher jobLauncher;
     private final Job job;
-    @Scheduled(cron = "0 0 0/1 * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
     public void runUpdateTrendingPostsJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters parameters = new JobParametersBuilder()
                 .addString("updateTrendingPosts", "exchangeJob" + System.currentTimeMillis()).toJobParameters();
