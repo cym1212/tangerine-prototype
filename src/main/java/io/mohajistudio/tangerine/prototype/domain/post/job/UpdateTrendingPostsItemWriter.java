@@ -42,6 +42,8 @@ public class UpdateTrendingPostsItemWriter implements ItemWriter<TrendingPost>, 
             log.info("postId = " + trendingPostList.get(i).getPost().getId() + ", score = " + trendingPostList.get(i).getScore());
         }
         trendingPostRepository.saveAll(trendingPostList);
+        List<TrendingPost> afterAll = trendingPostRepository.findAll();
+        log.info("after Size = " + afterAll.size());
         trendingPostList.clear();
         return ExitStatus.COMPLETED;
     }
