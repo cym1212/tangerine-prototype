@@ -46,7 +46,7 @@ public interface PlaceBlockRepository extends JpaRepository<PlaceBlock, Long> {
     @Query("SELECT DISTINCT pb FROM PlaceBlock pb " +
             "LEFT JOIN FETCH pb.placeCategory " +
             "LEFT JOIN FETCH pb.place " +
-            "LEFT JOIN FETCH pb.placeBlockImages pbi " +
+            "LEFT JOIN pb.placeBlockImages pbi " +
             "WHERE pb.member.id = :memberId " +
             "AND pb.deletedAt IS NULL " +
             "AND pbi.deletedAt IS NULL " +
