@@ -5,6 +5,7 @@ import io.mohajistudio.tangerine.prototype.domain.notification.domain.Notificati
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -18,4 +19,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             "WHERE n.member.id = :memberId " +
             "ORDER BY n.id DESC ")
     Page<Notification> findAll(@Param("memberId") Long memberId, Pageable pageable);
+
+    @Modifying
+    @Query("UPDATE Notification n SET n.read = :read WHERE n.id = :id")
+    void updateRead(@Param("id") Long id, @Param("read") boolean read);
 }

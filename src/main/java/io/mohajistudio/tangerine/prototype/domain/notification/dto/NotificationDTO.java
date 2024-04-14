@@ -19,6 +19,8 @@ public class NotificationDTO {
 
     private String body;
 
+    private boolean read;
+
     private PostDTO.Notification relatedPost;
 
     private CommentDTO.Compact relatedComment;

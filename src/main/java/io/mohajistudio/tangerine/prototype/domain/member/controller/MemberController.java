@@ -44,7 +44,14 @@ public class MemberController {
     @GetMapping("/{memberId}")
     @Operation(summary = "멤버 조회", description = "멤버를 조회합니다.")
     public MemberDTO memberDetails(@PathVariable("memberId") Long memberId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
+
         Member member = memberService.findMember(memberId);
+
+        if(Objects.equals(securityMember.getId(), memberId)) {
+            return memberMapper.toDetailsDTO(member);
+        }
         return memberMapper.toDTO(member);
     }
 

@@ -44,6 +44,10 @@ public class Member extends BaseEntity {
 
     private int followMemberCnt = 0; //팔로우 받은 멤버 수
 
+    @Setter
+    @Column(nullable = false)
+    private int unreadNotificationsCnt = 0;
+
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private MemberProfile memberProfile;
 
