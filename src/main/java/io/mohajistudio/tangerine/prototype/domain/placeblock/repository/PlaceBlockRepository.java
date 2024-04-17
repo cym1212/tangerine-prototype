@@ -1,4 +1,4 @@
-package io.mohajistudio.tangerine.prototype.domain.post.repository;
+package io.mohajistudio.tangerine.prototype.domain.placeblock.repository;
 
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
 import io.mohajistudio.tangerine.prototype.domain.place.domain.PlaceCategory;
@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface PlaceBlockRepository extends JpaRepository<PlaceBlock, Long> {
@@ -48,8 +49,14 @@ public interface PlaceBlockRepository extends JpaRepository<PlaceBlock, Long> {
             "LEFT JOIN FETCH pb.place " +
             "LEFT JOIN pb.placeBlockImages pbi " +
             "WHERE pb.member.id = :memberId " +
-            "AND pb.deletedAt IS NULL " +
-            "AND pbi.deletedAt IS NULL " +
             "ORDER BY pb.createdAt DESC")
     Page<PlaceBlock> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+
+    @Query(value = "SELECT pb FROM PlaceBlock pb " +
+            "LEFT JOIN FETCH pb.place p " +
+            "LEFT JOIN FETCH  pb.placeCategory " +
+            "LEFT JOIN FETCH pb.placeBlockImages " +
+            "WHERE ST_Within(p.coordinate, ST_MakeEnvelope(:minLat, :minLng, :maxLat, :maxLng, 4326))"
+    )
+    List<PlaceBlock> findAllInBounds(@Param("minLng") double minLng, @Param("minLat") double minLat, @Param("maxLng") double maxLng, @Param("maxLat") double maxLat);
 }
