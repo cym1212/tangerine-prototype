@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PlaceKakaoSearchApiDTO {
+public class KakaoPlaceDTO {
     @NotNull
     @Schema(description = "PlaceKakaoSearchApi Id")
     private Long id;

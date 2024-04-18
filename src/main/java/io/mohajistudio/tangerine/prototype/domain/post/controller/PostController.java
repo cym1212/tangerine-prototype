@@ -51,13 +51,13 @@ public class PostController {
 
     @PostMapping
     @Operation(summary = "게시글 추가", description = "게시글 형식에 맞게 데이터를 전달해주세요.")
-    public void postAdd(@Valid @RequestBody PostDTO.Add postAddDTO) {
+    public PostDTO.Details postAdd(@Valid @RequestBody PostDTO.Add postAddDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
-        Post post = postMapper.toEntity(postAddDTO);
+        Post post = postService.addPost(postMapper.toEntity(postAddDTO), securityMember.getId());
 
-        postService.addPost(post, securityMember.getId());
+        return postMapper.toDetailsDTO(post);
     }
 
     @GetMapping("/{id}")

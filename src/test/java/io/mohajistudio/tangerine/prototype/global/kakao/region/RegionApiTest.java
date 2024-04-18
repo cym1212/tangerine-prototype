@@ -2,7 +2,7 @@ package io.mohajistudio.tangerine.prototype.global.kakao.region;
 
 
 import io.mohajistudio.tangerine.prototype.infra.place.dto.AddressDTO;
-import io.mohajistudio.tangerine.prototype.infra.place.dto.PlaceKakaoSearchApiResultDTO;
+import io.mohajistudio.tangerine.prototype.infra.place.dto.KakaoPlaceApiDTO;
 import io.mohajistudio.tangerine.prototype.infra.place.service.RepresentServiceImpl;
 import io.mohajistudio.tangerine.prototype.infra.place.service.PlaceApiService;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class RegionApiTest {
 
     @Test
     void getRegionDatum() {
-        PlaceKakaoSearchApiResultDTO data = placeApiService.searchPlace("범박고등학교",1,1);
+        KakaoPlaceApiDTO data = placeApiService.searchPlace("범박고등학교",1,1);
         System.out.println("data = " + data.toString());
         String strings = data.getDocuments().get(0).getAddressName();
         System.out.println("strings = " + strings);
@@ -36,14 +36,14 @@ class RegionApiTest {
     @Test
     void getRegionData() {
 
-        List<PlaceKakaoSearchApiResultDTO> data = new ArrayList<>();
+        List<KakaoPlaceApiDTO> data = new ArrayList<>();
         data.add(placeApiService.searchPlace("강원도청",1,1));
         data.add(placeApiService.searchPlace("경기도청",1,1));
         data.add(placeApiService.searchPlace("서울시청",1,1));
         data.add(placeApiService.searchPlace("전라도청",1,1));
         data.add(placeApiService.searchPlace("경상도청",1,1));
         int i = 1;
-        for(PlaceKakaoSearchApiResultDTO datum : data){
+        for(KakaoPlaceApiDTO datum : data){
          System.out.println("data = " + datum.toString());
          String strings = datum.getDocuments().get(0).getAddressName();
          System.out.println("strings("+ i +") = " + strings);
@@ -158,7 +158,7 @@ class RegionApiTest {
 
         List<String> RepresentativeRegion = RRG.extract(places);
         System.out.println("대표지역 = " + RepresentativeRegion);
-        List<String> expectedList = Arrays.asList("전국");
+        List<String> expectedList = List.of("전국");
         assertArrayEquals(expectedList.toArray(), RepresentativeRegion.toArray());
     }
     @Test

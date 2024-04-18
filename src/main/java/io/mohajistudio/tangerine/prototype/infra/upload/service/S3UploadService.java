@@ -11,8 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
-import software.amazon.awssdk.services.s3.model.CopyObjectResponse;
-import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
@@ -45,6 +43,10 @@ public class S3UploadService {
     }
 
     public String copyImage(String storageKey, String orderImagePath, String newImagePath) {
+        if(storageKey.contains(newImagePath)) {
+            return storageKey;
+        }
+
         String destinationKey = storageKey.replace(orderImagePath, newImagePath);
 
         CopyObjectRequest copyObjectRequest = CopyObjectRequest.builder().sourceBucket(s3Config.getBucket()).destinationBucket(s3Config.getBucket()).sourceKey(storageKey).destinationKey(destinationKey).build();

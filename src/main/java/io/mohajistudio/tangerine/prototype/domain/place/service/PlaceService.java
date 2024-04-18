@@ -4,15 +4,16 @@ import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
 import io.mohajistudio.tangerine.prototype.domain.place.domain.PlaceCategory;
 import io.mohajistudio.tangerine.prototype.domain.place.repository.PlaceCategoryRepository;
 import io.mohajistudio.tangerine.prototype.domain.place.repository.PlaceRepository;
-import jakarta.transaction.Transactional;
+import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
+import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,19 +29,14 @@ public class PlaceService {
         return placeCategoryRepository.findAll();
     }
 
-    @Transactional
-    public void savePlaceListFromProvider(List<Place> placeList) {
-        placeList.forEach(place -> {
-            Optional<Place> findPlace = placeRepository.findByProviderId(place.getProviderId());
-            if (findPlace.isPresent()) {
-                LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
-                Place oldPlace = findPlace.get();
-                if (oldPlace.getModifiedAt().isBefore(thirtyDaysAgo)) {
-                placeRepository.update(oldPlace.getId(), place.getName(), place.getCoordinate().getX(), place.getCoordinate().getY(), place.getAddressProvince(), place.getAddressCity(), place.getAddressDistrict(), place.getAddressDetail(), place.getRoadAddress(), place.getDescription(), place.getLink());
-                }
-            } else {
-                placeRepository.save(place);
+    public Place addPlace(Place place) {
+        if(place.getId() != null) {
+            Optional<Place> findPlace = placeRepository.findById(place.getId());
+            if(findPlace.isEmpty()) {
+                throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
             }
-        });
+            return findPlace.get();
+        }
+        return placeRepository.save(place);
     }
 }
