@@ -29,6 +29,10 @@ public class PlaceService {
         return placeCategoryRepository.findAll();
     }
 
+    public List<Place> findPlaceListInBounds(double minLng, double minLat, double maxLng, double maxLat) {
+        return placeRepository.findAllInBounds(minLng, minLat, maxLng, maxLat);
+    }
+
     public Place addPlace(Place place) {
         if(place.getId() != null) {
             Optional<Place> findPlace = placeRepository.findById(place.getId());

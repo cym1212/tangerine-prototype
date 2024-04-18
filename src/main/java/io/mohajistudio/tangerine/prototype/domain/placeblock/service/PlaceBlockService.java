@@ -12,7 +12,6 @@ import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessExcept
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.INVALID_REPRESENTATIVE_PLACE_BLOCK_IMAGE_ORDER_NUMBER;
@@ -24,10 +23,6 @@ public class PlaceBlockService {
     private final PlaceBlockImageService placeBlockImageService;
     private final PlaceBlockImageRepository placeBlockImageRepository;
     private final PlaceService placeService;
-
-    public List<PlaceBlock> findPlaceBlockListInBounds(double minLng, double minLat, double maxLng, double maxLat) {
-        return placeBlockRepository.findAllInBounds(minLng, minLat, maxLng, maxLat);
-    }
 
     public void addPlaceBlock(PlaceBlock placeBlock, Post post) {
         Place place = placeService.addPlace(placeBlock.getPlace());

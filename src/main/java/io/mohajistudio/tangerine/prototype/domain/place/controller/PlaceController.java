@@ -41,6 +41,13 @@ public class PlaceController {
         return placeService.findPlaceListByPage(query, pageable).map(postMapper::toPlaceDetailsDTO);
     }
 
+    @GetMapping("/bounds")
+    @Operation(summary = "장소 카테고리 목록 조회", description = "장소 카테고리 목록을 조회합니다.")
+    public List<PlaceDTO.Details> placeListInBounds(@RequestParam("minLng") double minLng, @RequestParam("minLat") double minLat, @RequestParam("maxLng") double maxLng, @RequestParam("maxLat") double maxLat) {
+        List<Place> placeListBlockInBounds = placeService.findPlaceListInBounds(minLng, minLat, maxLng, maxLat);
+        return placeListBlockInBounds.stream().map(postMapper::toPlaceDetailsDTO).toList();
+    }
+
     @GetMapping("/kakao")
     @Operation(summary = "카카오 장소 목록 조회", description = "검색어를 query에 담아 page와 size 값을 넘기면 페이징 된 장소 목록을 반환합니다. 기본 값은 page는 1, size는 10 입니다.")
     public Page<PlaceDTO.Details> kakaoPlaceListByPage(@RequestParam("query") String query, @ModelAttribute PageableParam pageableParam) {

@@ -8,14 +8,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface PlaceRepository extends JpaRepository<Place, Long> {
+    @Query(value = "SELECT p FROM Place p WHERE ST_Within(p.coordinate, ST_MakeEnvelope(:minLat, :minLng, :maxLat, :maxLng, 4326))")
+    List<Place> findAllInBounds(@Param("minLng") double minLng, @Param("minLat") double minLat, @Param("maxLng") double maxLng, @Param("maxLat") double maxLat);
+
     @Query("SELECT p FROM Place p WHERE p.name LIKE %:query%")
     Page<Place> findByName(@Param("query") String query, Pageable pageable);
-
-    @Query("SELECT p FROM Place p WHERE p.providerId = :providerId")
-    Optional<Place> findByProviderId(@Param("providerId") Long providerId);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE Place SET " +
