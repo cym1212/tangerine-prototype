@@ -59,6 +59,9 @@ public class PlaceBlockDTO {
         @Min(1)
         @Schema(description = "대표 이미지 순서 번호", example = "1")
         private Short representativePlaceBlockImageOrderNumber;
+
+        @Schema(description = "Post id", example = "1")
+        private Long postId;
     }
 
     @Getter

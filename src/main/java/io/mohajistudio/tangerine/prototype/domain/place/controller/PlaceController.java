@@ -5,7 +5,10 @@ import io.mohajistudio.tangerine.prototype.domain.place.dto.PlaceCategoryDTO;
 import io.mohajistudio.tangerine.prototype.domain.place.mapper.PlaceCategoryMapper;
 import io.mohajistudio.tangerine.prototype.domain.place.mapper.PlaceMapper;
 import io.mohajistudio.tangerine.prototype.domain.place.service.PlaceService;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceBlockDTO;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceDTO;
+import io.mohajistudio.tangerine.prototype.domain.post.mapper.PlaceBlockMapper;
 import io.mohajistudio.tangerine.prototype.domain.post.mapper.PostMapper;
 import io.mohajistudio.tangerine.prototype.global.common.PageableParam;
 import io.mohajistudio.tangerine.prototype.global.enums.PlaceProvider;
@@ -29,6 +32,7 @@ import java.util.List;
 public class PlaceController {
     private final PlaceService placeService;
     private final PlaceMapper placeMapper;
+    private final PlaceBlockMapper placeBlockMapper;
     private final PostMapper postMapper;
     private final PlaceCategoryMapper placeCategoryMapper;
     private final PlaceApiService placeApiService;
@@ -46,6 +50,15 @@ public class PlaceController {
     public List<PlaceDTO.Details> placeListInBounds(@RequestParam("minLng") double minLng, @RequestParam("minLat") double minLat, @RequestParam("maxLng") double maxLng, @RequestParam("maxLat") double maxLat) {
         List<Place> placeListBlockInBounds = placeService.findPlaceListInBounds(minLng, minLat, maxLng, maxLat);
         return placeListBlockInBounds.stream().map(postMapper::toPlaceDetailsDTO).toList();
+    }
+
+    @GetMapping("/{placeId}/place-blocks")
+    @Operation(summary = "장소 카테고리 목록 조회", description = "장소 카테고리 목록을 조회합니다.")
+    public List<PlaceBlockDTO.Details> placeBlockListByPage(@PathVariable("placeId") Long placeId, @ModelAttribute PageableParam pageableParam) {
+        Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
+
+        Page<PlaceBlock> placeListBlockInBounds = placeService.findPlaceBlockListByPage(placeId, pageable);
+        return placeListBlockInBounds.stream().map(placeBlockMapper::toDetailsDTO).toList();
     }
 
     @GetMapping("/kakao")

@@ -6,7 +6,7 @@ import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberDTO;
 import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberProfileDTO;
 import io.mohajistudio.tangerine.prototype.domain.member.mapper.MemberMapper;
 import io.mohajistudio.tangerine.prototype.domain.member.service.MemberService;
-import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceBlockDTO;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PostDTO;

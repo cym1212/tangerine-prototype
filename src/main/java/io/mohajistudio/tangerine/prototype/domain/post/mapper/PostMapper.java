@@ -1,7 +1,7 @@
 package io.mohajistudio.tangerine.prototype.domain.post.mapper;
 
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
-import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceBlockDTO;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceDTO;
