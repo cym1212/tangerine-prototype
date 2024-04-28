@@ -31,8 +31,6 @@ public class SecurityConfig {
     private final JwtProvider jwtProvider;
     private static final String[] AUTHORITY_EVERY_MEMBER = {"GUEST", "MEMBER", "MANAGER", "ADMIN"};
     private static final String[] AUTHORITY_MEMBER = {"MEMBER", "MANAGER", "ADMIN"};
-    private static final String[] AUTHORITY_ADMIN = {"ADMIN"};
-
     private static final String AUTHORITY_GUEST = "GUEST";
 
 
@@ -55,11 +53,6 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.POST, "/posts", "/places", "/posts/*/comments", "/places/kakao", "/posts/place-blocks/place-block-images", "/places/recommend").hasAnyAuthority(AUTHORITY_MEMBER);
                     auth.requestMatchers(HttpMethod.PATCH, "/logout", "/posts/*/favorites", "/posts/*", "/posts/*/comments/*", "/members/*/follows", "/posts/*/scrap", "/posts/*/comments/*/favorites", "/members/*/member-profiles", "/members/*/notification-token").hasAnyAuthority(AUTHORITY_MEMBER);
                     auth.requestMatchers(HttpMethod.DELETE, "/posts/*", "/posts/*/comments/*").hasAnyAuthority(AUTHORITY_MEMBER);
-//                    auth.requestMatchers(HttpMethod.GET, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
-//                    auth.requestMatchers(HttpMethod.POST, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
-//                    auth.requestMatchers(HttpMethod.PATCH, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
-//                    auth.requestMatchers(HttpMethod.DELETE, "/admin/**").hasAnyAuthority(AUTHORITY_ADMIN);
-
                 }).csrf(AbstractHttpConfigurer::disable).sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2Login(oauth2Login -> {
                     oauth2Login.successHandler(oAuth2SuccessHandler);
