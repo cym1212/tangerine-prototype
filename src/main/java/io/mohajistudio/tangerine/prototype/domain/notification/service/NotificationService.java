@@ -14,13 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -97,5 +95,33 @@ public class NotificationService {
         }
 
         return notificationListByPage;
+    }
+
+    @Transactional
+    public void permanentDelete(Long memberId) {
+        int pageSize = 10;
+        int page = 0;
+
+        Page<Notification> notificationListByPage;
+        do {
+            notificationListByPage = notificationRepository.findAllForWithdrawal(memberId, PageRequest.of(page, pageSize));
+            List<Notification> notificationList = notificationListByPage.getContent();
+
+            notificationRepository.deleteAll(notificationList);
+
+            page++;
+        } while (notificationListByPage.hasNext());
+
+        page = 0;
+        do {
+            notificationListByPage = notificationRepository.findAllRelatedMemberForWithdrawal(memberId, PageRequest.of(page, pageSize));
+            List<Notification> notificationList = notificationListByPage.getContent();
+
+            notificationList.forEach(
+                    notification -> notificationRepository.deleteRelatedMember(notification.getId())
+            );
+
+            page++;
+        } while (notificationListByPage.hasNext());
     }
 }

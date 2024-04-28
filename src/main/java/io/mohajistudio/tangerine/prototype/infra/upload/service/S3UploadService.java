@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -53,5 +52,15 @@ public class S3UploadService {
         s3Client.copyObject(copyObjectRequest);
 
         return storageKey.replace(orderImagePath, newImagePath);
+    }
+
+    public void deleteImage(String storageKey) {
+        try {
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder().bucket(s3Config.getBucket()).key(storageKey).build();
+            s3Client.deleteObject(deleteObjectRequest);
+        } catch (S3Exception e) {
+            log.error(e.getMessage());
+            throw e;
+        }
     }
 }

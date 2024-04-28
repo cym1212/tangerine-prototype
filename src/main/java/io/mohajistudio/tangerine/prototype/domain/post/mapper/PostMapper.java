@@ -20,6 +20,7 @@ import org.mapstruct.Named;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 @Mapper
 public interface PostMapper {
     String regex = "^(?<province>\\S+)\\s+(?<city>\\S+)\\s+(?<district>\\S+)\\s*(?<detail>.+)?$";
@@ -35,6 +36,7 @@ public interface PostMapper {
     Post toEntity(PostDTO.Add postAddDTO);
 
     @Mapping(target = "representativePlaceBlockImageOrderNumber", ignore = true)
+    @Mapping(target = "postId", source = "post.id")
     PlaceBlockDTO.Details toDTO(PlaceBlock placeBlock);
 
     @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setCoordinate")

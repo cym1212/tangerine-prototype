@@ -43,6 +43,12 @@ public class PlaceBlockImageService {
         });
     }
 
+    public void permanentDelete(PlaceBlockImage placeBlockImage) {
+        String storageKey = placeBlockImage.getStorageKey();
+        s3UploadService.deleteImage(storageKey);
+        placeBlockImageRepository.delete(placeBlockImage);
+    }
+
     public String copyImageToPermanent(String storageKey) {
         return s3UploadService.copyImage(storageKey, UploadUtils.TEMPORARY_PATH, UploadUtils.IMAGES_PATH);
     }

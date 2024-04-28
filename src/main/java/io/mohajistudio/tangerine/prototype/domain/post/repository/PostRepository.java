@@ -59,6 +59,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY p.createdAt DESC")
     Page<Post> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 
+    @Query("SELECT DISTINCT p FROM Post p " +
+            "LEFT JOIN FETCH p.textBlocks " +
+            "LEFT JOIN FETCH p.placeBlocks pb " +
+            "LEFT JOIN FETCH pb.placeBlockImages pbi " +
+            "WHERE p.member.id = :memberId ")
+    Page<Post> findByMemberIdForWithdrawal(@Param("memberId") Long memberId, Pageable pageable);
+
     @Query("SELECT p FROM Post p WHERE p.member.id = :memberId AND p.createdAt >= :dateTime ORDER BY p.createdAt DESC")
     List<Post> findAllByMemberIdAfter(@Param("memberId") Long memberId, @Param("dateTime") LocalDateTime dateTime);
 

@@ -127,4 +127,13 @@ public class MemberService {
 
         memberRepository.updateNotificationToken(memberId, notificationToken);
     }
+
+    @Transactional
+    public void permanentDelete(Member member) {
+        if (member.getMemberProfile().getProfileImage() != null && !member.getMemberProfile().getProfileImage().isEmpty()) {
+            s3UploadService.deleteImage(member.getMemberProfile().getProfileImage());
+        }
+        memberProfileRepository.delete(member.getMemberProfile());
+        memberRepository.delete(member);
+    }
 }

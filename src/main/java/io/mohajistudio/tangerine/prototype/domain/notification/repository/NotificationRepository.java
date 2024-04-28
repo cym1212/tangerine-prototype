@@ -1,6 +1,5 @@
 package io.mohajistudio.tangerine.prototype.domain.notification.repository;
 
-import io.mohajistudio.tangerine.prototype.domain.member.domain.Follow;
 import io.mohajistudio.tangerine.prototype.domain.notification.domain.Notification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +22,14 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Modifying
     @Query("UPDATE Notification n SET n.read = :read WHERE n.id = :id")
     void updateRead(@Param("id") Long id, @Param("read") boolean read);
+
+    @Modifying
+    @Query("UPDATE Notification n SET n.relatedMember = null WHERE n.id = :id")
+    void deleteRelatedMember(@Param("id") Long id);
+
+    @Query("SELECT n FROM Notification n WHERE n.member.id = :memberId")
+    Page<Notification> findAllForWithdrawal(@Param("memberId") Long memberId, Pageable pageable);
+
+    @Query("SELECT n FROM Notification n WHERE n.relatedMember.id = :memberId")
+    Page<Notification> findAllRelatedMemberForWithdrawal(@Param("memberId") Long memberId, Pageable pageable);
 }

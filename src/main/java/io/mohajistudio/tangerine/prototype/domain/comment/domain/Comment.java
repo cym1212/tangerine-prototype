@@ -38,7 +38,7 @@ public class Comment extends BaseEntity {
     private CommentStatus status;
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     @Setter

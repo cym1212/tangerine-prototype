@@ -3,10 +3,7 @@ package io.mohajistudio.tangerine.prototype.domain.member.dto;
 
 import io.mohajistudio.tangerine.prototype.global.enums.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -90,6 +87,25 @@ public class MemberProfileDTO {
         @Size(min = 9, max = 15)
         @Schema(description = "멤버 핸드폰 번호", example = "01012345678")
         private String phone;
+
+        @Size(max = 255)
+        @Schema(description = "멤버 프로필 이미지", example = "https://thumbnail.com")
+        private String profileImage;
+    }
+
+    @Getter
+    @Setter
+    public static class Register {
+        @NotNull
+        @NotBlank
+        @Size(max = 20, min = 2)
+        @Pattern(regexp = "^[가-힣a-zA-Z0-9_]+$", message = "유효하지 않은 닉네임 형식입니다.")
+        @Schema(description = "멤버 닉네임", example = "송눈섭")
+        private String nickname;
+
+        @Size(max = 100)
+        @Schema(description = "멤버 소개", example = "안녕하세요~ 올리버 쌤입니다.")
+        private String introduction;
 
         @Size(max = 255)
         @Schema(description = "멤버 프로필 이미지", example = "https://thumbnail.com")

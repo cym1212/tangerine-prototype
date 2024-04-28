@@ -51,10 +51,10 @@ public interface PlaceBlockRepository extends JpaRepository<PlaceBlock, Long> {
             "ORDER BY pb.createdAt DESC")
     Page<PlaceBlock> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 
-    @Query("SELECT pb FROM PlaceBlock pb " +
-            "LEFT JOIN FETCH pb.placeCategory " +
-            "LEFT JOIN FETCH pb.place p " +
-            "LEFT JOIN FETCH pb.placeBlockImages " +
-            "WHERE p.id = :placeId")
+    @Query("SELECT pb FROM Place pl " +
+            "JOIN pl.placeBlocks pb " +
+            "LEFT JOIN FETCh pb.placeCategory " +
+            "LEFT JOIN FETCh  pb.placeBlockImages " +
+            "WHERE pl.id = :placeId")
     Page<PlaceBlock> findAllByPlaceId(@Param("placeId") Long placeId, Pageable pageable);
 }

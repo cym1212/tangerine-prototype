@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,12 +28,18 @@ public class AuthController {
 
     @PostMapping("/register")
     @Operation(summary = "회원가입", description = "회원가입 형식에 맞게 데이터를 전달해주세요.")
-    public GeneratedTokenDTO register(@Valid @RequestBody MemberProfileDTO memberProfileDTO) {
+    public GeneratedTokenDTO register(@Valid @RequestBody MemberProfileDTO.Register memberProfileRegisterDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
-        MemberProfile memberProfile = memberMapper.toEntity(memberProfileDTO);
+        MemberProfile memberProfile = memberMapper.toEntity(memberProfileRegisterDTO);
         return authService.register(securityMember, memberProfile);
+    }
+
+    @PostMapping("/withdrawal")
+    @Operation(summary = "회원탈퇴", description = "회원탈퇴를 합니다.")
+    public void withdrawal(@AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
+        authService.withdrawal(securityMemberDTO.getId());
     }
 
     @PatchMapping("/logout")
