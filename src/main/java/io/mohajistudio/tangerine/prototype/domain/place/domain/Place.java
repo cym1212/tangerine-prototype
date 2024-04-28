@@ -24,25 +24,36 @@ import java.util.Set;
 public class Place extends BaseEntity implements Persistable<Long> {
     @Column(nullable = false)
     private String name;
+
     @Column(nullable = false, columnDefinition = "geometry(Point, 4326)")
     private Point coordinate;
+
     private String thumbnail;
+
     @Column(columnDefinition = "varchar(20)", nullable = false)
     private String addressProvince;//광역시/도
+
     @Column(columnDefinition = "varchar(20)", nullable = false)
     private String addressCity;//시/군/구
+
     @Column(columnDefinition = "varchar(20)", nullable = false)
     private String addressDistrict;//읍/면/동
+
     @Column(columnDefinition = "varchar(20)")
     private String addressDetail;//이하
+
     private String roadAddress;
+
     @Column(length = 500)
     private String description;
+
     private String link;
+
     @Setter
     @Column(columnDefinition = "varchar(10)", nullable = false)
     @Enumerated(EnumType.STRING)
     private PlaceProvider placeSearchProvider;
+
     @Setter
     @Column(unique = true)
     private Long providerId;

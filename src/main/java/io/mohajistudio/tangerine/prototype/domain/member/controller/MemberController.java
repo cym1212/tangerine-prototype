@@ -44,7 +44,14 @@ public class MemberController {
     @GetMapping("/{memberId}")
     @Operation(summary = "멤버 조회", description = "멤버를 조회합니다.")
     public MemberDTO memberDetails(@PathVariable("memberId") Long memberId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
+
         Member member = memberService.findMember(memberId);
+
+        if(Objects.equals(securityMember.getId(), memberId)) {
+            return memberMapper.toDetailsDTO(member);
+        }
         return memberMapper.toDTO(member);
     }
 
@@ -114,7 +121,7 @@ public class MemberController {
     }
 
     @GetMapping("/{memberId}/place-blocks")
-    @Operation(summary = "특정 멤버가 작성한 게시글", description = "특정 멤버가 작성한 게시글들을 조회힙니다.")
+    @Operation(summary = "특정 멤버가 작성한 플레이스 블록", description = "특정 멤버가 작성한 플레이스 블록들을 조회힙니다.")
     public Page<PlaceBlockDTO.Details> placeBlockListByPage(@PathVariable("memberId") Long memberId, @ModelAttribute PageableParam pageableParam) {
         Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
 

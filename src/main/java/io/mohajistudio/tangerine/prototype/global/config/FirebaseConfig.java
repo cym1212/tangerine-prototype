@@ -25,23 +25,21 @@ public class FirebaseConfig {
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
                 new ClassPathResource("firebase-service-account.json").getInputStream());
         FirebaseOptions firebaseOptions = FirebaseOptions.builder().setCredentials(googleCredentials).build();
-        FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "trenvel");
-        return FirebaseMessaging.getInstance(app);
+        FirebaseApp firebaseApp = FirebaseApp.initializeApp(firebaseOptions);
+        return FirebaseMessaging.getInstance(firebaseApp);
     }
 
     @Bean
     @Profile("prod")
     FirebaseMessaging firebaseMessagingProd() throws IOException {
-        // Firebase 서비스 계정 파일의 경로
         String serviceAccountFilePath = "/config/firebase-service-account.json";
         Path serviceAccountPath = Paths.get(serviceAccountFilePath);
 
-        // Firebase 서비스 계정 파일을 FileSystemResource로 로드
         Resource serviceAccountResource = new FileSystemResource(serviceAccountPath);
         InputStream serviceAccountStream = serviceAccountResource.getInputStream();
 
         FirebaseOptions firebaseOptions = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(serviceAccountStream)).build();
-        FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "trenvel");
-        return FirebaseMessaging.getInstance(app);
+        FirebaseApp firebaseApp = FirebaseApp.initializeApp(firebaseOptions);
+        return FirebaseMessaging.getInstance(firebaseApp);
     }
 }

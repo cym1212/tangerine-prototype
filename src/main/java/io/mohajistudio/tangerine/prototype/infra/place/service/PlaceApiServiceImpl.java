@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.infra.place.config.PlaceApiProperties;
-import io.mohajistudio.tangerine.prototype.infra.place.dto.PlaceKakaoSearchApiResultDTO;
+import io.mohajistudio.tangerine.prototype.infra.place.dto.KakaoPlaceApiDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.ResponseHandler;
@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 public class PlaceApiServiceImpl implements PlaceApiService {
     private final PlaceApiProperties placeSearchApiProperties;
 
-    public PlaceKakaoSearchApiResultDTO searchPlace(String query, int page, int size) {
+    public KakaoPlaceApiDTO searchPlace(String query, int page, int size) {
         try {
             CloseableHttpClient client = HttpClientBuilder.create().build();
             String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
@@ -40,7 +40,7 @@ public class PlaceApiServiceImpl implements PlaceApiService {
 
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-                return objectMapper.readValue(jsonString, PlaceKakaoSearchApiResultDTO.class);
+                return objectMapper.readValue(jsonString, KakaoPlaceApiDTO.class);
             } else {
                 throw new BusinessException(jsonString, ErrorCode.KAKAO_PLACE_SEARCH);
             }

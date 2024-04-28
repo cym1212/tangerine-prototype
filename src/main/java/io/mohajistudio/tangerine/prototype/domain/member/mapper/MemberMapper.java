@@ -10,6 +10,8 @@ import org.mapstruct.Mapper;
 public interface MemberMapper {
     MemberDTO toDTO(Member member);
 
+    MemberDTO.Details toDetailsDTO(Member member);
+
     MemberProfileDTO toDTO(MemberProfile memberProfile);
 
     MemberProfile toEntity(MemberProfileDTO memberProfileDTO);

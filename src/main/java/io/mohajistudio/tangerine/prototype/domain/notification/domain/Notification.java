@@ -4,10 +4,7 @@ import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,12 +20,15 @@ import java.util.Map;
 @NoArgsConstructor
 @Table(name = "notification")
 public class Notification extends BaseEntity {
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Member member;
 
     private String title;
 
     private String body;
+
+    @Column(nullable = false)
+    private boolean read = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Post relatedPost;

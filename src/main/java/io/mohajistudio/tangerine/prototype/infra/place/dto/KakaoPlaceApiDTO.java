@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class PlaceKakaoSearchApiResultDTO {
-        private PlaceKakaoSearchApiMetaDTO meta;
-        private List<PlaceKakaoSearchApiDTO> documents;
+public class KakaoPlaceApiDTO {
+        private KakaoPlaceApiMetaDTO meta;
+        private List<KakaoPlaceDTO> documents;
 }

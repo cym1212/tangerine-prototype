@@ -1,4 +1,4 @@
-package io.mohajistudio.tangerine.prototype.domain.post.repository;
+package io.mohajistudio.tangerine.prototype.domain.placeblock.repository;
 
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
 import io.mohajistudio.tangerine.prototype.domain.place.domain.PlaceCategory;
@@ -46,10 +46,8 @@ public interface PlaceBlockRepository extends JpaRepository<PlaceBlock, Long> {
     @Query("SELECT DISTINCT pb FROM PlaceBlock pb " +
             "LEFT JOIN FETCH pb.placeCategory " +
             "LEFT JOIN FETCH pb.place " +
-            "LEFT JOIN FETCH pb.placeBlockImages pbi " +
+            "LEFT JOIN pb.placeBlockImages pbi " +
             "WHERE pb.member.id = :memberId " +
-            "AND pb.deletedAt IS NULL " +
-            "AND pbi.deletedAt IS NULL " +
             "ORDER BY pb.createdAt DESC")
     Page<PlaceBlock> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 }

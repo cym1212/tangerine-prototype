@@ -40,7 +40,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> {
                     //ALL
-                    auth.requestMatchers(HttpMethod.GET, "/", "/members/*", "/members/*/posts", "/members/*/place-blocks", "/trending-posts", "/posts", "/posts/*", "/login/*", "/posts/*/comments", "/posts/*/comments/favorites", "/members/*/follows", "/members/*/followMembers", "/posts/*/comments/*", "/posts/*/comments/*/replies", "/nickname-duplicate", "/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/", "/members/*", "/places/bounds", "/members/*/posts", "/members/*/place-blocks", "/trending-posts", "/posts", "/posts/*", "/login/*", "/posts/*/comments", "/posts/*/comments/favorites", "/members/*/follows", "/members/*/followMembers", "/posts/*/comments/*", "/posts/*/comments/*/replies", "/nickname-duplicate", "/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     auth.requestMatchers(HttpMethod.PATCH, "/tokens").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/app/login/*").permitAll();
 

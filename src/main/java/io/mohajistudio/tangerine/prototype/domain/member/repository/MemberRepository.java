@@ -41,4 +41,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Modifying
     @Query("UPDATE Member m SET m.notificationToken = NULL, m.refreshToken = NULL WHERE m.id = :id")
     void logout(@Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE Member m SET m.unreadNotificationsCnt = :unreadNotificationsCnt WHERE m.id = :id")
+    void updateUnreadNotificationsCnt(@Param("id") Long id, @Param("unreadNotificationsCnt") int unreadNotificationsCnt);
 }

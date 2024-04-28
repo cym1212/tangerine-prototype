@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PlaceKakaoSearchApiMetaDTO {
+public class KakaoPlaceApiMetaDTO {
     private int totalCount;
     private int pageableCount;
     private String isEnd;

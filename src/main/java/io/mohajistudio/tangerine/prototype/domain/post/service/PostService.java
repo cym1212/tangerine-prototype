@@ -1,10 +1,8 @@
 package io.mohajistudio.tangerine.prototype.domain.post.service;
 
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
-import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
-import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
-import io.mohajistudio.tangerine.prototype.domain.place.repository.PlaceRepository;
-import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.repository.PlaceBlockRepository;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.service.PlaceBlockService;
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.service.PlaceBlockImageService;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.*;
 import io.mohajistudio.tangerine.prototype.domain.post.repository.*;
@@ -28,31 +26,24 @@ import static io.mohajistudio.tangerine.prototype.global.enums.ErrorCode.*;
 @RequiredArgsConstructor
 public class PostService{
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
     private final FavoritePostRepository favoritePostRepository;
     private final TextBlockRepository textBlockRepository;
-    private final PlaceBlockRepository placeBlockRepository;
     private final PlaceBlockImageRepository placeBlockImageRepository;
     private final ScrapPostRepository scrapPostRepository;
     private final PlaceBlockImageService placeBlockImageService;
-    private final PlaceRepository placeRepository;
+    private final PlaceBlockService placeBlockService;
+    private final PlaceBlockRepository placeBlockRepository;
+
+
     private static final int MIN_POSTS_INTERVAL_MINUTES = 10;
     private static final int MAX_POSTS_INTERVAL_HOURS = 24;
 
-    public void addPost(Post post, Long memberId) {
+    public Post addPost(Post post, Long memberId) {
         checkPostInterval(memberId);
-
         post.validate();
-
-        Optional<Member> findMember = memberRepository.findById(memberId);
-
-        findMember.ifPresent(post::setMember);
-
+        post.setMember(Member.builder().id(memberId).build());
         post.setStatus(PostStatus.PUBLISHED);
-
-        String thumbnail = placeBlockImageService.copyImageToPermanent(post.getThumbnail());
-
-        post.setThumbnail(thumbnail);
+        post.setThumbnail(placeBlockImageService.copyImageToPermanent(post.getThumbnail()));
 
         postRepository.save(post);
 
@@ -61,31 +52,9 @@ public class PostService{
             textBlockRepository.save(textBlock);
         });
 
-        post.getPlaceBlocks().forEach(placeBlock -> {
-            placeBlock.setPost(post);
-            placeBlock.setMember(post.getMember());
+        post.getPlaceBlocks().forEach(placeBlock -> placeBlockService.addPlaceBlock(placeBlock, post));
 
-            Place place = placeBlock.getPlace();
-            Optional<Place> findPlace = placeRepository.findByProviderId(place.getProviderId());
-            if (findPlace.isEmpty()) {
-                throw new BusinessException(ENTITY_NOT_FOUND);
-            }
-            placeBlock.setPlace(findPlace.get());
-            placeBlockImageService.copyImagesToPermanent(placeBlock.getPlaceBlockImages());
-
-            placeBlockRepository.save(placeBlock);
-            placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> {
-                placeBlockImage.setPlaceBlock(placeBlock);
-                placeBlockImageRepository.save(placeBlockImage);
-                if (placeBlock.getRepresentativePlaceBlockImageOrderNumber() == placeBlockImage.getOrderNumber()) {
-                    placeBlock.setRepresentativePlaceBlockImageId(placeBlockImage.getId());
-                    placeBlockRepository.update(placeBlock.getId(), placeBlockImage.getId());
-                }
-            });
-            if (placeBlock.getRepresentativePlaceBlockImageId() == null) {
-                throw new BusinessException(INVALID_REPRESENTATIVE_PLACE_BLOCK_IMAGE_ORDER_NUMBER);
-            }
-        });
+        return post;
     }
 
     public Page<Post> findPostListByPage(Pageable pageable) {
@@ -120,8 +89,8 @@ public class PostService{
 
         Post post = findPost.get();
 
-        if (!post.getMember().getId().equals(memberId)) {
-            throw new BusinessException(ErrorCode.NO_PERMISSION);
+        if(!Objects.equals(post.getMember().getId(), memberId)) {
+            throw new BusinessException(NO_PERMISSION);
         }
 
         modifyPost.validate();
@@ -135,57 +104,7 @@ public class PostService{
         postRepository.update(post.getId(), modifiedAt, modifyPost.getTitle(), modifyPost.getVisitStartDate(), modifyPost.getVisitEndDate(), modifyPost.getPlaceBlockCnt(), modifyPost.getThumbnail());
 
         modifyPost.getTextBlocks().forEach(textBlock -> modifyTextBlock(textBlock, post));
-        modifyPost.getPlaceBlocks().forEach(placeBlock -> {
-            modifyPlaceBlock(placeBlock, post);
-            placeBlock.getPlaceBlockImages().forEach(placeBlockImage -> {
-                        modifyPlaceBlockImage(placeBlock, placeBlockImage);
-                        if (placeBlock.getRepresentativePlaceBlockImageOrderNumber() == placeBlockImage.getOrderNumber()) {
-                            placeBlock.setRepresentativePlaceBlockImageId(placeBlockImage.getId());
-                            placeBlockRepository.update(placeBlock.getId(), placeBlockImage.getId());
-                        }
-                    }
-            );
-            if (placeBlock.getRepresentativePlaceBlockImageId() == null) {
-                throw new BusinessException(INVALID_REPRESENTATIVE_PLACE_BLOCK_IMAGE_ORDER_NUMBER);
-            }
-            placeBlockImageService.copyImagesToPermanent(placeBlock.getPlaceBlockImages());
-        });
-    }
-
-    private void modifyPlaceBlock(PlaceBlock placeBlock, Post post) {
-        if (placeBlock.getPlace().getId() == null) {
-            Place place = placeBlock.getPlace();
-            Optional<Place> findPlace = placeRepository.findByProviderId(place.getProviderId());
-            if (findPlace.isEmpty()) {
-                throw new BusinessException(ENTITY_NOT_FOUND);
-            }
-            placeBlock.setPlace(findPlace.get());
-        }
-
-        if (placeBlock.getId() == null) {
-            placeBlock.setPost(post);
-            placeBlock.setMember(post.getMember());
-            placeBlockRepository.save(placeBlock);
-        } else {
-            Optional<PlaceBlock> findPlaceBlock = placeBlockRepository.findById(placeBlock.getId());
-            if (findPlaceBlock.isEmpty()) {
-                throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
-            }
-            placeBlockRepository.update(findPlaceBlock.get().getId(), placeBlock.getContent(), placeBlock.getOrderNumber(), placeBlock.getRating(), placeBlock.getPlaceCategory(), placeBlock.getPlace(), placeBlock.getVisitStartDate(), placeBlock.getVisitEndDate());
-        }
-    }
-
-    private void modifyPlaceBlockImage(PlaceBlock placeBlock, PlaceBlockImage placeBlockImage) {
-        if (placeBlockImage.getId() == null) {
-            placeBlockImage.setPlaceBlock(placeBlock);
-            placeBlockImageRepository.save(placeBlockImage);
-        } else {
-            Optional<PlaceBlockImage> findPlaceBlockImage = placeBlockImageRepository.findById(placeBlockImage.getId());
-            if (findPlaceBlockImage.isEmpty()) {
-                throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
-            }
-            placeBlockImageRepository.update(findPlaceBlockImage.get().getId(), placeBlockImage.getStorageKey(), placeBlockImage.getOrderNumber());
-        }
+        modifyPost.getPlaceBlocks().forEach(placeBlock -> placeBlockService.modifyPlaceBlock(placeBlock, post));
     }
 
     private void modifyTextBlock(TextBlock textBlock, Post post) {

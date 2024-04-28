@@ -3,7 +3,7 @@ package io.mohajistudio.tangerine.prototype.domain.place.mapper;
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
-import io.mohajistudio.tangerine.prototype.infra.place.dto.PlaceKakaoSearchApiDTO;
+import io.mohajistudio.tangerine.prototype.infra.place.dto.KakaoPlaceDTO;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -29,12 +29,12 @@ public interface PlaceMapper {
     @Mapping(source = "roadAddressName", target = "roadAddress")
     @Mapping(source = "categoryName", target = "description")
     @Mapping(source = "placeUrl", target = "link")
-    Place toEntity(PlaceKakaoSearchApiDTO placeKakaoSearchApiDTO);
+    Place toEntity(KakaoPlaceDTO kakaoPlace);
 
     @Named("setCoordinate")
-    default Point setCoordinate(PlaceKakaoSearchApiDTO placeKakaoSearchApiDTO) {
-        double lat = Double.parseDouble(placeKakaoSearchApiDTO.getY());
-        double lng = Double.parseDouble(placeKakaoSearchApiDTO.getX());
+    default Point setCoordinate(KakaoPlaceDTO kakaoPlaceDTO) {
+        double lat = Double.parseDouble(kakaoPlaceDTO.getY());
+        double lng = Double.parseDouble(kakaoPlaceDTO.getX());
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         return geometryFactory.createPoint(new Coordinate(lat, lng));
     }
