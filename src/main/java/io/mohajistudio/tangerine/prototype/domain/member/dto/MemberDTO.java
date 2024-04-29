@@ -24,6 +24,9 @@ public class MemberDTO {
 
         @Schema(description = "읽지 않은 알림 개수", example = "0")
         private int unreadNotificationsCnt;
+
+        @Schema(description = "이메일", example = "example@example.com")
+        private String email;
     }
 
     @Getter
