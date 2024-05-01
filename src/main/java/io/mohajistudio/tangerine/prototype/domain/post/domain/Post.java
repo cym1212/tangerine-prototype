@@ -24,7 +24,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@SQLRestriction("deleted_at is NULL")
+@SQLRestriction("status = 'PUBLISHED'")
 @Table(name = "post")
 public class Post extends BaseEntity {
     @Column(nullable = false)

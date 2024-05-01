@@ -85,11 +85,14 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     void updateFavoriteCnt(@Param("id") Long id, @Param("favoriteCnt") int favoriteCnt);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE Comment c SET c.member = null, c.deletedAt = :deletedAt WHERE c.id = :commentId ")
-    void permanentDelete(@Param("commentId") Long commentId, @Param("deletedAt") LocalDateTime deletedAt);
+    @Query("UPDATE Comment c SET c.member = null, c.deletedAt = :deletedAt, c.status = :commentStatus WHERE c.id = :commentId ")
+    void permanentDelete(@Param("commentId") Long commentId, @Param("commentStatus") CommentStatus commentStatus, @Param("deletedAt") LocalDateTime deletedAt);
 
     @Query("SELECT c FROM Comment c WHERE c.member.id = :memberId ")
     Page<Comment> findByMemberIdForWithdrawal(@Param("memberId") Long memberId, Pageable pageable);
 
 
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Comment c SET c.status = :commentStatus where c.id = :id")
+    void updateCommentStatus(@Param("id") Long id, @Param("commentStatus") CommentStatus commentStatus);
 }

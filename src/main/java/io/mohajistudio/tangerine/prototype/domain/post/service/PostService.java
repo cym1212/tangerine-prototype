@@ -272,7 +272,7 @@ public class PostService {
 
         postRepository.updatePostStatus(postId, postStatus);
 
-        return findPost.get();
+        return post;
     }
 
     @Transactional

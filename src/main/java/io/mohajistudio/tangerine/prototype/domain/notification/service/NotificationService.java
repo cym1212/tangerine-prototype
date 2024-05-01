@@ -88,6 +88,25 @@ public class NotificationService {
     }
 
     @Transactional
+    public void sendCommentReportMessageToCommentAuthor(Comment comment) {
+        String[] messageSourceArgs = new String[]{comment.getContent()};
+
+        String title = messageSource.getMessage("notification.report-comment.title", null, LocaleContextHolder.getLocale());
+        String body = messageSource.getMessage("notification.report-comment.body.commentAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
+
+        Notification notification = Notification.builder().title(title).body(body).member(comment.getMember()).relatedComment(comment).build();
+        notificationRepository.save(notification);
+
+        int unreadNotificationsCnt = comment.getMember().getUnreadNotificationsCnt() + 1;
+
+        memberRepository.updateUnreadNotificationsCnt(comment.getMember().getId(), unreadNotificationsCnt);
+
+        PushNotificationDTO notificationMessageDTO = PushNotificationDTO.builder().title(title).body(body).token(comment.getMember().getNotificationToken()).data(notification.getData()).build();
+        firebaseMessagingService.sendNotificationByToken(notificationMessageDTO);
+    }
+
+
+    @Transactional
     public Page<Notification> findNotificationListByPage(Long memberId, Pageable pageable) {
         Page<Notification> notificationListByPage = notificationRepository.findAll(memberId, pageable);
 

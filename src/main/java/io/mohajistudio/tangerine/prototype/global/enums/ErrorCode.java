@@ -55,7 +55,7 @@ public enum ErrorCode {
     NO_SUCH_KEY(400, "MP004", "잘못된 파일 이름으로 스토리지에 업로드를 요청했습니다"),
 
     // Report
-    ALREADY_EXIST_REPORT(400, "R001", "이미 신고를 한 게시글입니다.");
+    ALREADY_EXIST_REPORT(400, "R001", "이미 신고를 한 댓글 혹은 게시글입니다.");
 
     private final String code;
     private final String message;

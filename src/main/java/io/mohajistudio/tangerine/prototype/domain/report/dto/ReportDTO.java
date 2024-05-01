@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
-public class PostReportDTO {
+public class ReportDTO {
     private Long reportTypeId;
     @Length(max = 100)
     private String content;

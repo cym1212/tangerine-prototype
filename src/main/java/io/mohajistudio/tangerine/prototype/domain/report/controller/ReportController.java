@@ -1,10 +1,12 @@
 package io.mohajistudio.tangerine.prototype.domain.report.controller;
 
+import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
+import io.mohajistudio.tangerine.prototype.domain.report.domain.CommentReport;
 import io.mohajistudio.tangerine.prototype.domain.report.domain.PostReport;
 import io.mohajistudio.tangerine.prototype.domain.report.domain.ReportType;
-import io.mohajistudio.tangerine.prototype.domain.report.dto.PostReportDTO;
+import io.mohajistudio.tangerine.prototype.domain.report.dto.ReportDTO;
 import io.mohajistudio.tangerine.prototype.domain.report.dto.ReportTypeDTO;
 import io.mohajistudio.tangerine.prototype.domain.report.mapper.ReportMapper;
 import io.mohajistudio.tangerine.prototype.domain.report.service.ReportService;
@@ -41,11 +43,21 @@ public class ReportController {
 
     @PostMapping("/posts/{postId}/report")
     @Operation(summary = "게시글 신고", description = "게시글 신고 형식에 맞게 데이터를 전달해주세요.")
-    public void postReportAdd(@PathVariable("postId") Long postId, @Valid @RequestBody PostReportDTO postReportDTO, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
+    public void postReportAdd(@PathVariable("postId") Long postId, @Valid @RequestBody ReportDTO reportDTO, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
         Post post = Post.builder().id(postId).build();
         Member member = Member.builder().id(securityMemberDTO.getId()).build();
-        ReportType reportType = ReportType.builder().id(postReportDTO.getReportTypeId()).build();
-        PostReport postReport = PostReport.builder().reportingMember(member).post(post).reportType(reportType).resolutionStatus(ResolutionStatus.PENDING).build();
+        ReportType reportType = ReportType.builder().id(reportDTO.getReportTypeId()).build();
+        PostReport postReport = PostReport.builder().reportingMember(member).post(post).reportType(reportType).content(reportDTO.getContent()).resolutionStatus(ResolutionStatus.PENDING).build();
         reportService.addPostReport(postReport);
+    }
+
+    @PostMapping("/posts/{postId}/comments/{commentId}/report")
+    @Operation(summary = "게시글 신고", description = "게시글 신고 형식에 맞게 데이터를 전달해주세요.")
+    public void commentReportAdd(@PathVariable("commentId") Long commentId, @Valid @RequestBody ReportDTO reportDTO, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
+        Comment comment = Comment.builder().id(commentId).build();
+        Member member = Member.builder().id(securityMemberDTO.getId()).build();
+        ReportType reportType = ReportType.builder().id(reportDTO.getReportTypeId()).build();
+        CommentReport commentReport = CommentReport.builder().reportingMember(member).comment(comment).reportType(reportType).content(reportDTO.getContent()).resolutionStatus(ResolutionStatus.PENDING).build();
+        reportService.addCommentReport(commentReport);
     }
 }

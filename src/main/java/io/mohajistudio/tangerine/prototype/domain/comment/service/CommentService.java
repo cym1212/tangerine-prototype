@@ -196,10 +196,26 @@ public class CommentService {
             LocalDateTime deletedAt = LocalDateTime.now();
 
             commentList.forEach(
-                    comment -> commentRepository.permanentDelete(comment.getId(), deletedAt)
+                    comment -> commentRepository.permanentDelete(comment.getId(), CommentStatus.DELETED, deletedAt)
             );
             page++;
         } while (commentListByPage.hasNext());
+    }
+
+    public Comment modifyCommentStatus(Long commentId, CommentStatus commentStatus) {
+        Optional<Comment> findComment = commentRepository.findByIdWithMember(commentId);
+
+        if (findComment.isEmpty()) throw new UrlNotFoundException();
+
+        Comment comment = findComment.get();
+
+        if(comment.getStatus().equals(commentStatus)) {
+            return null;
+        }
+
+        commentRepository.updateCommentStatus(commentId, commentStatus);
+
+        return comment;
     }
 
     public void permanentDeleteFavoriteComment(Long memberId) {
