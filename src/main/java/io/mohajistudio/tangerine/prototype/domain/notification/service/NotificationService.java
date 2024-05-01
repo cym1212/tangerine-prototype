@@ -36,20 +36,20 @@ public class NotificationService {
 
         // 게시글에 댓글이 달렸을 경우
         if (!Objects.equals(comment.getMember().getId(), post.getMember().getId())) {
-            String parentBody = messageSource.getMessage("notification.comment.postAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
+            String parentBody = messageSource.getMessage("notification.comment.body.postAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
             map.put(post.getMember(), parentBody);
         }
 
         if (comment.getParentComment() != null) {
             // 부모 댓글에 답글이 달렸을 경우
             if (!Objects.equals(comment.getMember().getId(), comment.getParentComment().getMember().getId())) {
-                String parentBody = messageSource.getMessage("notification.comment.parentAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
+                String parentBody = messageSource.getMessage("notification.comment.body.parentAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
                 map.put(comment.getParentComment().getMember(), parentBody);
             }
 
             // 대상 댓글에 답글이 달렸을 경우
             if (!Objects.equals(comment.getMember().getId(), comment.getReplyComment().getMember().getId())) {
-                String parentBody = messageSource.getMessage("notification.comment.replyAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
+                String parentBody = messageSource.getMessage("notification.comment.body.replyAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
                 map.put(comment.getReplyComment().getMember(), parentBody);
             }
         }
@@ -67,6 +67,24 @@ public class NotificationService {
             PushNotificationDTO notificationMessageDTO = PushNotificationDTO.builder().title(title).body(body).token(member.getNotificationToken()).data(notification.getData()).build();
             firebaseMessagingService.sendNotificationByToken(notificationMessageDTO);
         }
+    }
+
+    @Transactional
+    public void sendPostReportMessageToPostAuthor(Post post) {
+        String[] messageSourceArgs = new String[]{post.getTitle()};
+
+        String title = messageSource.getMessage("notification.report-post.title", null, LocaleContextHolder.getLocale());
+        String body = messageSource.getMessage("notification.report-post.body.postAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
+
+        Notification notification = Notification.builder().title(title).body(body).member(post.getMember()).relatedPost(post).build();
+        notificationRepository.save(notification);
+
+        int unreadNotificationsCnt = post.getMember().getUnreadNotificationsCnt() + 1;
+
+        memberRepository.updateUnreadNotificationsCnt(post.getMember().getId(), unreadNotificationsCnt);
+
+        PushNotificationDTO notificationMessageDTO = PushNotificationDTO.builder().title(title).body(body).token(post.getMember().getNotificationToken()).data(notification.getData()).build();
+        firebaseMessagingService.sendNotificationByToken(notificationMessageDTO);
     }
 
     @Transactional

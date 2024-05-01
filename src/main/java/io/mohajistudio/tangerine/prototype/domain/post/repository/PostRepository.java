@@ -84,4 +84,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.deletedAt = :deletedAt, p.status = :postStatus where p.id = :id")
     void delete(@Param("id") Long id, @Param("deletedAt") LocalDateTime deletedAt, @Param("postStatus") PostStatus postStatus);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Post p SET p.status = :postStatus where p.id = :id")
+    void updatePostStatus(@Param("id") Long id, @Param("postStatus") PostStatus postStatus);
 }

@@ -259,6 +259,22 @@ public class PostService {
         } while (postListByPage.hasNext());
     }
 
+    public Post modifyPostStatus(Long postId, PostStatus postStatus) {
+        Optional<Post> findPost = postRepository.findByIdWithMember(postId);
+
+        if (findPost.isEmpty()) throw new UrlNotFoundException();
+
+        Post post = findPost.get();
+
+        if(post.getStatus().equals(postStatus)) {
+            return null;
+        }
+
+        postRepository.updatePostStatus(postId, postStatus);
+
+        return findPost.get();
+    }
+
     @Transactional
     public void permanentDeleteFavoritePost(Long memberId) {
         int pageSize = 10;

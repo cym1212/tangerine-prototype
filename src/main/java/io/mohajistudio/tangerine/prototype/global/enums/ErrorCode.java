@@ -52,8 +52,10 @@ public enum ErrorCode {
     MULTIPART_FILE_EXCEPTION(400, "MP001", "파일을 찾을 수 없습니다"),
     STORAGE_UPLOAD_FAILURE(400, "MP002", "스토리지로 업로드를 실패했습니다"),
     MAX_UPLOAD_SIZE_EXCEEDED(400, "MP003", "파일 최대 크기를 초과했습니다"),
-    NO_SUCH_KEY(400, "MP004", "잘못된 파일 이름으로 스토리지에 업로드를 요청했습니다");
+    NO_SUCH_KEY(400, "MP004", "잘못된 파일 이름으로 스토리지에 업로드를 요청했습니다"),
 
+    // Report
+    ALREADY_EXIST_REPORT(400, "R001", "이미 신고를 한 게시글입니다.");
 
     private final String code;
     private final String message;
