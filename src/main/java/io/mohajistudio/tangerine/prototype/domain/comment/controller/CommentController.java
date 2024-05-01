@@ -17,8 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,15 +70,12 @@ public class CommentController {
 
     @PatchMapping("/{id}")
     @Operation(summary = "댓글 수정", description = "댓글 형식에 맞게 데이터를 전달해주세요.")
-    public void commentModify(@RequestBody @Valid CommentDTO.Patch commentPatchDTO, @PathVariable(name = "postId") Long postId, @PathVariable(name = "id") Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
-
+    public void commentModify(@RequestBody @Valid CommentDTO.Patch commentPatchDTO, @PathVariable(name = "postId") Long postId, @PathVariable(name = "id") Long id, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
         if (!Objects.equals(id, commentPatchDTO.getId())) {
             throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
-        commentService.modifyComment(commentMapper.toEntity(commentPatchDTO), postId, securityMember.getId());
+        commentService.modifyComment(commentMapper.toEntity(commentPatchDTO), postId, securityMemberDTO.getId());
     }
 
     @DeleteMapping("/{id}")

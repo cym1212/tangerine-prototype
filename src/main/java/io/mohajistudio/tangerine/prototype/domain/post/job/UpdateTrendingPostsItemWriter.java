@@ -14,6 +14,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -21,30 +22,31 @@ import java.util.*;
 public class UpdateTrendingPostsItemWriter implements ItemWriter<TrendingPost>, StepExecutionListener {
     private final TrendingPostRepository trendingPostRepository;
     private static final int TRENDING_POST_SIZE = 50;
-    private final List<TrendingPost> trendingPostList = new ArrayList<>();
+    private final Set<TrendingPost> trendingPostSet = new HashSet<>();
 
     @Override
     public void write(Chunk<? extends TrendingPost> chunk) {
-        trendingPostList.addAll(chunk.getItems());
-        trendingPostList.sort(Comparator.comparingDouble(TrendingPost::getScore).reversed());
-        if (trendingPostList.size() > TRENDING_POST_SIZE) {
-            trendingPostList.subList(0, TRENDING_POST_SIZE).clear();
-        }
+        trendingPostSet.addAll(chunk.getItems());
+
+        Set<TrendingPost> topTrendingPosts = trendingPostSet.stream()
+                .sorted(Comparator.comparingDouble(TrendingPost::getScore).reversed())
+                .limit(TRENDING_POST_SIZE).collect(Collectors.toSet());
+
+        trendingPostSet.clear();
+        trendingPostSet.addAll(topTrendingPosts);
     }
 
     @Override
     public ExitStatus afterStep(@NonNull @NotNull StepExecution stepExecution) {
         trendingPostRepository.deleteAll();
-        List<TrendingPost> all = trendingPostRepository.findAll();
-        log.info("size = " + all.size());
-        for (int i = 0; i < trendingPostList.size(); i++) {
-            trendingPostList.get(i).setId((long) i);
-            log.info("postId = " + trendingPostList.get(i).getPost().getId() + ", score = " + trendingPostList.get(i).getScore());
+
+        int i = 0;
+        for (TrendingPost post : trendingPostSet) {
+            post.setId((long) i++);
         }
-        trendingPostRepository.saveAll(trendingPostList);
-        List<TrendingPost> afterAll = trendingPostRepository.findAll();
-        log.info("after Size = " + afterAll.size());
-        trendingPostList.clear();
+
+        trendingPostRepository.saveAll(trendingPostSet);
+        trendingPostSet.clear();
         return ExitStatus.COMPLETED;
     }
 }
