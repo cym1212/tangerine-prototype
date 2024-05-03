@@ -53,7 +53,7 @@ public class MemberController {
 
     @PatchMapping("/{memberId}/member-profiles")
     @Operation(summary = "멤버 프로필 수정", description = "멤버 프로필을 수정합니다")
-    public void memberProfileModify(@PathVariable("memberId") Long memberId, @Valid @RequestBody MemberProfileDTO.Modify memberProfileModifyDTO, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
+    public void memberProfileModify(@PathVariable("memberId") Long memberId, @Valid @RequestBody MemberProfileDTO memberProfileModifyDTO, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
 
         if (securityMemberDTO == null || !Objects.equals(memberId, securityMemberDTO.getId())) {
             throw new BusinessException(ErrorCode.NO_PERMISSION);

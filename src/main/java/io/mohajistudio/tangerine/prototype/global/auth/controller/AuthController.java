@@ -28,7 +28,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @Operation(summary = "회원가입", description = "회원가입 형식에 맞게 데이터를 전달해주세요.")
-    public GeneratedTokenDTO register(@Valid @RequestBody MemberProfileDTO.Register memberProfileRegisterDTO) {
+    public GeneratedTokenDTO register(@Valid @RequestBody MemberProfileDTO memberProfileRegisterDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
 
