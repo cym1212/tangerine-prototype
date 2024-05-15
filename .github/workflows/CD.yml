@@ -52,7 +52,7 @@ jobs:
             /share/CACHEDEV1_DATA/.qpkg/container-station/bin/docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:latest
             /share/CACHEDEV1_DATA/.qpkg/container-station/bin/docker stop ${{ secrets.DOCKERHUB_REPOSITORY_NAME }} || true
             /share/CACHEDEV1_DATA/.qpkg/container-station/bin/docker rm ${{ secrets.DOCKERHUB_REPOSITORY_NAME }} || true
-            /share/CACHEDEV1_DATA/.qpkg/container-station/bin/docker run -d \
+            /share/CACHEDEV1_DATA/.qpkg/container-station/bin/docker run --restart always -d \
             --name ${{ secrets.DOCKERHUB_REPOSITORY_NAME }} \
               -v /share/Container/app:/config \
               -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
