@@ -82,6 +82,6 @@ public class PlaceBlockDTO {
         @Valid
         @NotNull
         @Schema(description = "장소")
-        private PlaceDTO.Add place;
+        private PlaceDTO place;
     }
 }

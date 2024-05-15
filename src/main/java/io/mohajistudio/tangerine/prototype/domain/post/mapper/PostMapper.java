@@ -40,7 +40,7 @@ public interface PostMapper {
     PlaceBlockDTO.Details toDTO(PlaceBlock placeBlock);
 
     @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setCoordinate")
-    Place toPlaceDetailsDTO(PlaceDTO.Details placeDetailsDTO);
+    Place toPlace(PlaceDTO placeDTO);
 
     @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setDTOCoordinate")
     PlaceDTO.Details toPlaceDetailsDTO(Place place);

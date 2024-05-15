@@ -33,14 +33,4 @@ public class PlaceDTO {
         @Schema(description = "Place Id", example = "1")
         private Long id;
     }
-
-    @Getter
-    @Setter
-    @Schema(name = "PlaceDTO.Add", description = "장소를 추가할 때 사용할 DTO")
-    public static class Add {
-        @Schema(description = "장소 정보 제공 출처", example = "KAKAO")
-        private PlaceProvider placeSearchProvider;
-        @Schema(description = "장소 정보 제공 출처의 Id", example = "11045491")
-        private Long providerId;
-    }
 }
