@@ -40,14 +40,14 @@ public class PlaceController {
     public Page<PlaceDTO.Details> placeListByPage(@RequestParam("query") String query, @ModelAttribute PageableParam pageableParam) {
         Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
 
-        return placeService.findPlaceListByPage(query, pageable).map(postMapper::toPlaceDetailsDTO);
+        return placeService.findPlaceListByPage(query, pageable).map(placeMapper::toPlaceDetailsDTO);
     }
 
     @GetMapping("/bounds")
     @Operation(summary = "장소 카테고리 목록 조회", description = "장소 카테고리 목록을 조회합니다.")
     public List<PlaceDTO.Details> placeListInBounds(@RequestParam("minLng") double minLng, @RequestParam("minLat") double minLat, @RequestParam("maxLng") double maxLng, @RequestParam("maxLat") double maxLat) {
         List<Place> placeListBlockInBounds = placeService.findPlaceListInBounds(minLng, minLat, maxLng, maxLat);
-        return placeListBlockInBounds.stream().map(postMapper::toPlaceDetailsDTO).toList();
+        return placeListBlockInBounds.stream().map(placeMapper::toPlaceDetailsDTO).toList();
     }
 
     @GetMapping("/{placeId}/place-blocks")
@@ -72,7 +72,7 @@ public class PlaceController {
 
         Pageable pageable = PageRequest.of(pageableParam.getPage(), pageableParam.getSize());
 
-        List<PlaceDTO.Details> placeDetailsDTOList = placeList.stream().map(postMapper::toPlaceDetailsDTO).toList();
+        List<PlaceDTO.Details> placeDetailsDTOList = placeList.stream().map(placeMapper::toPlaceDetailsDTO).toList();
 
         return new PageImpl<>(placeDetailsDTOList, pageable, kakaoPlaceApiDTO.getMeta().getTotalCount());
     }

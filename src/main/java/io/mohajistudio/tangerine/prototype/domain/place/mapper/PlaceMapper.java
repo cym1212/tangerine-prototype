@@ -1,6 +1,8 @@
 package io.mohajistudio.tangerine.prototype.domain.place.mapper;
 
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
+import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceDTO;
+import io.mohajistudio.tangerine.prototype.global.common.PointDTO;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.infra.place.dto.KakaoPlaceDTO;
@@ -32,6 +34,31 @@ public interface PlaceMapper {
     @Mapping(source = "categoryName", target = "description")
     @Mapping(source = "placeUrl", target = "link")
     Place toEntity(KakaoPlaceDTO kakaoPlace);
+
+    @Mapping(source = "address", target = "addressProvince", qualifiedByName = "convertToProvince")
+    @Mapping(source = "address", target = "addressCity", qualifiedByName = "convertToCity")
+    @Mapping(source = "address", target = "addressDistrict", qualifiedByName = "convertToDistrict")
+    @Mapping(source = "address", target = "addressDetail", qualifiedByName = "convertToDetail")
+    @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setCoordinate")
+    Place toPlace(PlaceDTO placeDTO);
+
+    @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setDTOCoordinate")
+    PlaceDTO.Details toPlaceDetailsDTO(Place place);
+
+    @Named("setCoordinate")
+    default Point setPlaceAddDTOCoordinate(PointDTO coordinate) {
+        double lat = coordinate.getLat();
+        double lng = coordinate.getLng();
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        return geometryFactory.createPoint(new Coordinate(lat, lng));
+    }
+
+    @Named("setDTOCoordinate")
+    default PointDTO setCoordinate(Point coordinate) {
+        double lat = coordinate.getX();
+        double lng = coordinate.getY();
+        return PointDTO.builder().lat(lat).lng(lng).build();
+    }
 
     @Named("setCoordinate")
     default Point setCoordinate(KakaoPlaceDTO kakaoPlaceDTO) {
