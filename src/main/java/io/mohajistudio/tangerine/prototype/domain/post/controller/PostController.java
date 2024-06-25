@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,12 +63,11 @@ public class PostController {
 
     @GetMapping("/{id}")
     @Operation(summary = "게시글 상세 조회", description = "게시글 상세를 조회합니다.")
-    public PostDTO.Details postDetails(@PathVariable("id") Long id) {
+    public PostDTO.Details postDetails(@AuthenticationPrincipal SecurityMemberDTO securityMemberDTO, @PathVariable("id") Long id) {
         Long memberId = null;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication.getPrincipal() != "anonymousUser") {
-            SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
-            memberId = securityMember.getId();
+
+        if(securityMemberDTO != null) {
+            memberId = securityMemberDTO.getId();
         }
 
         Post postDetails = postService.findPostDetails(id, memberId);

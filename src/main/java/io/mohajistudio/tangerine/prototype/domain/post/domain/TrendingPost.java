@@ -18,7 +18,7 @@ public class TrendingPost {
     @Id
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private Post post;
 
     private double score;

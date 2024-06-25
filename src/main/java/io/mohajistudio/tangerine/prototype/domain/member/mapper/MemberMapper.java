@@ -14,7 +14,5 @@ public interface MemberMapper {
 
     MemberProfileDTO toDTO(MemberProfile memberProfile);
 
-    MemberProfile toEntity(MemberProfileDTO memberProfileDTO);
-
-    MemberProfile toEntity(MemberProfileDTO.Modify memberProfileModifyDTO);
+    MemberProfile toEntity(MemberProfileDTO memberProfileModifyDTO);
 }

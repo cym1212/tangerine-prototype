@@ -3,7 +3,7 @@ package io.mohajistudio.tangerine.prototype.domain.placeblock.service;
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
 import io.mohajistudio.tangerine.prototype.domain.place.service.PlaceService;
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.service.PlaceBlockImageService;
-import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.domain.placeblock.repository.PlaceBlockRepository;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.domain.post.repository.PlaceBlockImageRepository;

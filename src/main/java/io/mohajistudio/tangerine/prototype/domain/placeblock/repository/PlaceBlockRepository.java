@@ -2,7 +2,7 @@ package io.mohajistudio.tangerine.prototype.domain.placeblock.repository;
 
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
 import io.mohajistudio.tangerine.prototype.domain.place.domain.PlaceCategory;
-import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,4 +50,11 @@ public interface PlaceBlockRepository extends JpaRepository<PlaceBlock, Long> {
             "WHERE pb.member.id = :memberId " +
             "ORDER BY pb.createdAt DESC")
     Page<PlaceBlock> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
+
+    @Query("SELECT pb FROM Place pl " +
+            "JOIN pl.placeBlocks pb " +
+            "LEFT JOIN FETCh pb.placeCategory " +
+            "LEFT JOIN FETCh  pb.placeBlockImages " +
+            "WHERE pl.id = :placeId")
+    Page<PlaceBlock> findAllByPlaceId(@Param("placeId") Long placeId, Pageable pageable);
 }

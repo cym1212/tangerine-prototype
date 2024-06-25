@@ -6,7 +6,7 @@ import io.mohajistudio.tangerine.prototype.domain.member.domain.MemberProfile;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.FollowRepository;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberProfileRepository;
 import io.mohajistudio.tangerine.prototype.domain.member.repository.MemberRepository;
-import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.domain.placeblock.repository.PlaceBlockRepository;
 import io.mohajistudio.tangerine.prototype.domain.post.repository.PostRepository;
@@ -126,5 +126,14 @@ public class MemberService {
         if (findMember.isEmpty()) throw new UrlNotFoundException();
 
         memberRepository.updateNotificationToken(memberId, notificationToken);
+    }
+
+    @Transactional
+    public void permanentDelete(Member member) {
+        if (member.getMemberProfile().getProfileImage() != null && !member.getMemberProfile().getProfileImage().isEmpty()) {
+            s3UploadService.deleteImage(member.getMemberProfile().getProfileImage());
+        }
+        memberProfileRepository.delete(member.getMemberProfile());
+        memberRepository.delete(member);
     }
 }

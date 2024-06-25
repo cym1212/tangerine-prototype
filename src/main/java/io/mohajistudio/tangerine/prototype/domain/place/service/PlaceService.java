@@ -4,6 +4,8 @@ import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
 import io.mohajistudio.tangerine.prototype.domain.place.domain.PlaceCategory;
 import io.mohajistudio.tangerine.prototype.domain.place.repository.PlaceCategoryRepository;
 import io.mohajistudio.tangerine.prototype.domain.place.repository.PlaceRepository;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.repository.PlaceBlockRepository;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PlaceService {
     private final PlaceRepository placeRepository;
+    private final PlaceBlockRepository placeBlockRepository;
     private final PlaceCategoryRepository placeCategoryRepository;
 
     public Page<Place> findPlaceListByPage(String query, Pageable pageable) {
@@ -42,5 +45,9 @@ public class PlaceService {
             return findPlace.get();
         }
         return placeRepository.save(place);
+    }
+
+    public Page<PlaceBlock> findPlaceBlockListByPage(Long placeId, Pageable pageable) {
+        return placeBlockRepository.findAllByPlaceId(placeId, pageable);
     }
 }

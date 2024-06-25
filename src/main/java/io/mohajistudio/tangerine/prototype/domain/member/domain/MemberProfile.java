@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Table(name = "member_profile")
 public class MemberProfile extends BaseEntity {
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20)
     private String name;
 
     private LocalDate birthday;
@@ -24,7 +24,7 @@ public class MemberProfile extends BaseEntity {
     @Column(length = 15)
     private String phone;
 
-    @Column(length = 1, nullable = false)
+    @Column(length = 1)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -34,7 +34,7 @@ public class MemberProfile extends BaseEntity {
     @Setter
     private String profileImage;
 
-    @Column(length = 20, unique = true)
+    @Column(length = 20, unique = true, nullable = false)
     private String nickname;
 
     @Setter

@@ -1,6 +1,8 @@
 package io.mohajistudio.tangerine.prototype.domain.place.mapper;
 
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
+import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceDTO;
+import io.mohajistudio.tangerine.prototype.global.common.PointDTO;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
 import io.mohajistudio.tangerine.prototype.infra.place.dto.KakaoPlaceDTO;
@@ -10,13 +12,15 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.mapstruct.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Mapper
 public interface PlaceMapper {
-    String regex = "^(?<province>\\S+)\\s+(?<city>\\S+)\\s+(?<district>\\S+)\\s*(?<detail>.+)?$";
-    Pattern pattern = Pattern.compile(regex);
+    String regexp = "^(?<province>\\S+)\\s+(?<city>\\S+)\\s+(?<district>\\S+)\\s*(?<detail>.+)?$";
+    Pattern pattern = Pattern.compile(regexp);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "id", target = "providerId")
@@ -31,6 +35,31 @@ public interface PlaceMapper {
     @Mapping(source = "placeUrl", target = "link")
     Place toEntity(KakaoPlaceDTO kakaoPlace);
 
+    @Mapping(source = "address", target = "addressProvince", qualifiedByName = "convertToProvince")
+    @Mapping(source = "address", target = "addressCity", qualifiedByName = "convertToCity")
+    @Mapping(source = "address", target = "addressDistrict", qualifiedByName = "convertToDistrict")
+    @Mapping(source = "address", target = "addressDetail", qualifiedByName = "convertToDetail")
+    @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setCoordinate")
+    Place toPlace(PlaceDTO placeDTO);
+
+    @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setDTOCoordinate")
+    PlaceDTO.Details toPlaceDetailsDTO(Place place);
+
+    @Named("setCoordinate")
+    default Point setPlaceAddDTOCoordinate(PointDTO coordinate) {
+        double lat = coordinate.getLat();
+        double lng = coordinate.getLng();
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        return geometryFactory.createPoint(new Coordinate(lat, lng));
+    }
+
+    @Named("setDTOCoordinate")
+    default PointDTO setCoordinate(Point coordinate) {
+        double lat = coordinate.getX();
+        double lng = coordinate.getY();
+        return PointDTO.builder().lat(lat).lng(lng).build();
+    }
+
     @Named("setCoordinate")
     default Point setCoordinate(KakaoPlaceDTO kakaoPlaceDTO) {
         double lat = Double.parseDouble(kakaoPlaceDTO.getY());
@@ -43,7 +72,25 @@ public interface PlaceMapper {
     default String convertToProvince(String address) {
         Matcher matcher = pattern.matcher(address);
         if (matcher.matches()) {
-            return matcher.group("province");
+            String province =  matcher.group("province");
+            Map<String, String> provinceMap = new HashMap<>();
+            provinceMap.put("서울", "서울특별시");
+            provinceMap.put("부산", "부산광역시");
+            provinceMap.put("대구", "대구광역시");
+            provinceMap.put("인천", "인천광역시");
+            provinceMap.put("광주", "광주광역시");
+            provinceMap.put("울산", "울산광역시");
+            provinceMap.put("전남", "전라남도");
+            provinceMap.put("경남", "경상남도");
+            provinceMap.put("경북", "경상북도");
+            provinceMap.put("충남", "충청남도");
+            provinceMap.put("충북", "충청북도");
+            provinceMap.put("경기", "경기도");
+            provinceMap.put("전북특별자치도", "전북특별자치도");
+            provinceMap.put("제주특별자치도", "제주특별자치도");
+            provinceMap.put("강원특별자치도", "강원특별자치도");
+            provinceMap.put("세종특별자치시", "세종특별자치시");
+            return provinceMap.getOrDefault(province, province);
         }
         throw new BusinessException("지원하지 않는 주소 형식입니다, address = " + address, ErrorCode.INVALID_INPUT_VALUE);
     }

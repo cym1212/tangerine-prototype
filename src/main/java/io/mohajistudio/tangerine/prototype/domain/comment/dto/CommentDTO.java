@@ -1,6 +1,7 @@
 package io.mohajistudio.tangerine.prototype.domain.comment.dto;
 
 import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberDTO;
+import io.mohajistudio.tangerine.prototype.global.enums.CommentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -54,6 +55,8 @@ public class CommentDTO {
         private int groupNumber;
         @Schema(description = "좋아요 개수")
         private int favoriteCnt;
+        @Schema(description = "댓글 상태", example = "PUBLISHED")
+        private CommentStatus status;
         @Schema(description = "생성 시간")
         private LocalDateTime createdAt;
         @Schema(description = "수정 시간")

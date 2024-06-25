@@ -4,6 +4,7 @@ import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.FavoriteComment;
 import io.mohajistudio.tangerine.prototype.domain.comment.dto.CommentDTO;
 import io.mohajistudio.tangerine.prototype.domain.comment.dto.FavoriteCommentDTO;
+import io.mohajistudio.tangerine.prototype.global.enums.CommentStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -25,7 +26,9 @@ public interface CommentMapper {
 
     @Named("checkDeletedComment") // 2
     default String convertToDistrict(Comment comment) {
-        if (comment.getDeletedAt() != null) {
+        if (comment.getStatus() == CommentStatus.DELETED) {
+            return null;
+        } else if (comment.getStatus() == CommentStatus.FLAGGED) {
             return null;
         }
         return comment.getContent();

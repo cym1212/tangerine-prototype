@@ -52,7 +52,7 @@ public class BatchConfig {
         return new JpaPagingItemReaderBuilder<Post>()
                 .name("updateTrendingPostsItemReader")
                 .entityManagerFactory(entityManagerFactory)
-                .queryString("SELECT p FROM Post p WHERE p.deletedAt IS NULL")
+                .queryString("SELECT p FROM Post p")
                 .pageSize(CHUNK_SIZE)
                 .build();
     }

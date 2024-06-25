@@ -5,6 +5,7 @@ import io.mohajistudio.tangerine.prototype.domain.comment.domain.Comment;
 import io.mohajistudio.tangerine.prototype.domain.comment.domain.FavoriteComment;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
 import io.mohajistudio.tangerine.prototype.domain.notification.domain.Notification;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.global.common.BaseEntity;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.enums.PostStatus;
@@ -23,7 +24,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@SQLRestriction("deleted_at is NULL")
+@SQLRestriction("status = 'PUBLISHED'")
 @Table(name = "post")
 public class Post extends BaseEntity {
     @Column(nullable = false)

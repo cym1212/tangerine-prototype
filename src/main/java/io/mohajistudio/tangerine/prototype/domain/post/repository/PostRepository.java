@@ -59,6 +59,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY p.createdAt DESC")
     Page<Post> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 
+    @Query("SELECT DISTINCT p FROM Post p " +
+            "LEFT JOIN FETCH p.textBlocks " +
+            "LEFT JOIN FETCH p.placeBlocks pb " +
+            "LEFT JOIN FETCH pb.placeBlockImages pbi " +
+            "WHERE p.member.id = :memberId ")
+    Page<Post> findByMemberIdForWithdrawal(@Param("memberId") Long memberId, Pageable pageable);
+
     @Query("SELECT p FROM Post p WHERE p.member.id = :memberId AND p.createdAt >= :dateTime ORDER BY p.createdAt DESC")
     List<Post> findAllByMemberIdAfter(@Param("memberId") Long memberId, @Param("dateTime") LocalDateTime dateTime);
 
@@ -77,4 +84,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Post p set p.deletedAt = :deletedAt, p.status = :postStatus where p.id = :id")
     void delete(@Param("id") Long id, @Param("deletedAt") LocalDateTime deletedAt, @Param("postStatus") PostStatus postStatus);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Post p SET p.status = :postStatus where p.id = :id")
+    void updatePostStatus(@Param("id") Long id, @Param("postStatus") PostStatus postStatus);
 }

@@ -19,6 +19,7 @@ import java.util.Set;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+
 @Table(name = "comment")
 public class Comment extends BaseEntity {
     @Setter
@@ -38,7 +39,7 @@ public class Comment extends BaseEntity {
     private CommentStatus status;
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     @Setter

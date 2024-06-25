@@ -1,7 +1,7 @@
 package io.mohajistudio.tangerine.prototype.domain.post.mapper;
 
 import io.mohajistudio.tangerine.prototype.domain.place.domain.Place;
-import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceBlockDTO;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceDTO;
 import io.mohajistudio.tangerine.prototype.global.common.PointDTO;
@@ -12,6 +12,7 @@ import org.mapstruct.Named;
 
 @Mapper
 public interface PlaceBlockMapper {
+    @Mapping(source = "post.id", target = "postId")
     PlaceBlockDTO.Details toDetailsDTO(PlaceBlock placeBlock);
 
     @Mapping(source = "coordinate", target = "coordinate", qualifiedByName = "setDTOCoordinate")

@@ -14,13 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,20 +36,20 @@ public class NotificationService {
 
         // 게시글에 댓글이 달렸을 경우
         if (!Objects.equals(comment.getMember().getId(), post.getMember().getId())) {
-            String parentBody = messageSource.getMessage("notification.comment.postAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
+            String parentBody = messageSource.getMessage("notification.comment.body.postAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
             map.put(post.getMember(), parentBody);
         }
 
         if (comment.getParentComment() != null) {
             // 부모 댓글에 답글이 달렸을 경우
             if (!Objects.equals(comment.getMember().getId(), comment.getParentComment().getMember().getId())) {
-                String parentBody = messageSource.getMessage("notification.comment.parentAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
+                String parentBody = messageSource.getMessage("notification.comment.body.parentAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
                 map.put(comment.getParentComment().getMember(), parentBody);
             }
 
             // 대상 댓글에 답글이 달렸을 경우
             if (!Objects.equals(comment.getMember().getId(), comment.getReplyComment().getMember().getId())) {
-                String parentBody = messageSource.getMessage("notification.comment.replyAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
+                String parentBody = messageSource.getMessage("notification.comment.body.replyAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
                 map.put(comment.getReplyComment().getMember(), parentBody);
             }
         }
@@ -70,6 +68,43 @@ public class NotificationService {
             firebaseMessagingService.sendNotificationByToken(notificationMessageDTO);
         }
     }
+
+    @Transactional
+    public void sendPostReportMessageToPostAuthor(Post post) {
+        String[] messageSourceArgs = new String[]{post.getTitle()};
+
+        String title = messageSource.getMessage("notification.report-post.title", null, LocaleContextHolder.getLocale());
+        String body = messageSource.getMessage("notification.report-post.body.postAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
+
+        Notification notification = Notification.builder().title(title).body(body).member(post.getMember()).relatedPost(post).build();
+        notificationRepository.save(notification);
+
+        int unreadNotificationsCnt = post.getMember().getUnreadNotificationsCnt() + 1;
+
+        memberRepository.updateUnreadNotificationsCnt(post.getMember().getId(), unreadNotificationsCnt);
+
+        PushNotificationDTO notificationMessageDTO = PushNotificationDTO.builder().title(title).body(body).token(post.getMember().getNotificationToken()).data(notification.getData()).build();
+        firebaseMessagingService.sendNotificationByToken(notificationMessageDTO);
+    }
+
+    @Transactional
+    public void sendCommentReportMessageToCommentAuthor(Comment comment) {
+        String[] messageSourceArgs = new String[]{comment.getContent()};
+
+        String title = messageSource.getMessage("notification.report-comment.title", null, LocaleContextHolder.getLocale());
+        String body = messageSource.getMessage("notification.report-comment.body.commentAuthor", messageSourceArgs, LocaleContextHolder.getLocale());
+
+        Notification notification = Notification.builder().title(title).body(body).member(comment.getMember()).relatedComment(comment).build();
+        notificationRepository.save(notification);
+
+        int unreadNotificationsCnt = comment.getMember().getUnreadNotificationsCnt() + 1;
+
+        memberRepository.updateUnreadNotificationsCnt(comment.getMember().getId(), unreadNotificationsCnt);
+
+        PushNotificationDTO notificationMessageDTO = PushNotificationDTO.builder().title(title).body(body).token(comment.getMember().getNotificationToken()).data(notification.getData()).build();
+        firebaseMessagingService.sendNotificationByToken(notificationMessageDTO);
+    }
+
 
     @Transactional
     public Page<Notification> findNotificationListByPage(Long memberId, Pageable pageable) {
@@ -97,5 +132,33 @@ public class NotificationService {
         }
 
         return notificationListByPage;
+    }
+
+    @Transactional
+    public void permanentDelete(Long memberId) {
+        int pageSize = 10;
+        int page = 0;
+
+        Page<Notification> notificationListByPage;
+        do {
+            notificationListByPage = notificationRepository.findAllForWithdrawal(memberId, PageRequest.of(page, pageSize));
+            List<Notification> notificationList = notificationListByPage.getContent();
+
+            notificationRepository.deleteAll(notificationList);
+
+            page++;
+        } while (notificationListByPage.hasNext());
+
+        page = 0;
+        do {
+            notificationListByPage = notificationRepository.findAllRelatedMemberForWithdrawal(memberId, PageRequest.of(page, pageSize));
+            List<Notification> notificationList = notificationListByPage.getContent();
+
+            notificationList.forEach(
+                    notification -> notificationRepository.deleteRelatedMember(notification.getId())
+            );
+
+            page++;
+        } while (notificationListByPage.hasNext());
     }
 }

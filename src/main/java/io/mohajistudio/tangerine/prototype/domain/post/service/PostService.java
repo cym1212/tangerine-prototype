@@ -1,8 +1,10 @@
 package io.mohajistudio.tangerine.prototype.domain.post.service;
 
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.domain.placeblock.repository.PlaceBlockRepository;
 import io.mohajistudio.tangerine.prototype.domain.placeblock.service.PlaceBlockService;
+import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.service.PlaceBlockImageService;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.*;
 import io.mohajistudio.tangerine.prototype.domain.post.repository.*;
@@ -13,6 +15,7 @@ import io.mohajistudio.tangerine.prototype.global.error.exception.UrlNotFoundExc
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -73,7 +76,7 @@ public class PostService{
         Post post = findPost.get();
 
         if (memberId != null) {
-            Optional<FavoritePost> findFavoritePost = favoritePostRepository.findByMemberIdAndPostId(id, memberId);
+            Optional<FavoritePost> findFavoritePost = favoritePostRepository.findByMemberIdAndPostId(memberId, id);
             post.setIsFavorite(findFavoritePost.isPresent());
         }
 
@@ -224,5 +227,75 @@ public class PostService{
             ScrapPost favoritePost = ScrapPost.builder().member(member).post(post).build();
             scrapPostRepository.save(favoritePost);
         }
+    }
+
+    @Transactional
+    public void permanentDelete(Long memberId) {
+        int pageSize = 10;
+        int page = 0;
+
+        Page<Post> postListByPage;
+        do {
+            postListByPage = postRepository.findByMemberIdForWithdrawal(memberId, PageRequest.of(page, pageSize));
+            List<Post> postList = postListByPage.getContent();
+
+            postList.parallelStream().forEach(
+                    post -> {
+                        post.getPlaceBlocks().forEach(
+                                placeBlock -> {
+                                    Set<PlaceBlockImage> placeBlockImages = placeBlock.getPlaceBlockImages();
+                                    placeBlockImages.forEach(
+                                            placeBlockImageService::permanentDelete
+                                    );
+                                    placeBlockRepository.delete(placeBlock);
+                                }
+                        );
+                        textBlockRepository.deleteAll(post.getTextBlocks());
+                        postRepository.delete(post);
+                    }
+            );
+
+            page++;
+        } while (postListByPage.hasNext());
+    }
+
+    public Post modifyPostStatus(Long postId, PostStatus postStatus) {
+        Optional<Post> findPost = postRepository.findByIdWithMember(postId);
+
+        if (findPost.isEmpty()) throw new UrlNotFoundException();
+
+        Post post = findPost.get();
+
+        if(post.getStatus().equals(postStatus)) {
+            return null;
+        }
+
+        postRepository.updatePostStatus(postId, postStatus);
+
+        return post;
+    }
+
+    @Transactional
+    public void permanentDeleteFavoritePost(Long memberId) {
+        int pageSize = 10;
+        int page = 0;
+
+        Page<FavoritePost> favoritePostListByPage;
+        do {
+            favoritePostListByPage = favoritePostRepository.findByMemberIdForWithdrawal(memberId, PageRequest.of(page, pageSize));
+            List<FavoritePost> favoritePostList = favoritePostListByPage.getContent();
+
+            favoritePostList.parallelStream().forEach(
+                    favoritePost -> {
+                        Optional<Post> findPost = postRepository.findById(favoritePost.getPost().getId());
+                        if (findPost.isPresent()) {
+                            Post post = findPost.get();
+                            postRepository.updateFavoriteCnt(post.getId(), post.getFavoriteCnt() - 1);
+                        }
+                        favoritePostRepository.delete(favoritePost);
+                    }
+            );
+            page++;
+        } while (favoritePostListByPage.hasNext());
     }
 }

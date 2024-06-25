@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
+    @Query("SELECT c FROM Comment c WHERE c.id = :id")
+    Optional<Comment> findByIdForWithdrawal(@Param("id") Long id);
+
     @Query("SELECT c FROM Comment c LEFT JOIN FETCH c.post WHERE c.id = :id")
     Optional<Comment> findById(@Param("id") Long id);
 
@@ -70,14 +73,26 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Comment> findByPostIdAndCommentIdOrderByAsc(@Param("postId") Long postId, @Param("commentId") Long commentId, Pageable pageable);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE Comment c SET c.modifiedAt = :modifiedAt, c.content = :content WHERE c.id = :id AND c.deletedAt IS NULL")
+    @Query("UPDATE Comment c SET c.modifiedAt = :modifiedAt, c.content = :content WHERE c.id = :id")
     void update(@Param("id") Long id, @Param("modifiedAt") LocalDateTime modifiedAt, @Param("content") String content);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE Comment c SET c.deletedAt = :deletedAt, c.status = :commentStatus WHERE c.id =:id AND c.deletedAt IS NULL")
+    @Query("UPDATE Comment c SET c.deletedAt = :deletedAt, c.status = :commentStatus WHERE c.id =:id")
     void delete(@Param("id") Long id, @Param("deletedAt") LocalDateTime deletedAt, @Param("commentStatus") CommentStatus commentStatus);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE Comment c SET c.favoriteCnt = :favoriteCnt WHERE c.id = :id AND c.deletedAt IS NULL")
+    @Query("UPDATE Comment c SET c.favoriteCnt = :favoriteCnt WHERE c.id = :id")
     void updateFavoriteCnt(@Param("id") Long id, @Param("favoriteCnt") int favoriteCnt);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Comment c SET c.member = null, c.deletedAt = :deletedAt, c.status = :commentStatus WHERE c.id = :commentId ")
+    void permanentDelete(@Param("commentId") Long commentId, @Param("commentStatus") CommentStatus commentStatus, @Param("deletedAt") LocalDateTime deletedAt);
+
+    @Query("SELECT c FROM Comment c WHERE c.member.id = :memberId ")
+    Page<Comment> findByMemberIdForWithdrawal(@Param("memberId") Long memberId, Pageable pageable);
+
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Comment c SET c.status = :commentStatus where c.id = :id")
+    void updateCommentStatus(@Param("id") Long id, @Param("commentStatus") CommentStatus commentStatus);
 }

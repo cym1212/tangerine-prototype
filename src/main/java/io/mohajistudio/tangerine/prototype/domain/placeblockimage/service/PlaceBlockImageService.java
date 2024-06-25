@@ -1,7 +1,7 @@
 package io.mohajistudio.tangerine.prototype.domain.placeblockimage.service;
 
 import io.mohajistudio.tangerine.prototype.domain.placeblockimage.domain.PlaceBlockImage;
-import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.domain.post.repository.PlaceBlockImageRepository;
 import io.mohajistudio.tangerine.prototype.global.enums.ErrorCode;
 import io.mohajistudio.tangerine.prototype.global.error.exception.BusinessException;
@@ -41,6 +41,12 @@ public class PlaceBlockImageService {
                 placeBlockImage.setStorageKey(newFileName);
             }
         });
+    }
+
+    public void permanentDelete(PlaceBlockImage placeBlockImage) {
+        String storageKey = placeBlockImage.getStorageKey();
+        s3UploadService.deleteImage(storageKey);
+        placeBlockImageRepository.delete(placeBlockImage);
     }
 
     public String copyImageToPermanent(String storageKey) {

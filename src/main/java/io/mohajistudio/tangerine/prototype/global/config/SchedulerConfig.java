@@ -11,14 +11,17 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 
 @Slf4j
+@Profile("prod")
 @Configuration
 @RequiredArgsConstructor
 public class SchedulerConfig {
     private final JobLauncher jobLauncher;
     private final Job job;
+
     @Scheduled(cron = "0 0/30 * * * *")
     public void runUpdateTrendingPostsJob() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters parameters = new JobParametersBuilder()

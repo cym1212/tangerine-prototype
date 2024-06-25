@@ -6,7 +6,7 @@ import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberDTO;
 import io.mohajistudio.tangerine.prototype.domain.member.dto.MemberProfileDTO;
 import io.mohajistudio.tangerine.prototype.domain.member.mapper.MemberMapper;
 import io.mohajistudio.tangerine.prototype.domain.member.service.MemberService;
-import io.mohajistudio.tangerine.prototype.domain.post.domain.PlaceBlock;
+import io.mohajistudio.tangerine.prototype.domain.placeblock.domain.PlaceBlock;
 import io.mohajistudio.tangerine.prototype.domain.post.domain.Post;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PlaceBlockDTO;
 import io.mohajistudio.tangerine.prototype.domain.post.dto.PostDTO;
@@ -24,8 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,13 +42,10 @@ public class MemberController {
 
     @GetMapping("/{memberId}")
     @Operation(summary = "멤버 조회", description = "멤버를 조회합니다.")
-    public MemberDTO memberDetails(@PathVariable("memberId") Long memberId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
-
+    public MemberDTO memberDetails(@PathVariable("memberId") Long memberId, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
         Member member = memberService.findMember(memberId);
 
-        if(Objects.equals(securityMember.getId(), memberId)) {
+        if(securityMemberDTO != null && Objects.equals(securityMemberDTO.getId(), memberId)) {
             return memberMapper.toDetailsDTO(member);
         }
         return memberMapper.toDTO(member);
@@ -57,11 +53,9 @@ public class MemberController {
 
     @PatchMapping("/{memberId}/member-profiles")
     @Operation(summary = "멤버 프로필 수정", description = "멤버 프로필을 수정합니다")
-    public void memberProfileModify(@PathVariable("memberId") Long memberId, @Valid @RequestBody MemberProfileDTO.Modify memberProfileModifyDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
+    public void memberProfileModify(@PathVariable("memberId") Long memberId, @Valid @RequestBody MemberProfileDTO memberProfileModifyDTO, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
 
-        if (!Objects.equals(memberId, securityMember.getId())) {
+        if (securityMemberDTO == null || !Objects.equals(memberId, securityMemberDTO.getId())) {
             throw new BusinessException(ErrorCode.NO_PERMISSION);
         }
 
@@ -71,11 +65,10 @@ public class MemberController {
 
     @PostMapping(value = "/{memberId}/member-profiles/profile-images", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "스토리지에 이미지 업로드", description = "이미지 값을 넘기면 S3에 이미지를 저장하고 주소를 반환합니다.")
-    public String profileImageUpload(@PathVariable("memberId") Long memberId, @RequestPart(value = "profileImage") MultipartFile profileImage) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
+    public String profileImageUpload(@PathVariable("memberId") Long memberId, @RequestPart(value = "profileImage") MultipartFile profileImage, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
 
-        if (!Objects.equals(memberId, securityMember.getId())) {
+
+        if (securityMemberDTO == null || !Objects.equals(memberId, securityMemberDTO.getId())) {
             throw new BusinessException(ErrorCode.NO_PERMISSION);
         }
 
@@ -84,15 +77,16 @@ public class MemberController {
 
     @PatchMapping("/{memberId}/follows")
     @Operation(summary = "팔로우할 멤버 추가/삭제", description = "팔로우 할 멤버를 추가 또는 삭제합니다.")
-    public void followMemberModify(@PathVariable("memberId") Long memberId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
+    public void followMemberModify(@PathVariable("memberId") Long memberId, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
+        if(securityMemberDTO == null) {
+            throw new BusinessException(ErrorCode.NO_PERMISSION);
+        }
 
-        if (Objects.equals(memberId, securityMember.getId())) {
+        if (Objects.equals(memberId, securityMemberDTO.getId())) {
             throw new BusinessException(ErrorCode.SELF_FOLLOW);
         }
 
-        memberService.modifyFollowMember(securityMember.getId(), memberId);
+        memberService.modifyFollowMember(securityMemberDTO.getId(), memberId);
     }
 
     @GetMapping("/{memberId}/follows")
@@ -131,11 +125,8 @@ public class MemberController {
 
     @PatchMapping("/{memberId}/notification-token")
     @Operation(summary = "멤버의 ", description = "특정 멤버가 작성한 게시글들을 조회힙니다.")
-    public void notificationTokenModify(@PathVariable("memberId") Long memberId, @Valid @RequestBody MemberDTO.Notification memberNotificationDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMemberDTO securityMember = (SecurityMemberDTO) authentication.getPrincipal();
-
-        if (!Objects.equals(memberId, securityMember.getId())) {
+    public void notificationTokenModify(@PathVariable("memberId") Long memberId, @Valid @RequestBody MemberDTO.Notification memberNotificationDTO, @AuthenticationPrincipal SecurityMemberDTO securityMemberDTO) {
+        if (securityMemberDTO == null || !Objects.equals(memberId, securityMemberDTO.getId())) {
             throw new BusinessException(ErrorCode.NO_PERMISSION);
         }
 

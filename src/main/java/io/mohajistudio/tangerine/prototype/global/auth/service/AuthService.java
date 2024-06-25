@@ -9,6 +9,10 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.mohajistudio.tangerine.prototype.domain.comment.service.CommentService;
+import io.mohajistudio.tangerine.prototype.domain.member.service.MemberService;
+import io.mohajistudio.tangerine.prototype.domain.notification.service.NotificationService;
+import io.mohajistudio.tangerine.prototype.domain.post.service.PostService;
 import io.mohajistudio.tangerine.prototype.global.auth.dto.GeneratedTokenDTO;
 import io.mohajistudio.tangerine.prototype.global.auth.dto.OAuth2AttributeDTO;
 import io.mohajistudio.tangerine.prototype.domain.member.domain.Member;
@@ -50,15 +54,19 @@ import java.util.*;
 @Transactional
 public class AuthService {
     private final JwtProperties jwtConfig;
+    private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
     private final MemberProfileRepository memberProfileRepository;
-    private final JwtProvider jwtProvider;
+    private final PostService postService;
+    private final NotificationService notificationService;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final ClientRegistrationRepository clientRegistrationRepository;
+    private final MemberService memberService;
     private final S3UploadService s3UploadService;
     private final AppleOAuthService appleOAuthService;
     private static final String KAKAO_API_URL = "https://kapi.kakao.com/v2/user/me";
     private static final String APPLE_URL = "https://appleid.apple.com/auth/token";
+    private final CommentService commentService;
 
     public GeneratedTokenDTO register(SecurityMemberDTO securityMember, MemberProfile memberProfile) {
         Optional<Member> findMember = memberRepository.findById(securityMember.getId());
@@ -211,5 +219,16 @@ public class AuthService {
             generatedTokenDTO.setIsRegistered(true);
         }
         return generatedTokenDTO;
+    }
+
+    @Transactional
+    public void withdrawal(Long memberId) {
+        Member member = memberService.findMember(memberId);
+        notificationService.permanentDelete(memberId);
+        postService.permanentDelete(memberId);
+        postService.permanentDeleteFavoritePost(memberId);
+        commentService.permanentDelete(memberId);
+        commentService.permanentDeleteFavoriteComment(memberId);
+        memberService.permanentDelete(member);
     }
 }

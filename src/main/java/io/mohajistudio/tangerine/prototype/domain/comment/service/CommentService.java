@@ -16,10 +16,12 @@ import io.mohajistudio.tangerine.prototype.global.error.exception.UrlNotFoundExc
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -87,7 +89,7 @@ public class CommentService {
 
     public Comment findComment(Long postId, Long id) {
         Optional<Comment> findComment = commentRepository.findByIdDetails(id, postId);
-        if(findComment.isEmpty()) {
+        if (findComment.isEmpty()) {
             throw new UrlNotFoundException();
         }
         return findComment.get();
@@ -181,5 +183,61 @@ public class CommentService {
 
     public Set<FavoriteComment> findFavoriteCommentListAtPost(Long postId, Long memberId) {
         return favoriteCommentRepository.findByMemberIdAndPostId(memberId, postId);
+    }
+
+    public void permanentDelete(Long memberId) {
+        int pageSize = 10;
+        int page = 0;
+
+        Page<Comment> commentListByPage;
+        do {
+            commentListByPage = commentRepository.findByMemberIdForWithdrawal(memberId, PageRequest.of(page, pageSize));
+            List<Comment> commentList = commentListByPage.getContent();
+            LocalDateTime deletedAt = LocalDateTime.now();
+
+            commentList.forEach(
+                    comment -> commentRepository.permanentDelete(comment.getId(), CommentStatus.DELETED, deletedAt)
+            );
+            page++;
+        } while (commentListByPage.hasNext());
+    }
+
+    public Comment modifyCommentStatus(Long commentId, CommentStatus commentStatus) {
+        Optional<Comment> findComment = commentRepository.findByIdWithMember(commentId);
+
+        if (findComment.isEmpty()) throw new UrlNotFoundException();
+
+        Comment comment = findComment.get();
+
+        if(comment.getStatus().equals(commentStatus)) {
+            return null;
+        }
+
+        commentRepository.updateCommentStatus(commentId, commentStatus);
+
+        return comment;
+    }
+
+    public void permanentDeleteFavoriteComment(Long memberId) {
+        int pageSize = 10;
+        int page = 0;
+
+        Page<FavoriteComment> favoriteCommentListByPage;
+        do {
+            favoriteCommentListByPage = favoriteCommentRepository.findByMemberIdForWithdrawal(memberId, PageRequest.of(page, pageSize));
+            List<FavoriteComment> favoriteCommentList = favoriteCommentListByPage.getContent();
+
+            favoriteCommentList.forEach(
+                    favoriteComment -> {
+                        Optional<Comment> findComment = commentRepository.findByIdForWithdrawal(favoriteComment.getComment().getId());
+                        if (findComment.isPresent()) {
+                            Comment comment = findComment.get();
+                            postRepository.updateFavoriteCnt(comment.getId(), comment.getFavoriteCnt() - 1);
+                        }
+                        favoriteCommentRepository.delete(favoriteComment);
+                    }
+            );
+            page++;
+        } while (favoriteCommentListByPage.hasNext());
     }
 }
